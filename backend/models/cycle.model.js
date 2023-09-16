@@ -16,10 +16,10 @@ const CycleSchema = Schema({
         require: true
     },
     datetime: {
-        type: String,
+        type: Date,
         require: true
     },
-    days: Number
+    days: Number,
 })
 
 const Cycle = mongoose.model('Cycle', CycleSchema);

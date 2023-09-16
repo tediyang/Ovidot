@@ -20,6 +20,7 @@ const UserSchema = Schema({
         require: true
     },
     username: String,
+    age: Number,
     period: Number,
     _cycle: [
         {
