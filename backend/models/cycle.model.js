@@ -18,7 +18,8 @@ const CycleSchema = Schema({
     datetime: {
         type: String,
         require: true
-    }
+    },
+    days: Number
 })
 
 const Cycle = mongoose.model('Cycle', CycleSchema);
