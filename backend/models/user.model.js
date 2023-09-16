@@ -26,6 +26,12 @@ const UserSchema = Schema({
             type: Schema.ObjectId,
             ref: 'Cycle'
         }
+    ],
+    _pregnancy: [
+        {
+            type: Schema.ObjectId,
+            ref: 'Pregnancy'
+        }
     ]
 });
 
