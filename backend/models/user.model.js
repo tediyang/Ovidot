@@ -13,7 +13,8 @@ const UserSchema = Schema({
     },
     email: {
         type: String,
-        require: true
+        require: true,
+        unique: true
     },
     password: {
         type: String,
@@ -22,6 +23,10 @@ const UserSchema = Schema({
     username: String,
     age: Number,
     period: Number,
+    pregnant: {
+        type: String,
+        default: 'No'
+    },
     _cycle: [
         {
             type: Schema.ObjectId,

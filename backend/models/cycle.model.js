@@ -20,6 +20,8 @@ const CycleSchema = Schema({
         require: true
     },
     days: Number,
+    period: Number,
+    fertility: Number
 })
 
 const Cycle = mongoose.model('Cycle', CycleSchema);

@@ -11,11 +11,23 @@ const PregnancySchema = Schema({
         type: Date,
         default: Date.now
     },
-    days: Number,
     datetime: {
         type: Date,
         require: true
-    }
+    },
+    days: Number,
+    firstSprint: {
+        type: Date,
+        require: true
+    },
+    secondSprint: {
+        type: Date,
+        require: true
+    },
+    lastSprint: {
+        type: Date,
+        require: true
+    },
 });
 
 const Pregnancy = mongoose.model('User', PregnancySchema);
