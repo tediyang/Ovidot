@@ -32,4 +32,3 @@ app.use('/api/auth', auth);  // Use the route for authentication
 app.listen(port, () => {
     console.log(`listen on ${port}`);
 })
-ush
