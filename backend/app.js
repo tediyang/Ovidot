@@ -3,6 +3,7 @@ require('dotenv').config()
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const auth = require('./routes/auth.route');
 
 // fetch the env variables
 const host = process.env.HOST || '127.0.0.1';
@@ -25,8 +26,10 @@ db.once('open', () => {
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use('/api/auth', auth);  // Use the route for authentication
 
 
 app.listen(port, () => {
     console.log(`listen on ${port}`);
 })
+ush
