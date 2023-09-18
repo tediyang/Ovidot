@@ -9,10 +9,7 @@ const { validationResult } = require('express-validator');
 const HttpStatus = require('http-status-codes');
 const { createUserValidation, updateValidation, validate } = require("./validationMiddleware");
 const saltRounds = 12;
-const handleDatabaseError = (res, error) => {
-	console.error(error);
-	res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: "internal server error" });
-};
+const { handleResponse } = require("./responseMiddleware");
 
 /* create user asynchronously */
 exports.createUser = [
@@ -29,7 +26,7 @@ exports.createUser = [
 		const { email, password } = req.body;
 		const existingUser = await User.findOne({ email });
 		if (existingUser) {
-			return res.status(HttpStatus.BAD_REQUEST).json({ message: "email exists?: yes!" });
+			return handleResponse(res, HttpStatus.BAD_REQUEST, "email exists?: yes!");
 		}
 
 		const encrpytedPassword = await bycrypt.hash(password, saltRounds);
@@ -37,15 +34,15 @@ exports.createUser = [
 		const newUser = new User({ email, password: encryptedPassword });
 		await newUser.save();
 		/* return response */
-		res.status(HttpStatus.CREATED).json({ message: "A new user is now created sucessfully" });
+		return handleResponse(res, HttpStatus.CREATED, "A new user is now created sucessfully");
 	}
 		catch(error) {
-			handleDatabaseError(res, error);
+			return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
 		}
 	}
 ];
 /**
- * create a functionto find list of all users and export it 
+ * create a functionto find list of all users and export it
  * find all the list excluding the password cause its encrypted
  * do this asyncly
  * catch error
@@ -56,7 +53,7 @@ exports.findAllusers = async (req, res) => {
 		res.status(HttpStatus.OK).json(users);
 	}
 	catch (error) {
-		handleDatabaseError(res, error);
+		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
 	}
 };
 /* find specific user */
@@ -67,13 +64,13 @@ exports.findUser = async(req, res) => {
 		const user = await User.findById(userId, "-password");
 		/* check for conditons */
 		if(!user) {
-			return res.status(HttpStatus.NOT_FOUND).json({ message: "User not found"});
+			return handleResponse(res, HttpStatus.NOT_FOUND, "User not found");
 		}
 		// else return OK response
 		res.status(HttpStatus.OK).json(user);
 	}
 	catch(error) {
-		handleDatabaseError(res, error);
+		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
 	}
 };
 /*update user*/
@@ -93,7 +90,7 @@ exports.updateUser = [
 	 	* ?
 	 	* */
 		if(!user) {
-			return res.status(HttpStatus.NOT_FOUND).json({ message: "user not found" });
+			return handleResponse(res, HttpStatus.NOT_FOUND, "User not found");
 		}
 		if (email) {
 			user.email = email;
@@ -103,10 +100,10 @@ exports.updateUser = [
 			user.password = encryptePassword;
 		}
 		await user.save()
-		res.status(HttpStatus.OK).json({ message: "user update successful" });
+		return handleResponse(res, HttpStatus.OK, "User update successful");
 	}
 	catch(error) {
-		handleDatabaseError(res, error);
+		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
 	}
 	}
 ]
@@ -117,13 +114,13 @@ exports.deleteUser async (req, res) => {
 		/* find and remove user by Id */
 		const result = await User.findByIdAndRemove(usrId);
 		if(!result) {
-			return res.status(HttpStatus.NOT_FOUND).json({ message: "user not found" });
+			return handleResponse(res, HttpStatus.NOT_FOUND, "User not found");
 		}
 		/* else, delete it */
 		// we need to have a log later on
 		res.status(HttpStatus.OK).json({ message: "user deleted sucessfully" });
 	}
 	catch(error) {
-		handleDatabaseError(res, error);
+		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
 		}
 };
