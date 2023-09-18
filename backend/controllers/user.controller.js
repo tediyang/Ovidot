@@ -4,12 +4,21 @@
 
 /* import all neccessary modules & Libs*/
 const User = require('../models/user/model');
-const bcrypt = require('bycryptjs');
+const bcrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
 const HttpStatus = require('http-status-codes');
+const { createUserValidation, updateValidation, validate } = require("./validationMiddleware");
+const saltRounds = 12;
+const handleDatabaseError = (res, error) => {
+	console.error(error);
+	res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: "internal server error" });
+};
 
 /* create user asynchronously */
-exports.createUser = async (req, res, next) => {
+exports.createUser = [
+	createUserValidation,
+	validate,
+	async (req, res, next) => {
 	try {
 		/**
 		 * parse the email and password from the req.body
@@ -23,7 +32,6 @@ exports.createUser = async (req, res, next) => {
 			return res.status(HttpStatus.BAD_REQUEST).json({ message: "email exists?: yes!" });
 		}
 
-		const saltRounds = 12;
 		const encrpytedPassword = await bycrypt.hash(password, saltRounds);
 
 		const newUser = new User({ email, password: encryptedPassword });
@@ -31,25 +39,28 @@ exports.createUser = async (req, res, next) => {
 		/* return response */
 		res.status(HttpStatus.CREATED).json({ message: "A new user is now created sucessfully" });
 	}
-};
+		catch(error) {
+			handleDatabaseError(res, error);
+		}
+	}
+];
 /**
  * create a functionto find list of all users and export it 
  * find all the list excluding the password cause its encrypted
  * do this asyncly
  * catch error
  * */
-exports.findAllusers = async (req, res, next) => {
+exports.findAllusers = async (req, res) => {
 	try {
 		const users = await User.find({}, "-password");
 		res.status(HttpStatus.OK).json(users);
 	}
 	catch (error) {
-		console.error(error);
-		res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: "internal server error" });
+		handleDatabaseError(res, error);
 	}
 };
 /* find specific user */
-exports.findUser = async(req, res, next) => {
+exports.findUser = async(req, res) => {
 	//initialize userId
 	const userId = req.params.id;
 	try {
@@ -62,12 +73,14 @@ exports.findUser = async(req, res, next) => {
 		res.status(HttpStatus.OK).json(user);
 	}
 	catch(error) {
-		console.error(error);
-		res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: "internal server error" });
+		handleDatabaseError(res, error);
 	}
 };
 /*update user*/
-exports.updateUser = async(req, res, next) => {
+exports.updateUser = [
+	updateUserValidation,
+	validate
+	async(req, res) => {
 	const userId = req.param.id;
 	const { email, password } = req.body;
 	try {
@@ -86,7 +99,6 @@ exports.updateUser = async(req, res, next) => {
 			user.email = email;
 		}
 		if(password) {
-			const saltRounds = 12;
 			const encryptedPassword = await bycrypt.hash(password, saltRounds);
 			user.password = encryptePassword;
 		}
@@ -94,12 +106,12 @@ exports.updateUser = async(req, res, next) => {
 		res.status(HttpStatus.OK).json({ message: "user update successful" });
 	}
 	catch(error) {
-		console.error(error);
-		res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: "internal server Error" });
+		handleDatabaseError(res, error);
 	}
-}
+	}
+]
 /* Delete user */
-exports.deleteUser async (req, res, next) => {
+exports.deleteUser async (req, res) => {
 	const userId = req.params.id;
 	try {
 		/* find and remove user by Id */
@@ -112,7 +124,6 @@ exports.deleteUser async (req, res, next) => {
 		res.status(HttpStatus.OK).json({ message: "user deleted sucessfully" });
 	}
 	catch(error) {
-		console.error(error) {
-			res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: "internal server error" });
+		handleDatabaseError(res, error);
 		}
-	};
+};
