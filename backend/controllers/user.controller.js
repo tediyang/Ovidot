@@ -5,7 +5,6 @@
 /* import all neccessary modules & Libs*/
 const User = require('../models/user/model');
 const bcrypt = require('bcryptjs');
-const { validationResult } = require('express-validator');
 const HttpStatus = require('http-status-codes');
 const { createUserValidation, updateValidation, validate } = require("./validationMiddleware");
 const saltRounds = 12;
