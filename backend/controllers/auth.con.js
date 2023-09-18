@@ -6,7 +6,7 @@ import { createUserValidation, updateUserValidation, validate, HttpStatus } from
 import { generateToken as GT } from "./jwtHelper";
 
 const saltRounds = 12;
-const matched = await bcrypt.compare(password, user.password);
+//const matched = await bcrypt.compare(password, user.password);
 const secretkey = process.env.SECRETKEY;
 
 export const signup = [
@@ -41,6 +41,7 @@ export const login = [
 				return HR(res, HttpStatus.UNAUTHORIZED, 'Authentication failed');
 			}
 
+			const matched = await bcrypt.compare(password, user.password);
 			if(!matched) {
 				return HR(res, HttpStatus.UNAUTHORIZED, 'Authentication failed');
 			}
