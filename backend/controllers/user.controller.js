@@ -3,7 +3,7 @@
  */
 
 /* import all neccessary modules & Libs*/
-const User = require('../models/user/model');
+const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 const HttpStatus = require('http-status-codes');
 const { createUserValidation, updateValidation, validate } = require("./validationMiddleware");
