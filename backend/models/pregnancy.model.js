@@ -13,20 +13,20 @@ const PregnancySchema = Schema({
     },
     datetime: {
         type: Date,
-        require: true
+        required: true
     },
     days: Number,
-    firstSprint: {
+    firstTrimesterStartDate: {
         type: Date,
-        require: true
+        required: true
     },
-    secondSprint: {
+    secondTrimesterStartDate: {
         type: Date,
-        require: true
+        required: true
     },
-    lastSprint: {
+    thirdTrimesterStartDate: {
         type: Date,
-        require: true
+        required: true
     },
 });
 
