@@ -19,10 +19,22 @@ const CycleSchema = Schema({
         type: Date,
         require: true
     },
-    days: Number,
-    period: Number,
-    ovulation: Number
-})
+    days: {
+	    type: Number,
+	    required: true,
+	    min: 1 //min val for days
+    },
+    period: {
+	    type: Number,
+	    required: true,
+	    min: 1
+    },
+    ovulation: {
+	    type: Number,
+	    required: true,
+	    min: 1
+    },
+});
 
 const Cycle = mongoose.model('Cycle', CycleSchema);
 module.exports = Cycle;
