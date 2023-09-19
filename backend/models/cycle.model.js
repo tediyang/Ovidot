@@ -15,14 +15,42 @@ const CycleSchema = Schema({
         type: String,
         require: true
     },
-    datetime: {
+    period: {
+        type: Number,
+        required: true,
+        min: 1
+    },
+    start_date: {
         type: Date,
         require: true
     },
-    days: Number,
-    period: Number,
-    ovulation: Number
-})
+    days: {
+	    type: Number,
+	    required: true,
+        min: 1
+    },
+    ovulation: {
+        type: Date,
+    },
+    period_range: [
+        {
+            type: Date,
+            required: true
+        }
+    ],
+    ovulation_range: [
+        {
+            type: Date,
+            required: true,
+        }
+    ],
+    safe_days: [
+        {
+            type: Date,
+            required: true
+        }
+    ]
+});
 
 const Cycle = mongoose.model('Cycle', CycleSchema);
 module.exports = Cycle;

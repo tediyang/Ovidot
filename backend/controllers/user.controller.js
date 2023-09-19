@@ -4,37 +4,57 @@
 
 /* import all neccessary modules & Libs*/
 const User = require('../models/user.model');
-const req
-// const HttpStatus = require('http-status-codes');
-const { createUserValidation, updateValidation, validate } = require("./validationMiddleware");
-const saltRounds = 12;
-const { handleResponse } = require("./responseMiddleware");
+const handleResponse = require('../utility/handle.response');
+const HttpStatus =  require('HttpStatus');
 
 /**
- * create a function to find list of all users and export it
- * find all the list excluding the password cause its encrypted
- * do this asyncly
- * catch error
+ * 
+ * @param {Object} data - user data 
+ * @returns 
  */
-// exports.findAllusers = async (req, res) => {
-// 	try {
-// 		const users = await User.find({}, "-password");
-// 		res.status(HttpStatus.OK).json(users);
-// 	}
-// 	catch (error) {
-// 		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
-//  }
-// };
+exports.create = async(data) => {
+	// create a user
+	const email = data.email
+	const existUser = await User.findOne({ email });
+  	if (existUser) {
+    	return handleResponse(res, HttpStatus.NOT_FOUND, `${email} already exist.`);
+  	}
 
-/* find specific user */
+  	try {
+    	const saltRounds = 12;
+    	const salt = await bcrypt.genSalt(saltRounds);
+    	// Hash the password
+    	const hashedPassword = await bcrypt.hash(password, salt);
+    	// Register the new user data. The create method prevents sql injection
+      	const newUser = await User.create(data);
+
+      	await newUser.save();
+      	return res.status(201).send();
+
+  	} catch (error) {
+    	console.error(error);
+      	return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+  	}
+}
+
+/**
+ * Find the user and update the data passed.
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ * @returns - updated user object
+ */
 exports.update = async(req, res, next) => {
-	//initialize userId
-	const { userId } = req.params.id;
-    const {period, pregnant, ovulation, datetime } = req.body;
+	// get userId from params
+	const userId = req.params.id;
+    const { username, age } = req.body;
 
 	try {
+		const updatedAt = new Date();
 		const user = await User.findByIdAndUpdate(userId,
-            {});
+            {username: username, age: age, updated_at: updatedAt},
+			{new: true});
+
 		/* check for conditons */
 		if(!user) {
 			return handleResponse(res, HttpStatus.NOT_FOUND, "User not found");
@@ -46,54 +66,28 @@ exports.update = async(req, res, next) => {
 		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
 	}
 };
-/*update user*/
-exports.updateUser = [
-	updateUserValidation,
-	validate
-	async (req, res) => {
-	const userId = req.param.id;
-	const { email, password } = req.body;
-	try {
-		/**
-	 	* find user by Id
-	 	* if it exist
-	 	* then update users properties
-	 	* encrypt the password
-	 	* save the modification
-	 	* ?
-	 	* */
-		if(!user) {
-			return handleResponse(res, HttpStatus.NOT_FOUND, "User not found");
-		}
-		if (email) {
-			user.email = email;
-		}
-		if(password) {
-			const encryptedPassword = await bycrypt.hash(password, saltRounds);
-			user.password = encryptePassword;
-		}
-		await user.save()
-		return handleResponse(res, HttpStatus.OK, "User update successful");
-	}
-	catch(error) {
-		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
-	}
-	}
-]
-/* Delete user */
-exports.deleteUser async (req, res) => {
+
+/**
+ * Fetch and return the user data from the database.
+ * @param {Object} res
+ * @param {Object} req
+ * @param {Function} next
+ * @returns -  the user data.
+ */
+exports.fetch = async (res, req, next) => {
 	const userId = req.params.id;
+
 	try {
-		/* find and remove user by Id */
-		const result = await User.findByIdAndRemove(usrId);
-		if(!result) {
-			return handleResponse(res, HttpStatus.NOT_FOUND, "User not found");
-		}
-		/* else, delete it */
-		// we need to have a log later on
-		res.status(HttpStatus.OK).json({ message: "user deleted sucessfully" });
-	}
-	catch(error) {
+		const user = await User.findById(userId);
+	
+		return res.status(HttpStatus.OK).json({
+			userId: user.id,
+			username: user.username,
+			age: user.age
+		});
+
+	} catch(error) {
+		console.log(error);
 		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
-		}
-};
+	}
+}

@@ -28,23 +28,12 @@ const UserSchema = Schema({
         type: Number,
         require: true
     },
-    period: Number,
-    pregnant: {
-        type: String,
-        default: 'No'
-    },
     _cycles: [
         {
             type: Schema.ObjectId,
             ref: 'Cycle'
         }
     ],
-    _pregnancy: [
-        {
-            type: Schema.ObjectId,
-            ref: 'Pregnancy'
-        }
-    ]
 });
 
 const User = mongoose.model('User', UserSchema);
