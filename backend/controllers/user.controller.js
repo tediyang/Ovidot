@@ -5,7 +5,7 @@
 /* import all neccessary modules & Libs*/
 const User = require('../models/user.model');
 const handleResponse = require('../utility/handle.response');
-const HttpStatus =  require('HttpStatus');
+const HttpStatus =  require('httpstatus');
 
 /**
  * 
