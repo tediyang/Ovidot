@@ -20,14 +20,20 @@ const UserSchema = Schema({
         type: String,
         require: true
     },
-    username: String,
-    age: Number,
+    username: {
+        type: String,
+        require: true
+    },
+    age: {
+        type: Number,
+        require: true
+    },
     period: Number,
     pregnant: {
         type: String,
         default: 'No'
     },
-    _cycle: [
+    _cycles: [
         {
             type: Schema.ObjectId,
             ref: 'Cycle'

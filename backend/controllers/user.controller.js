@@ -3,64 +3,38 @@
  */
 
 /* import all neccessary modules & Libs*/
-const User = require('../models/user/model');
-const bcrypt = require('bcryptjs');
-const HttpStatus = require('http-status-codes');
+const User = require('../models/user.model');
+const req
+// const HttpStatus = require('http-status-codes');
 const { createUserValidation, updateValidation, validate } = require("./validationMiddleware");
 const saltRounds = 12;
 const { handleResponse } = require("./responseMiddleware");
 
-/* create user asynchronously */
-exports.createUser = [
-	createUserValidation,
-	validate,
-	async (req, res, next) => {
-	try {
-		/**
-		 * parse the email and password from the req.body
-		 * check if email exist
-		 * if it does throw an httpstatus code in a json format 
-		 * encrypt the password 
-		 * go ahead to create new user since checked not existing */
-		const { email, password } = req.body;
-		const existingUser = await User.findOne({ email });
-		if (existingUser) {
-			return handleResponse(res, HttpStatus.BAD_REQUEST, "email exists?: yes!");
-		}
-
-		const encrpytedPassword = await bycrypt.hash(password, saltRounds);
-
-		const newUser = new User({ email, password: encryptedPassword });
-		await newUser.save();
-		/* return response */
-		return handleResponse(res, HttpStatus.CREATED, "A new user is now created sucessfully");
-	}
-		catch(error) {
-			return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
-		}
-	}
-];
 /**
- * create a functionto find list of all users and export it
+ * create a function to find list of all users and export it
  * find all the list excluding the password cause its encrypted
  * do this asyncly
  * catch error
- * */
-exports.findAllusers = async (req, res) => {
-	try {
-		const users = await User.find({}, "-password");
-		res.status(HttpStatus.OK).json(users);
-	}
-	catch (error) {
-		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
-	}
-};
+ */
+// exports.findAllusers = async (req, res) => {
+// 	try {
+// 		const users = await User.find({}, "-password");
+// 		res.status(HttpStatus.OK).json(users);
+// 	}
+// 	catch (error) {
+// 		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
+//  }
+// };
+
 /* find specific user */
-exports.findUser = async(req, res) => {
+exports.update = async(req, res, next) => {
 	//initialize userId
-	const userId = req.params.id;
+	const { userId } = req.params.id;
+    const {period, pregnant, ovulation, datetime } = req.body;
+
 	try {
-		const user = await User.findById(userId, "-password");
+		const user = await User.findByIdAndUpdate(userId,
+            {});
 		/* check for conditons */
 		if(!user) {
 			return handleResponse(res, HttpStatus.NOT_FOUND, "User not found");
@@ -76,7 +50,7 @@ exports.findUser = async(req, res) => {
 exports.updateUser = [
 	updateUserValidation,
 	validate
-	async(req, res) => {
+	async (req, res) => {
 	const userId = req.param.id;
 	const { email, password } = req.body;
 	try {

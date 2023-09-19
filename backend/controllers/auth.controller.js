@@ -8,7 +8,7 @@ const secretKey = process.env.SECRETKEY;
 
 // Generate a jwt token for a user when successfullly logged in
 function createToken(user) {
-    return jwt.sign({ id: user.id, email: user.email }, secretKey, { expiresIn: '1h' });
+  return jwt.sign({ id: user.id, email: user.email }, secretKey, { expiresIn: '1h' });
 }
 
 // Create User account when for sign up
@@ -19,7 +19,7 @@ exports.signup = async (req, res, next) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { email, password } = req.body;
+  const { email, password, username, age } = req.body;
 
   const existUser = await User.findOne({ email });
   if (existUser) {
@@ -57,8 +57,15 @@ exports.login = async (req, res, next) => {
   }
 
   const matched = await bcrypt.compare(password, user.password);
-  if (matched) {
-      const token = generateToken(user);
-      res.status(200).json({ message: 'Authentication successful', token });
+  try {
+    if (matched) {
+        const token = createToken(user);
+        res.status(200).json({ message: 'Authentication successful', token });
+    } else {
+      return res.status(401).json({ message: 'Authentication failed' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({error: 'Internal Server Error'});
   }
 };

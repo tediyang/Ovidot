@@ -4,8 +4,8 @@
  * if any validation error it returns bad_request
  * */
 
-const = { body, validationResult } = require("express-validator");
-const = HttpStatus = require("http-status-codes");
+const { body, validationResult } = require("express-validator");
+const HttpStatus = require("http-status-codes");
 
 const createUserValidation = [
 	body("email").isEmail().withMessage("invalid email address"),
