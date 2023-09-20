@@ -44,7 +44,7 @@ const CycleSchema = Schema({
             required: true,
         }
     ],
-    safe_days: [
+    unsafe_days: [
         {
             type: Date,
             required: true
