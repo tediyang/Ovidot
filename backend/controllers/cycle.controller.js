@@ -1,18 +1,19 @@
-import cycle from "../models/cycle.model";
-import { handleResponse as HR } from ".responseMiddleware";
+const Cycle = require("../models/cycle.model");
+const handleResponse = require("../utility/handle.response");
 
 /**
  * user is only permitted to
  * create, update and delete her own cycle
- **/
-export const createCycle = async(req, res) => {
+ */
+exports.create = async(req, res) => {
 	try {
-		const { month, datetime, days, period, ovulation } = req.body;
+		const { period, ovulation, startdate } = req.body;
 		/* define a cycle */
+
 		const newCycle = new Cycle({ 
 			month,
 			datetime,
-			days
+			days,
 			period,
 			ovulation
 		});
