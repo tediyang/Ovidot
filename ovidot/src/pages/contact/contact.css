@@ -1,0 +1,39 @@
+.contact__container {
+    display: grid;
+    place-items: center;
+}
+
+.contact__wrapper {
+    width: fit-content;
+    display: flex;
+    gap: 2rem;
+}
+
+.contact__wrapper a {
+    margin-top: 2rem;
+    background: peachpuff;
+    font-size: 2rem;
+    border: 2px solid transparent;
+    transition: var(--transition);
+    padding: 2rem;
+    border-radius: 1.5rem;
+}
+
+.contact__wrapper a:hover {
+    background: pink;
+    border-color: var(--color-gray-600);
+
+}
+
+/*==== MEDIA QUERIES (small screens====*/
+@media screen and (max-width: 600px) {
+    .contact__wrapper {
+        gap: 1.5rem;
+    }
+    .contact__wrapper a {
+        padding: 1rem;
+        font-size: 1.2rem;
+        border-radius: 1rem;
+    }
+
+}

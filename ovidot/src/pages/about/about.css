@@ -1,0 +1,83 @@
+.about__section-image {
+    border-radius: 2rem;
+    transform:skew(10deg);
+    transition: var(--transition);
+    width: 50%;
+}
+
+.about__section-image:nth-child(2) {
+    transform: skew(-15deg);
+}
+
+.about__section-image:hover {
+    transform: skew(0);
+}
+
+.about__section-content h1 {
+    margin-bottom: 2rem;
+}
+
+.about__section-content p {
+    margin-bottom: 1rem;
+    font-family: 'Cabin Sketch';
+    font-size: 17px;
+}
+
+
+.about__story-container, .about__goal-container {
+    display: grid;
+    grid-template-columns: 40% 50%;
+    gap: 10%;
+}
+
+.about__reason-container {
+    display: grid;
+    grid-template-columns: 50% 40%;
+    gap: 10%;
+    
+}
+
+
+/* ====== MEDIA QUERIES ====== (medium screens) */
+@media screen and (max-width: 1024px) {
+    .about__section-image{
+        width: 40%;
+
+    }
+    .about__section-content h1 {
+        margin-bottom: 1.2rem;
+    }
+
+    .about__story-container, .about__goal-container,
+    .about__reason-container 
+    {
+        gap: 3rem;
+    }
+
+    .about__reason .about__section-image  {
+        grid-row: 0;
+    }
+}
+
+/* ====== MEDIA QUERIES ====== (medium screens) */
+@media screen and (max-width: 600px) {
+
+    .about__section-image {
+        width: 40%;
+        margin-inline: auto;
+        align-items: center;
+        margin-left: 30px;
+    }
+
+    .about__story-container, .about__reason-container,
+    .about__goal-container {
+        gap: 1rem;
+        grid-template-columns: 1fr;
+    }
+
+    .about__reason .about__section-image  {
+        grid-row: 1;
+        
+    }
+
+}
