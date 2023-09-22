@@ -3,7 +3,7 @@ const handleResponse = require("../utility/handle.response");
 const cycleCalculator = require("../utility/cycle.calculator");
 const HttpStatus =  require('httpstatus');
 const User = require('../models/user.model');
-const { populateWithCycles } = require('../utility/user.populate')
+const { populateWithCycles } = require('../utility/user.populate');
 
 // create a cycle for a given user
 exports.create = async(req, res, next) => {
@@ -45,7 +45,6 @@ exports.create = async(req, res, next) => {
 			unsafe_days: cycleData.unsafeDays
 		});
 
-<<<<<<< HEAD
 		await newCycle.save();
 		user._cycles.push(newCycle._id);
 		await user.save();
@@ -59,10 +58,6 @@ exports.create = async(req, res, next) => {
 
 // fetch all the cycles for a given user
 exports.fetchAll = async(req, res, next) => {
-=======
-/* update a cycle record by Id */
-exports.updateCycleById = async(req, res) => {
->>>>>>> 68f1bd2ef42a6f6ac5c9f3e6b5d089a2984ad4fc
 	try {
 		const id = req.params.userId;
 
@@ -160,16 +155,10 @@ exports.update = async(req, res) => {
 		console.error(error);
 		handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "internal server error");
 	}
-<<<<<<< HEAD
 }
 
 /* Delete cycle by cycleId for a given user */
 exports.delete = async(req, res, next) => {
-=======
-};
-/* Delete cycle byId */
-exports.deleteCycleById = async(req, res) => {
->>>>>>> 68f1bd2ef42a6f6ac5c9f3e6b5d089a2984ad4fc
 	try {
 		const { userId, cycleId } = req.params;
 		const user = await populateWithCycles(userId, '_id', cycleId);
