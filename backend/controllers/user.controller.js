@@ -1,4 +1,4 @@
-/* 
+/**
  * controller for performing CRUD on a user.
  */
 
@@ -9,8 +9,8 @@ const HttpStatus =  require('httpstatus');
 
 /**
  * 
- * @param {Object} data - user data 
- * @returns 
+ * @param {Object} data - user data
+ * @returns
  */
 exports.create = async(data) => {
 	// create a user
@@ -24,7 +24,8 @@ exports.create = async(data) => {
     	const saltRounds = 12;
     	const salt = await bcrypt.genSalt(saltRounds);
     	// Hash the password
-    	const hashedPassword = await bcrypt.hash(password, salt);
+    	const hashedPassword = await bcrypt.hash(data.password, salt);
+		data.password = hashedPassword;
     	// Register the new user data. The create method prevents sql injection
       	const newUser = await User.create(data);
 
@@ -46,7 +47,7 @@ exports.create = async(data) => {
  */
 exports.update = async(req, res, next) => {
 	// get userId from params
-	const userId = req.params.id;
+	const userId = req.params.userId;
     const { username, age } = req.body;
 
 	try {
@@ -63,9 +64,10 @@ exports.update = async(req, res, next) => {
 		res.status(HttpStatus.OK).json(user);
 	}
 	catch(error) {
+		console.log(error);
 		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
 	}
-};
+}
 
 /**
  * Fetch and return the user data from the database.
@@ -75,7 +77,7 @@ exports.update = async(req, res, next) => {
  * @returns -  the user data.
  */
 exports.fetch = async (res, req, next) => {
-	const userId = req.params.id;
+	const userId = req.params.userId;
 
 	try {
 		const user = await User.findById(userId);

@@ -1,9 +1,30 @@
 const express = require('express');
-const cycleRoutes = express.Router();
-const cc = require('../controllers/cycle.controller.js');
+const router = express.Router();
+const cycleController = require('../controllers/cycle.controller');
+const { body } = require('express-validator');
 
-cycleRoutes.post("/cycles", cc.create);
-cycleRoutes.put("/cycles/:id", cc.updateCycleById);
-cycleRoutes.delete("/cycles/:id", cc.deleteCycleById);
+// create a cycle
+router.post('/:userId/dashboard',
+    cycleController.create);
 
-module.exports = cycleRoutes;
+// get all cycles for a user
+router.get('/:userId/dashboard',
+    cycleController.fetchAll);
+
+// get cycle by cycleId
+router.get('/:userId/dashboard/:cycleId',
+    cycleController.fetchOne);
+
+// get cycle by cycleId
+router.get('/:userId/dashboard/:month',
+    cycleController.fetchMonth);
+
+// update cycle
+router.get('/:userId/dashboard/:cycleId',
+    cycleController.update);
+
+// delete cycle
+router.get('/:userId/dashboard/:cycleId',
+    cycleController.delete);
+
+module.exports = router;

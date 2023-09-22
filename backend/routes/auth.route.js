@@ -3,20 +3,20 @@ const { Router } = require('express');
 const authController = require('../controllers/auth.controller.js');
 const { validationResult, body } = require('express-validator');
 
-const AuthRoutes = express.Router();
-
-AuthRoutes.post('/api/signup', [
+// Signup
+router.post('/signup', [
     body("email").isString().notEmpty(),
     body("password").isString().notEmpty()
     ],
     authController.signup
 );
 
-AuthRoutes.post('/api/login', [
+// Login
+router.post('/login', [
     body("email").isString().notEmpty(),
     body("password").isString().notEmpty()
     ],
     authController.login
 );
 
-module.exports = AuthRoutes;
+module.exports = router;

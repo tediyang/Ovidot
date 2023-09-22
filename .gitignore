@@ -1,3 +1,5 @@
 node_modules/
 ovidot.env
 .env
+other.js
+admin/

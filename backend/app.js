@@ -1,9 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-//require('dotenv-safe/config.js');
-require('dotenv').config()
-const app = express();
+const auth = require('./routes/auth.route');
+const cycle = require('./routes/cycle.route');
 
 app.use(cors());
 app.use(express.json());
@@ -21,8 +21,12 @@ db.once('open', () => {
     console.log('MongoDB connected!');
 });
 
-const routes = require('./routes/index.js');
-app.use('/api', routes);
+// start application
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use('/api/auth', auth);  // Route for signup and login authentication
+app.use('/api', cycle);  // route for CRUD operation on cycle
 
 const errorHandler = require('./middleware/error.middleware.js');
 app.use(errorHandler);

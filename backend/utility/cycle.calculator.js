@@ -80,12 +80,17 @@ exports.calculate = (period, startDate, ovulation = null) => {
                 unsafeRangeStart.setDate(unsafeRangeStart.getDate() + 1);
             }
 
+            let nextDate = new Date();
+            nextDate.setDate(dayOne.getDate() + totalCycleDays)
+            nextDate = nextDate.toISOString().split('T')[0];
 
             resolve ({
                 days: totalCycleDays,
                 periodRange,
+                ovulation: ovulationRange[1],
                 ovulationRange,
-                unsafeDays
+                unsafeDays,
+                nextDate
             });
         } catch(err) {
             reject(err);
@@ -93,14 +98,13 @@ exports.calculate = (period, startDate, ovulation = null) => {
     });
 }
 
-
 /**
  * Extract the month from the datetime
  * @param {String} startdate
  * @returns - return the month
  */
 exports.month = startdate => {
-    const dateObject = new Date(datetime);
+    const dateObject = new Date(startdate);
     const month = dateObject.toLocaleString('en-US', { month: 'long' });
 
     return month;

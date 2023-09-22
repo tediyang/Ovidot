@@ -20,7 +20,14 @@ const CycleSchema = Schema({
         required: true,
         min: 1
     },
+    ovulation: {
+        type: Date,
+    },
     start_date: {
+        type: Date,
+        require: true
+    },
+    next_date: {
         type: Date,
         require: true
     },
@@ -28,9 +35,6 @@ const CycleSchema = Schema({
 	    type: Number,
 	    required: true,
         min: 1
-    },
-    ovulation: {
-        type: Date,
     },
     period_range: [
         {
