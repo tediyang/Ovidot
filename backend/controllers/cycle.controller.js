@@ -27,7 +27,7 @@ exports.create = async(req, res) => {
 };
 
 /* update a cycle record by Id */
-export const updateCycleById = async(req, res) => {
+exports.updateCycleById = async(req, res) => {
 	try {
 		const { month, datetime, days, period, ovulation } = req.body;
 		const updatedCycle = await Cycle.findyIdAndUpdate(
@@ -55,7 +55,7 @@ export const updateCycleById = async(req, res) => {
 	}
 };
 /* Delete cycle byId */
-export const deleteCycleById = async(req, res) => {
+exports.deleteCycleById = async(req, res) => {
 	try {
 		const deletedCycle = await Cycle.findByIdAndRemove(req.params.id);
 		if (!deletedCycle) {

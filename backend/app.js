@@ -1,34 +1,35 @@
-// Import dependencies and load the .env file 
-require('dotenv').config()
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const auth = require('./routes/auth.route');
+//require('dotenv-safe/config.js');
+require('dotenv').config()
+const app = express();
 
-// fetch the env variables
-const host = process.env.HOST || '127.0.0.1';
-const db_env = process.env.DB || 'test';
-const port = process.env.PORT || 5000;
+app.use(cors());
+app.use(express.json());
 
-// Connect with MongoDB
-mongoose.connect(`mongodb://${host}/${db_env}`, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+const { HOST, DB, PORT } = process.env;
+mongoose.connect(`mongodb://${HOST}/${DB}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
 });
 
 const db = mongoose.connection;
+
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
-  console.log('Connected to MongoDB');
+    console.log('MongoDB connected!');
 });
 
-// start application
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use('/api/auth', auth);  // Use the route for authentication
+const routes = require('./routes/index.js');
+app.use('/api', routes);
 
+const errorHandler = require('./middleware/error.middleware.js');
+app.use(errorHandler);
 
-app.listen(port, () => {
-    console.log(`listen on ${port}`);
-})
+const loggerMiddleware = require('./middleware/logger.middleware.js');
+app.use(loggerMiddleware);
+
+app.listen(PORT, () => {
+  console.log(`Server is now running on port ${PORT}`);
+});
