@@ -26,7 +26,8 @@ const UserSchema = Schema({
     },
     age: {
         type: Number,
-        require: true
+        require: true,
+        min: 8
     },
     _cycles: [
         {

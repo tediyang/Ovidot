@@ -5,7 +5,7 @@ const { validationResult } = require('express-validator');
 const { body } = require('express-validator');
 
 // Signup
-router.post('/api/signup', [
+router.post('/signup', [
     body("email").isString().notEmpty(),
     body("password").isString().notEmpty()
     ],
@@ -13,7 +13,7 @@ router.post('/api/signup', [
 );
 
 // Login
-router.post('/api/login', [
+router.post('/login', [
     body("email").isString().notEmpty(),
     body("password").isString().notEmpty()
     ],

@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const auth = require('./routes/auth.route');
+const cycle = require('./routes/cycle.route');
 
 // fetch the env variables
 const host = process.env.HOST || '127.0.0.1';
@@ -26,7 +27,8 @@ db.once('open', () => {
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use('/api/auth', auth);  // Use the route for authentication
+app.use('/api/auth', auth);  // Route for signup and login authentication
+app.use('/api', cycle);  // route for CRUD operation on cycle
 
 
 app.listen(port, () => {
