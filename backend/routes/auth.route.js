@@ -1,7 +1,12 @@
+require('dotenv').config();
+
 const express = require('express');
 const { Router } = require('express');
 const authController = require('../controllers/auth.controller.js');
 const { validationResult, body } = require('express-validator');
+const verifyToken = require('../middleware/verifyToken');
+
+const router = Router();
 
 // Signup
 router.post('/signup', [
@@ -18,5 +23,9 @@ router.post('/login', [
     ],
     authController.login
 );
+
+/* verifyToken middleware */
+router.use('/signup', verifyToken);
+router.use('/login', verifyToken);
 
 module.exports = router;
