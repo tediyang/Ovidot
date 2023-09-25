@@ -1,38 +1,39 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const auth = require('./routes/auth.route');
-const cycle = require('./routes/cycle.route');
+const dotenv = require('dotenv');
 
-app.use(cors());
-app.use(express.json());
+dotenv.config();
 
+const authRoute = require('./routes/auth.route');
+const cycleRoute = require('./routes/cycle.route');
+
+const loggerMiddleware = require('./middleWare/logger.middleware');
+const errorHandle = require('./middleWare/error.middleware');
+
+const app = express();
 const { HOST, DB, PORT } = process.env;
+
 mongoose.connect(`mongodb://${HOST}/${DB}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
-    console.log('MongoDB connected!');
+  console.log('MongoDB connected!');
 });
 
-// start application
-const app = express();
 app.use(cors());
 app.use(express.json());
-app.use('/api/auth', auth);  // Route for signup and login authentication
-app.use('/api', cycle);  // route for CRUD operation on cycle
 
-const errorHandler = require('./middleware/error.middleware.js');
-app.use(errorHandler);
+app.use('/api/auth', authRoute);
+app.use('/api', cycleRoute);
 
-const loggerMiddleware = require('./middleware/logger.middleware.js');
 app.use(loggerMiddleware);
+app.use(errorHandle);
 
 app.listen(PORT, () => {
   console.log(`Server is now running on port ${PORT}`);

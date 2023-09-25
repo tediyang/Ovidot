@@ -3,10 +3,10 @@
 const express = require('express');
 const router = express.Router();
 const cycleController = require('../controllers/cycle.controller');
-const verifyToken = require('../middleware/verifyToken');
+const verify = require('../middleWare/tokenVerification');
 
 /* protect routes */
-router.use('/:userId/cycles', verifyToken);
+router.use('/:userId/cycles', verify);
 
 /**
  * create

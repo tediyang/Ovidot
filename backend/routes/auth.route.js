@@ -4,7 +4,7 @@ const express = require('express');
 const { Router } = require('express');
 const authController = require('../controllers/auth.controller.js');
 const { validationResult, body } = require('express-validator');
-const verifyToken = require('../middleware/verifyToken');
+const verify = require('../middleWare/tokenVerification');
 
 const router = Router();
 
@@ -25,7 +25,7 @@ router.post('/login', [
 );
 
 /* verifyToken middleware */
-router.use('/signup', verifyToken);
-router.use('/login', verifyToken);
+router.use('/signup', verify);
+router.use('/login', verify);
 
 module.exports = router;
