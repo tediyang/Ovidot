@@ -3,7 +3,9 @@
  * Note: this calcutor is based on the average 28 days cycle,
  * proper estimation will be made on later version from data provided
  * individula by users to get an accurate prediction.
- * @param {String} Number- the number of days of menstruation 
+ * @param {Number} period - the number of days of menstruation
+ * @param {Date} startDate - the begining of the user cycle
+ * @param {Date} ovulation - the day the user experienced ovulation in the cycle.
  * @returns - an object with variables of days (cycle duration), periodRange,
  * ovulationRange and unsafeDays.
  */
@@ -60,7 +62,7 @@ exports.calculate = (period, startDate, ovulation = null) => {
             ]
 
             /** Calculate the unsafeRange
-            * Get unsafeRangeStart, and if the difference between unsafeRangeStart and lastPeriod is less than 0.
+            * Get unsafeRangeStart, and if the difference between unsafeRangeStart and lastPeriodDay is less than 0.
             * increase the unsafeRangeStart date
             */ 
             const unsafeRangeStart = new Date(ovulation);
