@@ -4,20 +4,21 @@
 
 /* import all neccessary modules & Libs*/
 const User = require('../models/user.model');
-const handleResponse = require('../utility/handle.response');
-const HttpStatus =  require('httpstatus');
+const { handleResponse } = require('../utility/handle.response');
+const bcrypt = require('bcryptjs');
 
 /**
- * 
+ * create the user object for the new user if it doesn't exist
  * @param {Object} data - user data
+ * @param {Object} res - response set to user
  * @returns
  */
-exports.create = async(data) => {
+exports.create = async(data, res) => {
 	// create a user
 	const email = data.email
 	const existUser = await User.findOne({ email });
   	if (existUser) {
-    	return handleResponse(res, HttpStatus.NOT_FOUND, `${email} already exist.`);
+    	return handleResponse(res, 404, `${email} already exist.`);
   	}
 
   	try {
@@ -34,23 +35,21 @@ exports.create = async(data) => {
 
   	} catch (error) {
     	console.error(error);
-      	return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+      	return handleResponse(res, 500, 'Internal Server Error');
   	}
 }
 
 /**
  * Find the user and update the data passed.
- * @param {Object} req
- * @param {Object} res
- * @param {Function} next
+ * @param {Object} res - response sent to user
+ * @param {Object} req - request from user
  * @returns - updated user object
  */
-exports.update = async(req, res, next) => {
+exports.update = async(req, res) => {
 	// get userId from params
-	const userId = req.params.userId;
-    const { username, age } = req.body;
-
 	try {
+		const userId = req.params.userId;
+		const { username, age } = req.body;
 		const updatedAt = new Date();
 		const user = await User.findByIdAndUpdate(userId,
             {username: username, age: age, updated_at: updatedAt},
@@ -58,38 +57,67 @@ exports.update = async(req, res, next) => {
 
 		/* check for conditons */
 		if(!user) {
-			return handleResponse(res, HttpStatus.NOT_FOUND, "User not found");
+			return handleResponse(res, 404, "User not found");
 		}
 		// else return OK response
-		res.status(HttpStatus.OK).json(user);
+		res.status(200).json({
+			userId: user._id,
+			email: user.email,
+			username: user.username,
+			age: user.age
+		});
 	}
 	catch(error) {
 		console.log(error);
-		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
+		return handleResponse(res, 500, "Internal server error");
 	}
 }
 
 /**
  * Fetch and return the user data from the database.
- * @param {Object} res
- * @param {Object} req
- * @param {Function} next
+ * @param {Object} req - request from user
+ * @param {Object} res - response set to user
  * @returns -  the user data.
  */
-exports.fetch = async (res, req, next) => {
-	const userId = req.params.userId;
-
+exports.fetch = async(req, res) => {
 	try {
+		const userId = req.params.userId;
 		const user = await User.findById(userId);
-	
-		return res.status(HttpStatus.OK).json({
-			userId: user.id,
+
+		/* check for conditons */
+		if(!user) {
+			return handleResponse(res, 404, "User not found");
+		}
+
+		return res.status(200).json({
+			userId: user._id,
+			email: user.email,
 			username: user.username,
 			age: user.age
 		});
 
 	} catch(error) {
 		console.log(error);
-		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
+		return handleResponse(res, 500, "Internal server error");
+	}
+}
+
+/**
+ * Delete the user data from the database.
+ * @param {Object} res - response sent to user
+ * @param {Object} req - request from user
+ * @returns - None.
+ */
+exports.delete = async(req, res) => {
+	try {
+		const userId = req.params.userId;
+		const user = await User.findByIdAndDelete(userId);
+		if (!user) {
+			return handleResponse(res, 404, "User not found");
+		}
+		return res.status(204).send();
+	} catch (error) {
+		console.error(error);
+		handleResponse(res, 500, "Internal server error");
 	}
 }
