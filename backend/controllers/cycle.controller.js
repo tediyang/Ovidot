@@ -1,12 +1,11 @@
 const Cycle = require("../models/cycle.model");
 const handleResponse = require("../utility/handle.response");
 const cycleCalculator = require("../utility/cycle.calculator");
-const HttpStatus =  require('httpstatus');
 const User = require('../models/user.model');
 const { populateWithCycles } = require('../utility/user.populate');
 
 // create a cycle for a given user
-exports.create = async(req, res, next) => {
+exports.create = async(req, res) => {
 	try {
 		const id = req.params.userId;
 		const { period, ovulation, startdate } = req.body;
@@ -16,11 +15,14 @@ exports.create = async(req, res, next) => {
 		const user = await populateWithCycles(id, 'month', month);
 		if (user === null) {
 			console.log('User not found');
-			return handleResponse(res, HttpStatus.NOT_FOUND, 'User not found');
+			return handleResponse(res, 404, 'User not found');
 		}
 		if (user._cycles.length > 0) {
 			/**
 			 * 1. Get the most recent data for that month.
+			 * 2. Get the predicted nextdate for the previous cycle
+			 * 3. Get the difference from the new month startdate
+			 * 4. If the difference is greater than 10 (10 days) delete the previous month.
 			 */
 			const lastCycle = user._cycles[user._cycles.length - 1];
 			const nextD = new Date(lastCycle.next_date);
@@ -30,7 +32,7 @@ exports.create = async(req, res, next) => {
 				await Cycle.findByIdAndDelete(lastCycle._id);
 			}
 		}
-		// if user._cycles is false, create a new one.
+		// if user._cycles is false (no data), create a new one.
 		const cycleData = await cycleCalculator.calculate(period, startdate, ovulation);
 
 		const newCycle = await Cycle({
@@ -52,12 +54,12 @@ exports.create = async(req, res, next) => {
 
 	} catch(error) {
     	console.error(error);
-      	return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+      	return handleResponse(res, 500, 'Internal Server Error');
 	}
 }
 
 // fetch all the cycles for a given user
-exports.fetchAll = async(req, res, next) => {
+exports.fetchAll = async(req, res) => {
 	try {
 		const id = req.params.userId;
 
@@ -68,55 +70,55 @@ exports.fetchAll = async(req, res, next) => {
   		.exec((err, user) => {
 			if (err) {
 				console.error(err);
-				return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+				return handleResponse(res, 500, 'Internal Server Error');
 			}
 			if (!user) {
 				console.log('User not found');
-				return handleResponse(res, HttpStatus.NOT_FOUND, 'User not found');
+				return handleResponse(res, 404, 'User not found');
 			}
 
 			return res.status(200).json(user._cycles);
 		})
 	} catch (err) {
-		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+		return handleResponse(res, 500, 'Internal Server Error');
 	}
 }
 
 // get cycle by cycleId for a given user
-exports.fetchOne = async (req, res, next) => {
+exports.fetchOne = async (req, res) => {
 	try {
 		const { userId, cycleId } = req.params;
 
 		const user = await populateWithCycles(userId, '_id', cycleId);
 		if (user === null) {
 			console.log('User not found');
-			return handleResponse(res, HttpStatus.NOT_FOUND, 'User not found');
+			return handleResponse(res, 404, 'User not found');
 		}
 		if (user._cycles.length == 0) {
-			return handleResponse(res, HttpStatus.NOT_FOUND, "Cycle not found");
+			return handleResponse(res, 404, "Cycle not found");
 		}
 		return res.status(200).json(user._cycles[0]);
 	} catch (err) {
-		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+		return handleResponse(res, 500, 'Internal Server Error');
 	}
 }
 
 // get cycle by month fora a given user
-exports.fetchMonth = async (req, res, next) => {
+exports.fetchMonth = async (req, res) => {
 	try {
 		const { userId, month } = req.params;
 
 		const user = await populateWithCycles(userId, 'month', month);
 		if (user === null) {
 			console.log('User not found');
-			return handleResponse(res, HttpStatus.NOT_FOUND, 'User not found');
+			return handleResponse(res, 404, 'User not found');
 		}
 		if (user._cycles.length == 0) {
-			return handleResponse(res, HttpStatus.NOT_FOUND, "Cycle not found");
+			return handleResponse(res, 404, "Cycle not found");
 		}
 		return res.status(200).json(user._cycles[0]);
 	} catch (err) {
-		return handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+		return handleResponse(res, 500, 'Internal Server Error');
 	}
 }
 
@@ -128,10 +130,10 @@ exports.update = async(req, res) => {
 
 		const user = await populateWithCycles(userId, '_id', cycleId);
 		if (user === null) {
-			return handleResponse(res, HttpStatus.NOT_FOUND, "User not found");
+			return handleResponse(res, 404, "User not found");
 		}
 		if (user._cycles.length == 0) {
-			return handleResponse(res, HttpStatus.NOT_FOUND, "Cycle not found");
+			return handleResponse(res, 404, "Cycle not found");
 		}
 		const updated_at = new Date();
 		const cycleFound = user._cycles[0];
@@ -153,26 +155,26 @@ exports.update = async(req, res) => {
 	}
 	catch(error) {
 		console.error(error);
-		handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "internal server error");
+		handleResponse(res, 500, "internal server error");
 	}
 }
 
 /* Delete cycle by cycleId for a given user */
-exports.delete = async(req, res, next) => {
+exports.delete = async(req, res) => {
 	try {
 		const { userId, cycleId } = req.params;
 		const user = await populateWithCycles(userId, '_id', cycleId);
 		if (user === null) {
-			return handleResponse(res, HttpStatus.NOT_FOUND, "User not found");
+			return handleResponse(res, 404, "User not found");
 		}
 		if (user._cycles.length == 0) {
-			return handleResponse(res, HttpStatus.NOT_FOUND, "Cycle not found");
+			return handleResponse(res, 404, "Cycle not found");
 		}
 		await Cycle.findByIdAndRemove(cycleId);
-		return handleResponse(res, HttpStatus.OK, "cycle successfully deleted");
+		return handleResponse(res, 200, "cycle successfully deleted");
 	}
 	catch(error) {
 		console.log(err);
-		handleResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "internal server error");
+		handleResponse(res, 500, "internal server error");
 	}
 };
