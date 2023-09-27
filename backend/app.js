@@ -1,15 +1,14 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-
-dotenv.config();
 
 const authRoute = require('./routes/auth.route');
 const cycleRoute = require('./routes/cycle.route');
+const userRoute = require('./routes/user.route');
 
-const loggerMiddleware = require('./middleWare/logger.middleware');
-const errorHandle = require('./middleWare/error.middleware');
+const loggerMiddleware = require('./middleware/logger.middleware');
+const errorHandle = require('./middleware/error.middleware');
 
 const app = express();
 const { HOST, DB, PORT } = process.env;
@@ -31,6 +30,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoute);
 app.use('/api', cycleRoute);
+app.use('/api/users', userRoute);
 
 app.use(loggerMiddleware);
 app.use(errorHandle);
