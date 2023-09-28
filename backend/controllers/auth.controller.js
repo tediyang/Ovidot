@@ -4,6 +4,7 @@ const userController = require('../controllers/user.controller');
 const bcrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
 const { handleResponse } = require('../utility/handle.response');
+const { updateBlacklist } = require('../middleware/tokenBlacklist');
 
 // Secret key for jwt signing and verification
 const secretKey = process.env.SECRETKEY;
@@ -52,3 +53,15 @@ exports.login = async (req, res) => {
     return handleResponse(res, 500, 'Internal Server Error');
   }
 };
+
+exports.logout = async (req, res) => {
+  let token = req.header('Authorization');
+
+  // if token is present then update to the blacklist
+  if (token) {
+    token = token.substring(7); // remove Bearer
+    updateBlacklist(token);
+  }
+
+  return handleResponse(res, 200, 'logged out successfully');
+}
