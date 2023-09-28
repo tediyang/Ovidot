@@ -1,5 +1,5 @@
 const Cycle = require("../models/cycle.model");
-const handleResponse = require("../utility/handle.response");
+const { handleResponse } = require("../utility/handle.response");
 const cycleCalculator = require("../utility/cycle.calculator");
 const User = require('../models/user.model');
 const { populateWithCycles } = require('../utility/user.populate');
