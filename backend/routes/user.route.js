@@ -3,7 +3,7 @@
 const { Router } = require('express');
 const router = Router();
 const userController = require('../controllers/user.controller');
-const verify = require('../middleware/tokenVerification');
+const verify = require('../middleWare/tokenVerification');
 
 /**
  * update user data

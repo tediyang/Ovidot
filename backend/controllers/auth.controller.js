@@ -4,7 +4,7 @@ const userController = require('../controllers/user.controller');
 const bcrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
 const { handleResponse } = require('../utility/handle.response');
-const { updateBlacklist } = require('../middleware/tokenBlacklist');
+const { updateBlacklist } = require('../middleWare/tokenBlacklist');
 
 // Secret key for jwt signing and verification
 const secretKey = process.env.SECRETKEY;

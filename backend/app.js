@@ -7,8 +7,8 @@ const authRoute = require('./routes/auth.route');
 const cycleRoute = require('./routes/cycle.route');
 const userRoute = require('./routes/user.route');
 
-const loggerMiddleware = require('./middleware/logger.middleware');
-const errorHandle = require('./middleware/error.middleware');
+const loggerMiddleware = require('./middleWare/logger.middleware');
+const errorHandle = require('./middleWare/error.middleware');
 
 const app = express();
 const { HOST, DB, PORT } = process.env;
