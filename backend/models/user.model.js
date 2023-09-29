@@ -27,9 +27,11 @@ const UserSchema = Schema({
     age: {
         type: Number,
         require: true,
-        min: 8
+        min: 8,
+        max: 55
     },
     reset: String,
+    resetExp: Date,
     _cycles: [
         {
             type: Schema.ObjectId,
