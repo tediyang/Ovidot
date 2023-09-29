@@ -9,8 +9,8 @@ const cycleRoute = require('./routes/cycle.route');
 const userRoute = require('./routes/user.route');
 const passRoute = require('./routes/password.route');
 
-const loggerMiddleware = require('./middleWare/logger.middleware');
-const errorHandle = require('./middleWare/error.middleware');
+const loggerMiddleware = require('./middleware/logger.middleware');
+const errorHandle = require('./middleware/error.middleware');
 
 const app = express();
 const { HOST, DB, PORT } = process.env;
