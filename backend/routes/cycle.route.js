@@ -2,7 +2,7 @@
 const { Router } = require('express');
 const router = Router();
 const cycleController = require('../controllers/cycle.controller');
-const verify = require('../middleWare/tokenVerification');
+const verify = require('../middleware/tokenVerification');
 
 /**
  * create
