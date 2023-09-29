@@ -29,6 +29,7 @@ const UserSchema = Schema({
         require: true,
         min: 8
     },
+    reset: String,
     _cycles: [
         {
             type: Schema.ObjectId,
