@@ -5,6 +5,7 @@
 /* import all neccessary modules & Libs*/
 const User = require('../models/user.model');
 const { handleResponse } = require('../utility/handle.response');
+const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 
 /**
@@ -48,6 +49,11 @@ exports.create = async(data, res) => {
 exports.update = async(req, res) => {
 	// get userId from params
 	try {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+		  return handleResponse(res, 400, "Fill required properties");
+		}
+
 		const userId = req.params.userId;
 		const { username, age } = req.body;
 		const updatedAt = new Date();
