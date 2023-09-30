@@ -21,7 +21,6 @@ function readBlacklist() {
  */
 exports.updateBlacklist = (token) => {
   const blacklistData = readBlacklist();
-  console.log(blacklistData);
   blacklistData.push(token);
 
   // Write the updated blacklist array back to the file
