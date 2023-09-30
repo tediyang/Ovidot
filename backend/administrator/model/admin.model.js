@@ -11,7 +11,7 @@ const AdminSchema = Schema({
         type: Date,
         default: Date.now
     },
-    email: {
+    username: {
         type: String,
         require: true,
         unique: true
@@ -20,13 +20,9 @@ const AdminSchema = Schema({
         type: String,
         require: true
     },
-    username: {
-        type: String,
-        require: true
-    },
-    isAdmin: {
+    is_admin: {
         type: Boolean,
-        default: true
+        default : false
     }
 });
 

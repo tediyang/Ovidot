@@ -4,17 +4,22 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
+// Import routes
 const authRoute = require('./routes/auth.route');
 const cycleRoute = require('./routes/cycle.route');
 const userRoute = require('./routes/user.route');
 const passRoute = require('./routes/password.route');
+const adminRoute = require('./administrator/route/admin.route');
 
+// Import middlewares
 const loggerMiddleware = require('./middleware/logger.middleware');
 const errorHandle = require('./middleware/error.middleware');
 
+// start app
 const app = express();
 const { HOST, DB, PORT } = process.env;
 
+// Connect to database
 mongoose.connect(`mongodb://${HOST}/${DB}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -35,6 +40,7 @@ app.use('/api/auth', authRoute);
 app.use('/api', cycleRoute);
 app.use('/api/users', userRoute);
 app.use('/api', passRoute); // Forgot password route
+app.use('/admin', adminRoute);
 
 app.use(loggerMiddleware);
 app.use(errorHandle);

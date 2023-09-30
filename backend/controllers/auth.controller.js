@@ -15,7 +15,7 @@ const secretKey = process.env.SECRETKEY;
  * @returns - token
  */
 function createToken(user) {
-  return jwt.sign({ id: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
+  return jwt.sign({ id: user._id, email: user.email }, secretKey, { expiresIn: '5h' });
 }
 
 /**
@@ -119,7 +119,7 @@ exports.changePass = async (req, res) => {
     user.password = hashedNewPassword;
     await user.save();
 
-    res.status(200).json({ message: 'Password changed successfully' });
+    return res.status(204).send('Password changed');
   } catch (error) {
     console.log(error);
     return handleResponse(res, 500, 'Internal Server Error');

@@ -30,6 +30,10 @@ const UserSchema = Schema({
         min: 8,
         max: 55
     },
+    is_admin: {
+        type: Boolean,
+        default: false
+    },
     reset: String,
     resetExp: Date,
     _cycles: [

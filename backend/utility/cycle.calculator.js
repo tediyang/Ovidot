@@ -4,18 +4,18 @@
  * proper estimation will be made on later version from data provided
  * individula by users to get an accurate prediction.
  * @param {Number} period - the number of days of menstruation
- * @param {Date} startDate - the begining of the user cycle
- * @param {Date} ovulation - the day the user experienced ovulation in the cycle.
+ * @param {Date} startDate - the begining of the user cycle YYYY-MM-DD
+ * @param {Date} ovulation - the day the user experienced ovulation in the cycle. YYYY-MM-DD
  * @returns - an object with variables of days (cycle duration), periodRange,
  * ovulationRange and unsafeDays.
  */
 exports.calculate = (period, startDate, ovulation = null) => {
     return new Promise((resolve, reject) => {
         try {
-            const dayOne = new Date(startDate);
+            const dayOne = new Date(startDate); // The day menstraution starts
             const periodRange = [];
             const unsafeDays = [];
-
+            
             /**
              * Check if the user provided a date which ovulation was experienced
              * if yes:
@@ -23,14 +23,24 @@ exports.calculate = (period, startDate, ovulation = null) => {
              *      the range.
              * if no:
              *      use the default ovulationDate for the user.
-             */
-            if (ovulation == null) {
-                ovulation = new Date(dayOne);
-                ovulation.setDate(dayOne.getDate() + 9 + period);
+            */
+           if (ovulation === null) {
+               ovulation = new Date(dayOne);
+               ovulation.setDate(dayOne.getDate() + 9 + period);
             } else {
                 ovulation = new Date(ovulation);
-                if (ovulation.getDate() < dayOne.getDate()) {
-                    throw new Error("ovulation date can't occur before period date");
+                // check if ovulation is occurs before period range
+                let dayLast = new Date(dayOne);
+                dayLast.setDate(dayLast.getDate() + period); // The last day of menstraution
+                if (ovulation < dayOne) {
+                    const err = new Error("ovulation date can't occur before period date");
+                    err.statusCode = 400;
+                    reject(err);
+                }
+                if (ovulation < dayLast) {
+                    const err = new Error("ovulation date can't occur during menstraution");
+                    err.statusCode = 400;
+                    reject(err);
                 }
             }
 
@@ -65,13 +75,14 @@ exports.calculate = (period, startDate, ovulation = null) => {
             * Get unsafeRangeStart, and if the difference between unsafeRangeStart and lastPeriodDay is less than 0.
             * increase the unsafeRangeStart date
             */ 
-            const unsafeRangeStart = new Date(ovulation);
-            const lastPeriodDay = new Date(periodRange[periodRange.length - 1]);
-            let i = 5;
-            do {
-                unsafeRangeStart.setDate(ovulation.getDate() - i);
+           const lastPeriodDay = new Date(periodRange[periodRange.length - 1]);
+           let unsafeRangeStart;
+           let i = 5;
+           do {
+                unsafeRangeStart = new Date(ovulation);
+                unsafeRangeStart.setDate(unsafeRangeStart.getDate() - i);
                 i--;
-            } while (unsafeRangeStart.getDate() - lastPeriodDay.getDate() < 0 && i >= 0);
+            } while (((unsafeRangeStart - lastPeriodDay) / (24 * 60 * 60 * 1000)) <= 0 && i >= 0);
 
             const unsafeRangeEnd = new Date(ovulation);
             unsafeRangeEnd.setDate(ovulation.getDate() + 5);
@@ -82,7 +93,7 @@ exports.calculate = (period, startDate, ovulation = null) => {
                 unsafeRangeStart.setDate(unsafeRangeStart.getDate() + 1);
             }
 
-            let nextDate = new Date();
+            let nextDate = new Date(dayOne);
             nextDate.setDate(dayOne.getDate() + totalCycleDays)
             nextDate = nextDate.toISOString().split('T')[0];
 

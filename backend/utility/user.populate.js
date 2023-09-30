@@ -8,7 +8,7 @@ const User = require('../models/user.model');
  * @param {String} value - value to search for in the key
  * @returns - the user object with the cycles populated.
  */
-exports.populateWithCycles = async (userId, key, value) => {
+exports.populateWithCyclesBy = async (userId, key, value) => {
   return new Promise((resolve, reject) => {
     const search = {};
     search[key] = value;
@@ -18,14 +18,39 @@ exports.populateWithCycles = async (userId, key, value) => {
         path: '_cycles',
         match: search,
       })
-      .exec((err, user) => {
-        if (err) {
-          reject(err);
-        } else if (!user) {
-          resolve(null);
-        } else {
+      .exec()
+        .then((user) => {
+          if (!user) {
+            resolve(null);
+          }
           resolve(user);
-        }
-      });
+        })
+        .catch((err) => {
+          reject(err);
+        })
   });
 };
+
+/**
+ * Return a user with the populated cycle data
+ * @param {User} userId - Id of a given user
+ * @returns - resolves the user found.
+ */
+exports.populateWithCycles = async (userId) => {
+  return new Promise((resolve, reject) => {
+    User.findById(userId)
+      .populate({
+        path: '_cycles'
+      })
+      .exec()
+        .then((user) => {
+          if (!user) {
+            resolve(null);
+          }
+          resolve(user);
+        })
+        .catch((err) => {
+          reject(err);
+        })
+  });
+}

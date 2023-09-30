@@ -46,7 +46,7 @@ exports.forgotPass = async (req, res) => {
     const user = await User.findOne({ email: email });
 
     if (!user) {
-      return handleResponse(res, 404, "email not registered");
+      return handleResponse(res, 404, `${email} not registered`);
     }
 
     const token = resetToken();
@@ -96,7 +96,7 @@ exports.VerifyResetPass = async (req, res) => {
   });
 
   if (!user) {
-    return handleResponse(res, 400, 'Invalid or expired token');
+    return handleResponse(res, 401, 'Invalid or expired token');
   }
 
   return res.status(200).json({
@@ -110,7 +110,7 @@ exports.ResetPass = async (req, res) => {
   const { password } = req.body;
 
   if (!token || !password) {
-    return handleResponse(res, 400, 'Invalid password or token');
+    return handleResponse(res, 401, 'Invalid password or token');
   }
 
   if (isTokenBlacklisted(token)) {
@@ -123,7 +123,7 @@ exports.ResetPass = async (req, res) => {
   });
 
   if (!user) {
-    return handleResponse(res, 400, 'Invalid or expired token');
+    return handleResponse(res, 401, 'Invalid or expired token');
   }
 
   const saltRounds = 12;
