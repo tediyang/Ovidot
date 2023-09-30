@@ -41,7 +41,6 @@ exports.create = async(req, res) => {
 	try {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
-			console.log(errors);
 		  return handleResponse(res, 400, "Fill required properties");
 		}
 
@@ -58,7 +57,6 @@ exports.create = async(req, res) => {
 
 		const user = await populateWithCycles(id);
 		if (user === null) {
-			console.log('User not found');
 			return handleResponse(res, 404, 'User not found');
 		}
 		if (user._cycles.length > 0) {
@@ -113,7 +111,6 @@ exports.fetchAll = async(req, res) => {
 
 		const user = await populateWithCycles(id);
 		if (!user) {
-			console.log('User not found');
 			return handleResponse(res, 404, 'User not found');
 		}
 		return res.status(200).json(user._cycles);
@@ -129,7 +126,6 @@ exports.fetchOne = async (req, res) => {
 
 		const user = await populateWithCyclesBy(userId, '_id', cycleId);
 		if (user === null) {
-			console.log('User not found');
 			return handleResponse(res, 404, 'User not found');
 		}
 		if (user._cycles.length == 0) {
@@ -150,7 +146,6 @@ exports.fetchMonth = async (req, res) => {
 
 		const user = await populateWithCyclesBy(userId, 'month', month);
 		if (user === null) {
-			console.log('User not found');
 			return handleResponse(res, 404, 'User not found');
 		}
 		return res.status(200).json(user._cycles);

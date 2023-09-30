@@ -83,7 +83,7 @@ exports.logout = async (req, res) => {
       updateBlacklist(token);
     }
 
-    return handleResponse(res, 200, 'logged out successfully');
+    return res.status(200).send();
   } catch (error) {
     return handleResponse(res, 500, 'Internal Server Error');
   }

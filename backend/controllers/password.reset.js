@@ -65,10 +65,8 @@ exports.forgotPass = async (req, res) => {
 
     sender.sendMail(receiver, (error, info) => {
       if (error) {
-        console.error(error);
         return handleResponse(res, 500, 'Failed to send email');
       }
-      console.log('Email sent: ' + info.response);
       return handleResponse(res, 200, 'Password reset email sent');
     });
   } catch (error) {
