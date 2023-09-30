@@ -23,6 +23,7 @@ const { HOST, DB, PORT } = process.env;
 mongoose.connect(`mongodb://${HOST}/${DB}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  maxPoolSize: 2
 });
 
 const db = mongoose.connection;
@@ -37,9 +38,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use('/api/auth', authRoute);
-app.use('/api', cycleRoute);
 app.use('/api/users', userRoute);
-app.use('/api', passRoute); // Forgot password route
+app.use('/api/password', passRoute); // Forgot password route
+app.use('/api/cycles', cycleRoute);
 app.use('/admin', adminRoute);
 
 app.use(loggerMiddleware);
