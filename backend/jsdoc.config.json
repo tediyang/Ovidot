@@ -1,0 +1,13 @@
+{
+  "source": {
+    "include": [
+      "./administrator/route",
+      "./routes"
+    ],
+    "exclude": ["./node_modules"]
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "./out"
+  }
+}
