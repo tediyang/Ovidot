@@ -85,6 +85,8 @@ npm test
 ```
 
 ## Usage
+For local connection: http://127.0.0.1:{PORT}/{endpoint}
+
 ### Authorization Endpoints
 - Register a new user and get an access token for authentication purposes.
 Request
