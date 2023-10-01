@@ -4,8 +4,6 @@
 ## Contributors
 - [Eyang, Daniel Eyoh](https://github.com/Tediyang)
 - [Ekabua Mawoda](https://github.com/mdekabs)
-- [Elisha, Esther Essie ](https://github.com/3SSI3)
-- Olalekan Alao
 
 ## Features
 - **User Authentication:** Secure user authentication with token verification.
