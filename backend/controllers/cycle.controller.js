@@ -49,7 +49,7 @@ exports.create = async(req, res) => {
 
 		if (!validateCreateDate(startdate)) {
 			return handleResponse(res, 400,
-				'Specify a proper date: Date should not be less or greater than present day');
+				'Specify a proper date: Date should not be less 3 days or greater than present day');
 		}
 
 		// Get the month for the date
