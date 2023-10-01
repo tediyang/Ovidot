@@ -28,6 +28,7 @@ const Navbar = () => {
             })
           }
         </ul>
+        <Link to="/register" className="ov">Try Ovidot</Link>
         <button className="nav__toggle-btn" onClick={() => setIsNavShowing(prev => !prev)}>
           {
             isNavShowing ? <MdOutlineClose /> : <FaBars />

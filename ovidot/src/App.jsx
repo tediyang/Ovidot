@@ -9,6 +9,7 @@ import NotFound from './pages/notFound/NotFound'
 import Navbar from './components/Navbar'
 import Dashboard from './pages/dashboard/Dashboard'
 import Footer from './components/Footer'
+import Settings from './pages/settings/Settings'
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
         <Route path='calendar' element={<Calendar/>} />
         <Route path='register' element={<Register/>} />
         <Route path='dashboard' element={<Dashboard/>} />
+        <Route path='settings' element={<Settings/>} />
         <Route path='*' element={<NotFound/>} />
       </Routes>
       <Footer/>

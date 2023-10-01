@@ -1,3 +1,4 @@
+import '../index.css'
 
 const SectionHead = ({icon, title, className}) => {
   return (

@@ -1,5 +1,5 @@
 import './about.css'
-import HeaderImage from '../../images/wallpaper.png'
+//import HeaderImage from '../../images/wallpaper.png'
 import Header from '../../components/Header'
 import StoryImage from '../../images/flowers.png'
 import VisionImage from '../../images/calendar.jpeg'
@@ -8,7 +8,7 @@ import goalImage from '../../images/happy.jpeg'
 const About = () => {
   return (
     <>
-    <Header title="About us" image={HeaderImage}>
+    <Header title="About us">
     Your Health, Your Way!
     </Header>
     

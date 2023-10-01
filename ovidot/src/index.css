@@ -31,8 +31,8 @@
 /* GENERAL STYLES*/
 
 body {
-  /*background-image: url(./images/wallpaper.png);*/
-  /*background-size: auto;*/ 
+  /*background-image: url(./images/woman..png);
+  background-size: auto;*/
   background:var(--color-gray-100);
   font-family: 'EB Garamond', 'Cabin Sketch', 'Montserrat' sans-serif;
   color: var(--color-gray-600);
@@ -48,7 +48,6 @@ body {
 
 h1, h2, h3, h4, h5 {
   line-height: 1.2;
-  color: rgb(105, 4, 4);
 }
 
 h1 {
@@ -72,6 +71,7 @@ img {
   object-fit: cover;
   max-width: 180%;
   height:auto;
+  border-radius: 2rem;
 }
 
 
@@ -86,9 +86,20 @@ img {
   transition: var(--transition);
 }
 
+.btn.sm {
+  padding: 0.4rem 1.2rem;
+  font-size: 0.9rem;
+  
+}
+
+.btn.sm:hover {
+  background: hotpink;
+}
+
 .btn:hover {
   background-color: hotpink;
   color: white;
+  
 }
 
 
@@ -138,6 +149,64 @@ img {
 
 
 
+section {
+  margin-top: 10rem;
+}
+
+.section__head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.section__head span {
+  background: peachpuff;
+  padding: 0.8rem;
+  border-radius: 1rem;
+  color: gold;
+  font-size: 7rem;
+}
+
+.card {
+  background: var(--color-gray-200);
+  border: 2px solid purple;
+  text-align: center;
+  padding: 3rem 2rem;
+  border-radius: 0 3rem 0 3rem;
+  transition: var(--transition);
+}
+
+.card:hover {
+  background: transparent;
+  border-color: var(--color-gray-100);
+  cursor: default;
+}
+
+.card span {
+  width: 3rem;
+  height: 3rem;
+  background:peachpuff;
+  color: palevioletred;
+  font-size: 1.5rem;
+  padding: 0.8rem;
+  display: grid;
+  place-items: center;
+  margin-bottom: 1.5rem;
+  margin-inline: auto;
+  border-radius: 1rem;
+  transition: var(--transition);
+}
+.card:hover span {
+  background: palevioletred;
+  color: peachpuff;
+}
+
+.card small {
+  margin-top: 1rem;
+  display: block;
+  font-weight: 300;
+}
+
 
 /* MEDIA QUERIES (medium screens)*/
 @media screen and (max-width: 1024px) {
@@ -160,6 +229,7 @@ img {
     width: 76%;
   }
 }
+
 
 /* MEDIA QUERIES (small screens)*/
 @media screen and (max-width: 600px) {

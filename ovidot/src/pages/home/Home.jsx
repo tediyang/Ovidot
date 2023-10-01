@@ -11,7 +11,6 @@ const Home = () => {
     <MainHeader />
     <SectionHead />
     <FAQs />
-    <Footer />
     </>
   )
 }
