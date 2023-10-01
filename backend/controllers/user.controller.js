@@ -49,13 +49,13 @@ exports.create = async(data, res) => {
 exports.update = async(req, res) => {
 	// get userId from params
 	try {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-		  return handleResponse(res, 400, "Fill required properties");
-		}
-
 		const userId = req.params.userId;
 		const { username, age } = req.body;
+
+		if (!username && !age) {
+			return handleResponse(res, 400, "Provide atleast a param to update: username or age");
+		}
+
 		const updatedAt = new Date();
 		const user = await User.findByIdAndUpdate(userId,
             {username: username, age: age, updated_at: updatedAt},
@@ -70,7 +70,8 @@ exports.update = async(req, res) => {
 			userId: user._id,
 			email: user.email,
 			username: user.username,
-			age: user.age
+			age: user.age,
+			cycles: user._cycles
 		});
 	}
 	catch(error) {
@@ -99,7 +100,8 @@ exports.fetch = async(req, res) => {
 			userId: user._id,
 			email: user.email,
 			username: user.username,
-			age: user.age
+			age: user.age,
+			cycles: user._cycles
 		});
 
 	} catch(error) {
