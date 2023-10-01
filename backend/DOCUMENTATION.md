@@ -20,37 +20,37 @@ Ovidot is a web application that aims to revolutionize women's health tracking b
 
 ## Installation
 Clone repository from github in your OS terminal
-```
+```bash
 User@User ~
 $ git clone https://github.com/Tediyang/ovidot.git
 ```
 
 Change directory to the project directory
-```
+```bash
 User@User ~ 
 $ cd ovidot/backend
 ```
 
 Change branch from master to development
-```
+```bash
 User@User ~/ovidot/backend (master)
 $ git switch development
 ```
 
 Use the package manager [npm](https://docs.npmjs.com/cli/v9/commands/npm-install) to install all dependencies in package.json file
-```
+```bash
 User@User ~/ovidot/backend (development)
 $ npm install
 ```
 
 Create a .env file in the project root directory. In the .env file create environment variables for development in this manner:
-```
+```bash
 User@User ~/ovidot/backend 
 $ vi .env
 ```
 
 Then create the following evironmental variables in the .env file with the appropriate values.
-```
+```vi
 SECRETKEY=your-aplhanumeric-secret-key
 ADMINKEY=your-alphanumeric-admin-key
 HOST = 'your-local-host'
@@ -60,7 +60,7 @@ EMAILPASSWORD = "sender-email-address"
 ```
 
 To start the service
-```
+```bash
 User@User ~/ovidot/backend
 npm start
 
@@ -77,16 +77,16 @@ MongoDB connected!
 ```
 
 To run test
-```
+```bash
 User@User ~/ovidot/backend
 npm test
 ```
 
 ## Usage
-* Authorization Endpoints
+### Authorization Endpoints
 - Register a new user and get an access token for authentication purposes.
 Request
-```
+```bash
 POST /api/auth/signup
 body {
     "email": "<USER'S EMAIL>",
@@ -100,7 +100,7 @@ Response (Status 201)
 
 - Login with a registered account
 Request
-```
+```bash
 POST /api/auth/login
 body {
     "email": "<USER'S EMAIL>",
@@ -108,7 +108,7 @@ body {
 }
 ```
 Response on success (Status 200)
-```
+```bash
 {
   "message": "Authentication successful",
   "userId": "user's id",
@@ -116,7 +116,7 @@ Response on success (Status 200)
 }
 ```
 Response on failure (Status 401)
-```
+```bash
 {
   "message": "Authentication failed"
 }
@@ -124,14 +124,14 @@ Response on failure (Status 401)
 
 - Logout a registered account
 Request
-```
+```bash
 GET /api/auth/<:userId>/logout [Auth: Bearer Token]
 ```
 Response (Status 200)
 
 - Change Logged-in user password
 Request
-```
+```bash
 POST /api/auth/<:userId>/change-password [Auth: Bearer Token]
 body {
     "currentPassword": "<OLD PASSWORD>",
@@ -140,14 +140,14 @@ body {
 ```
 Response (Status 204)
 
-* User Endpoint
+### User Endpoint
 - Get user by userId
 Request
-```
+```bash
 GET /api/users/<:userId> [Auth: Bearer token]
 ```
 Response (Status 200)
-```
+```bash
 {
   "userId": "<USER ID>",
   "email": "<USER EMAIL>",
@@ -161,7 +161,7 @@ Response (Status 200)
 
 - Update user data
 Request
-```
+```bash
 PUT /api/users/<:userId> [Auth: Bearer token]
 body {
     "username": "<NEW USERNAME",
@@ -169,7 +169,7 @@ body {
 }
 ```
 Response (Status 200)
-```
+```bash
 {
   "userId": "<USER ID>",
   "email": "<USER EMAIL>",
@@ -181,7 +181,7 @@ Response (Status 200)
 }
 ```
 Response (Status 400)
-```
+```bash
 {
   "message": "Provide atleast a param to update: username or age"
 }
@@ -189,15 +189,15 @@ Response (Status 400)
 
 - Delete user data
 Request
-```
+```bash
 DELETE /api/users/<:userId> [Auth: Bearer token]
 ```
 Response (Status 204)
 
-* Cycle Endpoint
+### Cycle Endpoint
 - Create a Cycle
 Request
-```
+```bash
 POST /api/cycles/<:userId>/cycles [Auth: Bearer Token]
 {
   "period": <INT: NUMBER>,
@@ -205,7 +205,7 @@ POST /api/cycles/<:userId>/cycles [Auth: Bearer Token]
 }
 ```
 Response (status 201)
-```
+```bash
 {
     message: 'Cycle created',
     cycleId: "<CYCLE ID>"
@@ -214,11 +214,11 @@ Response (status 201)
 
 - Get a cycle by cycleId
 Request
-```
+```bash
 GET /api/cycles/<:userId>/cycles/<:cycleId> [Auth: Bearer Token]
 ```
 Response (Status 200)
-```
+```bash
 {
   "_id": "<CYCLE ID>",
   "month": "<MONTH>",
@@ -241,11 +241,11 @@ Response (Status 200)
 
 - Get all cycles for a given user
 Request
-```
+```bash
 GET /api/cycles/<:userId>/cycles [Auth: Bearer Token]
 ```
 Response (Status 200)
-```
+```bash
 [
     { <CYCLE DATA> }
 ]
@@ -253,11 +253,11 @@ Response (Status 200)
 
 - Get all cycles by month
 Request
-```
+```bash
 GET /api/cycles/<:userId>/<:month> [Auth: Bearer Token]
 ```
 Response (Status 200)
-```
+```bash
 [
     { <CYCLE DATA> }
 ]
@@ -265,7 +265,7 @@ Response (Status 200)
 
 - Update a cycle by cycleId
 Request
-```
+```bash
 PUT /api/cycles/:userId/cycles/:cycleId [Auth: Bearer Token]
 body {
     "period": <INT: NUMBER>,
@@ -273,7 +273,7 @@ body {
 }
 ```
 Response (Status 200)
-```
+```bash
 {
   "_id": "<CYCLE ID>",
   "month": "<MONTH>",
@@ -296,18 +296,18 @@ Response (Status 200)
 
 - Delete cycle by cycleId
 Request
-```
+```bash
 DELETE /api/cycles/:userId/cycles/:cycleId [Auth: Bearer Token]
 ```
 Response (Status 204)
-```
+```bash
 Cycle deleted
 ```
 
-* Forget Password for logged out user
+### Forget Password for logged out user
 - Send forget password reset link
 Request
-```
+```bash
 POST /api/password/forgot-password
 body {
     "email": "<EMAIL>"
@@ -318,11 +318,11 @@ Response (Status 500): Password reset link sent to email | Internal Server Error
 
 - Verify reset token
 Request
-```
+```bash
 GET /api/password/reset-password/:token
 ```
 Response (Status 200)
-```
+```bash
 {
     message : "success" ,
     token: <token>
@@ -331,7 +331,7 @@ Response (Status 200)
 
 - Reset Password
 Request
-```
+```bash
 POST /api/password/reset-password/:token
 body {
     "password": "<PASSWORD>",
