@@ -16,7 +16,7 @@ const { validateCreateDate, validateUpdateDate } = require('../utility/date.vali
  * @returns - Data to parse to cycle model.
  */
 function cycleParser(month, period, startdate, data ) {
-	let result = {
+	const result = {
 		month: month,
 		period: period,
 		ovulation: data.ovulation,
@@ -27,7 +27,28 @@ function cycleParser(month, period, startdate, data ) {
 		ovulation_range: data.ovulationRange,
 		unsafe_days: data.unsafeDays
 	}
-	return result
+	return result;
+}
+
+/**
+ * Take in a cycle object and return selected cycle properties
+ * @param {Cycle} cycle 
+ * @returns cycles properties 
+ */
+function cycleFilter(cycle) {
+	const result = {
+		id: cycle.id,
+		month: cycle.month,
+		period: cycle.period,
+		ovulation: cycle.ovulation,
+		start_date: cycle.start_date,
+		next_date: cycle.next_date,
+		days: cycle.days,
+		period_range: cycle.period_range,
+		ovulation_range: cycle.ovulation_range,
+		unsafe_days: cycle.unsafe_days
+	}
+	return result;
 }
 
 
@@ -113,7 +134,9 @@ exports.fetchAll = async(req, res) => {
 		if (!user) {
 			return handleResponse(res, 404, 'User not found');
 		}
-		return res.status(200).json(user._cycles);
+
+		const cycles = user._cycles.map(cycleFilter);
+		return res.status(200).json(cycles);
 	} catch (err) {
 		return handleResponse(res, 500, 'Internal Server Error');
 	}
@@ -131,8 +154,11 @@ exports.fetchOne = async (req, res) => {
 		if (user._cycles.length == 0) {
 			return handleResponse(res, 404, "Cycle not found");
 		}
-		return res.status(200).json(user._cycles[0]);
+
+		const cycle = cycleFilter(user._cycles[0]);
+		return res.status(200).json(cycle);
 	} catch (err) {
+		console.log(err);
 		return handleResponse(res, 500, 'Internal Server Error');
 	}
 }
