@@ -12,8 +12,19 @@ function createToken(user) {
   return jwt.sign({ id: user._id, admin: user.is_admin }, secretKey, { expiresIn: '1h' });
 }
 
-// admin controller
+/**
+ * Admin Controller
+ * @module AdminController
+ */
 const adminController = {
+  /**
+   * Admin login.
+   * @async
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   * @throws {Object} - Error response object.
+   */
   login: async (req, res) => {
     const { username, password } = req.body;
 
@@ -32,11 +43,12 @@ const adminController = {
     const matched = await bcrypt.compare(password, user.password);
     try {
       if (matched) {
-          const token = createToken(user);
-          res.status(200).json({
-            message: 'Authentication successful',
-            adminId: user._id,
-            token});
+        const token = createToken(user);
+        res.status(200).json({
+          message: 'Authentication successful',
+          adminId: user._id,
+          token
+        });
       } else {
         return handleResponse(res, 401, 'Authentication failed');
       }
@@ -48,9 +60,11 @@ const adminController = {
 
   /**
    * Get all users.
-   * @param {Object} req 
-   * @param {Object} res 
-   * @returns 
+   * @async
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   * @throws {Object} - Error response object.
    */
   viewAllusers: async (req, res) => {
     try {
@@ -58,9 +72,8 @@ const adminController = {
         return handleResponse(res, 403, 'Forbidden');
       }
 
-      const allUsers = await User.find({},
-        '-password -created_at -updated_at -is_admin -reset -resetExp');
-      return res.status(200).json( { allUsers });
+      const allUsers = await User.find({}, '-password -created_at -updated_at -is_admin -reset -resetExp');
+      return res.status(200).json({ allUsers });
     } catch (error) {
       console.log(error);
       handleResponse(res, 500, "Internal Server Error");
@@ -68,10 +81,12 @@ const adminController = {
   },
 
   /**
-   * Get user
-   * @param {Object} req 
-   * @param {Object} res 
-   * @returns 
+   * Get user.
+   * @async
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   * @throws {Object} - Error response object.
    */
   viewUser: async (req, res) => {
     try {
@@ -79,12 +94,11 @@ const adminController = {
         return handleResponse(res, 403, 'Forbidden');
       }
 
-      const user = await User.findOne({ email: req.params.email},
-        '-password -created_at -updated_at -is_admin -reset -resetExp');
+      const user = await User.findOne({ email: req.params.email }, '-password -created_at -updated_at -is_admin -reset -resetExp');
       if (!user) {
-        return handleResponse(res, 404, `user with ${req.params.email} not found`);
+        return handleResponse(res, 404, `User with ${req.params.email} not found`);
       }
-      return res.status(200).json({ user })
+      return res.status(200).json({ user });
     } catch (error) {
       console.log(error);
       handleResponse(res, 500, "Internal Server Error");
@@ -92,10 +106,12 @@ const adminController = {
   },
 
   /**
-   * Update user email
-   * @param {Object} req 
-   * @param {Object} res 
-   * @returns 
+   * Update user email.
+   * @async
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   * @throws {Object} - Error response object.
    */
   updateUser: async (req, res) => {
     try {
@@ -109,23 +125,30 @@ const adminController = {
         return handleResponse(res, 400, "Fill required properties");
       }
 
-      const user = await User.findOne({ email: req.params.email },
-        '-password -created_at -updated_at -is_admin -reset -resetExp');
+      const user = await User.findOne({ email: req.params.email }, '-password -created_at -updated_at -is_admin -reset -resetExp');
       if (!user) {
-        return handleResponse(res, 404, `user with ${req.params.email} not found`);
+        return handleResponse(res, 404, `User with ${req.params.email} not found`);
       }
       const updateUser = await User.findByIdAndUpdate(user.id,
         { email: req.body.email },
         { new: true });
 
       const updated = updateUser.email === req.body.email;
-      return res.status(200).json({ updated: updated});
+      return res.status(200).json({ updated: updated });
     } catch (error) {
       console.log(error);
       return handleResponse(res, 500, 'Internal Server Error');
     }
   },
 
+  /**
+   * Delete user.
+   * @async
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   * @throws {Object} - Error response object.
+   */
   deleteUser: async (req, res) => {
     try {
       if (!req.user.admin) {
@@ -150,9 +173,11 @@ const adminController = {
 
   /**
    * View all cycles.
-   * @param {Object} req
-   * @param {Object} res
-   * @returns 
+   * @async
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   * @throws {Object} - Error response object.
    */
   viewAllCycles: async (req, res) => {
     try {
@@ -160,8 +185,7 @@ const adminController = {
         return handleResponse(res, 403, 'Forbidden');
       }
 
-      const allCycleData = await Cycle.find({},
-        '-created_at -updated_at');
+      const allCycleData = await Cycle.find({}, '-created_at -updated_at');
       return res.status(200).json({ allCycleData });
     } catch (error) {
       console.error(error);
@@ -170,10 +194,12 @@ const adminController = {
   },
 
   /**
-   * fetch a cycle by Id
-   * @param {Object} req 
-   * @param {Object} res 
-   * @returns 
+   * Fetch a cycle by ID.
+   * @async
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   * @throws {Object} - Error response object.
    */
   viewCycle: async (req, res) => {
     try {
@@ -184,8 +210,7 @@ const adminController = {
       const cycleId = req.params.cycleId;
 
       // Retrieve specific cycle data by ID
-      const specificCycleData = await Cycle.findById(cycleId,
-        '-created_at -updated_at');
+      const specificCycleData = await Cycle.findById(cycleId, '-created_at -updated_at');
       if (!specificCycleData) {
         return handleResponse(res, 404, "Cycle data not found");
       }
@@ -197,7 +222,14 @@ const adminController = {
     }
   },
 
-  // Delete cycle data
+  /**
+   * Delete cycle data.
+   * @async
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   * @throws {Object} - Error response object.
+   */
   deleteCycle: async (req, res) => {
     try {
       if (!req.user.admin) {

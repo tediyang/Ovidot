@@ -1,7 +1,7 @@
-// admin.model.js
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// Define the schema for the Admin model
 const AdminSchema = Schema({
     created_at: {
         type: Date,
@@ -13,18 +13,21 @@ const AdminSchema = Schema({
     },
     username: {
         type: String,
-        require: true,
+        required: true, // 'require' should be 'required'
         unique: true
     },
     password: {
         type: String,
-        require: true
+        required: true
     },
     is_admin: {
         type: Boolean,
-        default : false
+        default: false
     }
 });
 
+// Create the Admin model using the schema
 const Admin = mongoose.model('Admin', AdminSchema);
+
+// Export the Admin model
 module.exports = Admin;
