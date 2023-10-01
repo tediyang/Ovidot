@@ -81,7 +81,7 @@ router.post('/login', [
  * @param {Function} next - The next middleware function.
  * @throws {Error} If token verification fails or an error occurs during logout.
  */
-router.get('/logout', verify, authController.logout);
+router.get('/:useId/logout', verify, authController.logout);
 
 /**
  * Route for changing user password.
@@ -95,7 +95,7 @@ router.get('/logout', verify, authController.logout);
  * @returns {Object} The result of the password change operation.
  * @throws {Error} If validation fails, token verification fails, or an error occurs during password change.
  */
-router.post('/change-password', [
+router.post('/:userId/change-password', [
     body("currentPassword").isString().notEmpty(),
     body("newPassword").isString().notEmpty(),
     ],
