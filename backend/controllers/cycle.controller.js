@@ -226,8 +226,10 @@ exports.update = async(req, res) => {
 			updated_at: updated_at
 		},
 		{ new: true });
+
+		const updated = cycleFilter(updatecycle);
 		return res.status(200).json({
-			updatecycle
+			updated
 		});
 	}
 	catch (error) {
