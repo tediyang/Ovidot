@@ -9,7 +9,7 @@ exports.validateCreateDate = (startdate) => {
 
     const difference = ((currentDate - userDate) / (24 * 60 * 60 * 1000));
     
-    if (difference <= 1 && difference >= 0) {
+    if (difference <= 3 && difference >= 0) {
         return true;
     } else {
         return false;
