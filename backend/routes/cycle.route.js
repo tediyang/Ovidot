@@ -101,11 +101,7 @@ router.get('/:userId/:month', verify, cycleController.fetchMonth);
  * @returns {Object} The result of the cycle update operation.
  * @throws {Error} If validation fails, token verification fails, or an error occurs during update.
  */
-router.put('/:userId/cycles/:cycleId', [
-    body("period").isNumeric(),
-    body("ovulation").isString()
-    ],
-    verify, cycleController.update);
+router.put('/:userId/cycles/:cycleId', verify, cycleController.update);
 
 /**
  * Route for deleting a cycle for a user.
