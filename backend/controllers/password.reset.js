@@ -60,7 +60,8 @@ exports.forgotPass = async (req, res) => {
     const receiver = {
       to: email,
       subject: 'Password Reset',
-      text: `Click the following link to reset your password: ${resetLink}`
+      text: `Click the following link to reset your password: ${resetLink}, do not share this link with anyone.
+      This link will expire in 30 mins. If you didn't make this request then ignore it.`,
     };
 
     sender.sendMail(receiver, (error, info) => {
