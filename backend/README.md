@@ -4,8 +4,6 @@
 ## Contributors
 - [Eyang, Daniel Eyoh](https://github.com/Tediyang)
 - [Ekabua Mawoda](https://github.com/mdekabs)
-- [Elisha, Esther Essie ](https://github.com/3SSI3)
-- Olalekan Alao
 
 ## Features
 - **User Authentication:** Secure user authentication with token verification.
@@ -87,6 +85,8 @@ npm test
 ```
 
 ## Usage
+For local connection: http://127.0.0.1:{PORT}/{endpoint}
+
 ### Non-Authorization Endpoints
 - Register a new user and get an access token for authentication purposes.
 Request
