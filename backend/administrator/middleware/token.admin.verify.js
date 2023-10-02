@@ -1,10 +1,10 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const { handleResponse } = require('../utility/handle.response');
-const { isTokenBlacklisted } = require('./tokenBlacklist');
+const { handleResponse } = require('../../utility/handle.response');
+const { isTokenBlacklisted } = require('../../middleware/tokenBlacklist');
 
 /**
- * Middleware to verify admin by token.
+ * Verify admin token
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  * @param {Function} next - Express next middleware function.
