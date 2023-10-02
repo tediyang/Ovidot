@@ -128,7 +128,7 @@ Response on failure (Status 401)
 - Send forget password reset link
 Request
 ```bash
-POST /api/password/forgot-password
+POST /api/v1/forgot-password
 body {
     "email": "<EMAIL>"
 }
@@ -139,7 +139,7 @@ Response (Status 500): Password reset link sent to email | Internal Server Error
 - Verify reset token
 Request
 ```bash
-GET /api/password/reset-password/:token
+GET /api/v1//reset-password/:token
 ```
 Response (Status 200)
 ```bash
@@ -152,7 +152,7 @@ Response (Status 200)
 - Reset Password
 Request
 ```bash
-POST /api/password/reset-password/:token
+POST /api/v1/reset-password/:token
 body {
     "password": "<PASSWORD>",
 }
