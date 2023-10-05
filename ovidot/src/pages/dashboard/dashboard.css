@@ -27,14 +27,16 @@
 }
 
 .main__header-left h1 {
-    padding-left: 1rem;
+    padding-left: 0rem;
     font-weight: bold;
+    margin-right: 4rem;
 }
 
 .main__header-left p {
     margin: 1rem 0 3.5rem;
     font-size: 2rem;
     font-family: 'Cabin Sketch';
+    text-align: center;
 }
 .main__header-right {
     display: grid;
@@ -44,6 +46,59 @@
 
 .main__header-image {
     width: 47%;
+}
+
+.courses {
+    margin: 7rem;
+}
+ h3 {
+    font-size: 2.5rem;
+    text-align: center;
+ }
+.courses__container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.course {
+    background: white;
+    text-align: center;
+    border: 1px solid transparent;
+    transition: var(--transition);
+    border-radius: 2rem;
+    margin-top: 2rem;
+    width: 20rem;
+    height: rem;
+}
+
+.course__image {
+    display: inline-block;
+    object-fit: cover;
+    max-width: 55%;
+    height: auto;
+    margin-right: 8.8rem;
+}
+
+.course__image1{
+    display: inline-block;
+    object-fit: cover;
+    max-width: 55%;
+    height: auto;
+    margin-right: 8.8rem;
+}
+.course:hover {
+    background: white;
+    border-color: var(--color-primary);
+}
+
+.course__info {
+    padding: 2rem;
+}
+
+.course__info p {
+    margin: 1.2rem 0 2rem;
+    font-size: 1.2rem;
 }
 
 /* ====== FOOTER ====== */
@@ -105,8 +160,9 @@ footer {
 
 .section__head {
     display: flex;
-    align-items: center;
-    gap: 1rem;
+  align-items: center;
+  gap: 1rem;
+  margin-left: 15rem;
 }
 
 .section__head span {
@@ -182,6 +238,10 @@ footer {
     text-align: center;
 }
 
+.section__head {
+    margin-left: 11rem;
+}
+
 /* FOOTER */
 .footer__container {
     grid-template-columns: 1fr 1fr 1fr;
@@ -192,6 +252,45 @@ footer {
 @media screen and (max-width: 600px) {
 .footer__container {
         grid-template-columns: 1fr 1fr;
+    }
+    .courses {
+        margin: 7rem;
+    }
+     h3 {
+        font-size: 2.5rem;
+        text-align: center;
+     }
+    .courses__container {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 2rem;
+    }
+    
+    .course {
+        background: white;
+        text-align: center;
+        border: 1px solid transparent;
+        transition: var(--transition);
+        border-radius: 2rem;
+        margin-top: 2rem;
+        width: 20rem;
+        height: rem;
+    }
+    
+    .course__image {
+        display: inline-block;
+        object-fit: cover;
+        max-width: 55%;
+        height: auto;
+        margin-right: 8.8rem;
+    }
+    
+    .course__image1{
+        display: inline-block;
+        object-fit: cover;
+        max-width: 55%;
+        height: auto;
+        margin-right: 8.8rem;
     }
 }
 

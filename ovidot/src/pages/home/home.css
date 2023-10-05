@@ -47,7 +47,7 @@
     width: 47%;
 }
 
-/* ====== LEARN MORE ====== */
+/* ====== LEARN MORE ====== 
 .program {
     margin-top: 4rem;
 }
@@ -69,6 +69,58 @@
 .program__program:hover a{
     background: palevioletred;
     color: peachpuff;
+}*/
+.courses {
+    margin: 7rem;
+}
+ h3 {
+    font-size: 2.5rem;
+    text-align: center;
+ }
+.courses__container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.course {
+    background: white;
+    text-align: center;
+    border: 1px solid transparent;
+    transition: var(--transition);
+    border-radius: 2rem;
+    margin-top: 2rem;
+    width: 20rem;
+    height: rem;
+}
+
+.course__image {
+    display: inline-block;
+    object-fit: cover;
+    max-width: 55%;
+    height: auto;
+    margin-right: 8.8rem;
+}
+
+.course__image1{
+    display: inline-block;
+    object-fit: cover;
+    max-width: 55%;
+    height: auto;
+    margin-right: 8.8rem;
+}
+.course:hover {
+    background: white;
+    border-color: var(--color-primary);
+}
+
+.course__info {
+    padding: 2rem;
+}
+
+.course__info p {
+    margin: 1.2rem 0 2rem;
+    font-size: 1.2rem;
 }
 
 
@@ -124,7 +176,7 @@ footer {
 }
 
 
-/*==== SECTION HEAD ===== 
+/*==== SECTION HEAD =====*/
 
 .section {
     margin-top: 10rem;
@@ -142,11 +194,12 @@ footer {
     border-radius: 1rem;
     color: lightseagreen;
     font-size: 1.5rem;
-}*/
+}
 
-/*==== FAQs ===== */
+/*==== FAQs =====*/
 .faqs__container {
     margin-top: 3rem;
+    box-shadow: inset 0 0 3rem rgba(0, 0, 0, 0.5);
 }
 .faqs__wrapper {
     margin-top: 3rem;
@@ -158,6 +211,8 @@ footer {
 
 .faq {
     background: peachpuff;
+    align-items: center;
+    height: fit-content;
     padding: 2rem;
     border-radius: 1rem;
     cursor: pointer;
@@ -178,6 +233,8 @@ footer {
 .faq p {
     margin-top: 1.5rem;
 }
+
+
 
 
 /*======== MEDIA QUERIES (medium screens) ========*/
@@ -224,9 +281,30 @@ footer {
  
 }
 
+/** ARTICLE **/
+.courses {
+    margin: 7rem;
+}
+ h3 {
+    font-size: 2rem;
+    text-align: center;
+ }
+.courses__container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+
+
 @media screen and (max-width: 600px) {
 .footer__container {
         grid-template-columns: 1fr 1fr;
     }
+}
+.courses__container {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 2rem;
 }
 

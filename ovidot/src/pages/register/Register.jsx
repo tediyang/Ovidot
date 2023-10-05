@@ -67,6 +67,27 @@ const Register = () => {
     e.preventDefault();
   };
 
+  fetch('http://127.0.0.1:{PORT}/api/v1/signup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(values)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Handle response data
+    console.log(data);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };

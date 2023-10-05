@@ -74,6 +74,13 @@ img {
   border-radius: 2rem;
 }
 
+image {
+  display: inline-block;
+  object-fit: cover;
+  max-width: 100%;
+  height: auto;
+  border-radius: 2rem;
+}
 
 
 .btn {
@@ -100,6 +107,23 @@ img {
   background-color: hotpink;
   color: white;
   
+}
+
+.button {
+  color: white;
+  background-color: rebeccapurple;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0.5em;
+  margin-top: 15px;
+  margin-bottom: 30px;
+  border: none;
+  font-size: 14px;
+  width: -moz-fit-content;
+  width: fit-content;
+  margin: 0 auto;
+  transition: var(--transition);
 }
 
 

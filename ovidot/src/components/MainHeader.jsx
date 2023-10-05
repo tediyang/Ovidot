@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import Cycle from '../images/Women.jpeg'
+import Cycle from '../images/woman.jpeg'
 
 const MainHeader = () => {
   return (
