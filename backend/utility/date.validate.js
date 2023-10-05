@@ -1,38 +1,59 @@
-/**
- * Validate if the user sends appropriate date to start cycle.
- * @param {String} startdate - date (YYYY-MM-DD)
- * @returns - return true if the date is valid or false
- */
-exports.validateCreateDate = (startdate) => {
-    const currentDate = new Date();
-    const userDate = new Date(startdate);
+const DATE_OPTIONS = Object.freeze({
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0
+});
 
-    const difference = ((currentDate - userDate) / (24 * 60 * 60 * 1000));
-    
-    if (difference <= 3 && difference >= 0) {
-        return true;
-    } else {
+const MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
+
+/**
+ * Validate if the user sends an appropriate date to start the cycle.
+ * @param {String} startDate - date (YYYY-MM-DD)
+ * @returns {boolean} - true if the date is valid, false otherwise
+ */
+exports.validateCreateDate = (startDate) => {
+    const isValidDate = (date) => !isNaN(new Date(date));
+
+    if (!isValidDate(startDate)) {
         return false;
     }
-}
+
+    const currentDate = new Date();
+    const userDate = new Date(startDate);
+
+    // Set both dates to midnight for accurate date comparison
+    userDate.setHours(DATE_OPTIONS.hours, DATE_OPTIONS.minutes, DATE_OPTIONS.seconds, DATE_OPTIONS.milliseconds);
+    currentDate.setHours(DATE_OPTIONS.hours, DATE_OPTIONS.minutes, DATE_OPTIONS.seconds, DATE_OPTIONS.milliseconds);
+
+    const differenceInDays = (currentDate - userDate) / MILLISECONDS_IN_A_DAY;
+
+    return differenceInDays <= 3 && differenceInDays >= 0;
+};
 
 /**
- * Validate if the user sends appropriate date. Valid date falls between the
- * 5 days behind current cycle startdate.
- * @param {Date} prevdate - initial statedate of the cycle to update.
- * @param {String} newdate - new ovulationdate to update (YYYY-MM-DD)
- * @returns - return true if the date is valid or false
-*/
-exports.validateUpdateDate = (prevdate, newdate) => {
-    const newDate = new Date(newdate);
-    const prevDate = new Date(prevdate);
+ * Validate if the user sends an appropriate date. Valid date falls between the
+ * 5 days behind the current cycle start date.
+ * @param {String} prevDate - initial start date of the cycle to update.
+ * @param {String} newDate - new ovulation date to update (YYYY-MM-DD)
+ * @returns {boolean} - true if the date is valid, false otherwise
+ */
+exports.validateUpdateDate = (prevDate, newDate) => {
+    const isValidDate = (date) => !isNaN(new Date(date));
 
-    const difference = ((newDate - prevDate) / (24 * 60 * 60 * 1000));
+    if (!isValidDate(prevDate) || !isValidDate(newDate)) {
+        return false;
+    }
 
-    /**
-     * Validate the ovulation date the user input. Estimate is based on the assumption
-     * that ovulation date doesn't exceed 18 days from previous startdate.
-     */
-    if (difference < 18) return true;
-    else return false;
-}
+    const newDateObj = new Date(newDate);
+    const prevDateObj = new Date(prevDate);
+
+    // Set both dates to midnight for accurate date comparison
+    newDateObj.setHours(DATE_OPTIONS.hours, DATE_OPTIONS.minutes, DATE_OPTIONS.seconds, DATE_OPTIONS.milliseconds);
+    prevDateObj.setHours(DATE_OPTIONS.hours, DATE_OPTIONS.minutes, DATE_OPTIONS.seconds, DATE_OPTIONS.milliseconds);
+
+    const differenceInDays = (newDateObj - prevDateObj) / MILLISECONDS_IN_A_DAY;
+
+    // Validate the ovulation date. Assume ovulation doesn't exceed 18 days from the previous start date.
+    return differenceInDays < 18;
+};

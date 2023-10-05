@@ -5,12 +5,13 @@ const bcrypt = require('bcryptjs');
 const { handleResponse } = require('../utility/handle.response');
 const { isTokenBlacklisted, updateBlacklist } = require('../middleware/tokenBlacklist');
 
-// Secret key
-const secretKey = process.env.SECRETKEY;
-
 // Host, Port
 const host = process.env.HOST;
 const port = process.env.PORT;
+
+// Sender details
+const emailAddress = process.env.EMAIL;
+const emailPassword = process.env.EMAILPASSWORD;
 
 /**
  * create a reset token using uuid.v4
@@ -20,12 +21,10 @@ function resetToken() {
     return uuid.v4();
   }
 
-// Sender details
-const emailAddress = process.env.EMAIL;
-const emailPassword = process.env.EMAILPASSWORD;
 
-// Create the sender details. user and pass verification is used here, but for more efficient
-// security used Auth.
+/**
+ * Create the sender details. user and pass verification is used here, but for more efficient
+ * security used Auth. */
 const sender = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -34,12 +33,7 @@ const sender = nodemailer.createTransport({
   },
 });
 
-/**
- * Generate link to change password.
- * @param {Object} req 
- * @param {Object} res 
- * @returns 
- */
+/** Send reset link password to users */
 exports.forgotPass = async (req, res) => {
   try {
     const { email } = req.body;
@@ -76,12 +70,7 @@ exports.forgotPass = async (req, res) => {
   }
 }
 
-/**
- * reset user's password
- * @param {Object} req
- * @param {Object} res
- * @return - 
- */
+/** Validate reset token */
 exports.VerifyResetPass = async (req, res) => {
   const { token } = req.params;
 
@@ -104,6 +93,7 @@ exports.VerifyResetPass = async (req, res) => {
   })
 }
 
+/** Reset user's password */
 exports.ResetPass = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
@@ -135,4 +125,36 @@ exports.ResetPass = async (req, res) => {
   updateBlacklist(token);
 
   return handleResponse(res, 200, "Password changed");
+}
+
+/** Change logged-in user password */
+exports.changePass = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isPasswordValid) {
+      return handleResponse(res, 400, 'Current password is incorrect');
+    }
+
+    const saltRounds = 12;
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedNewPassword;
+    await user.save();
+
+    return res.status(204).send('Password changed');
+  } catch (error) {
+    console.log(error);
+    return handleResponse(res, 500, 'Internal Server Error');
+  }
 }

@@ -65,7 +65,7 @@ exports.create = async(req, res) => {
 		  return handleResponse(res, 400, "Fill required properties");
 		}
 
-		const id = req.params.userId;
+		const id = req.user.id;
 		const { period, ovulation, startdate } = req.body;
 
 		if (!validateCreateDate(startdate)) {
@@ -128,7 +128,7 @@ exports.create = async(req, res) => {
 // fetch all the cycles for a given user
 exports.fetchAll = async(req, res) => {
 	try {
-		const id = req.params.userId;
+		const id = req.user.id;
 
 		const user = await populateWithCycles(id);
 		if (!user) {
@@ -145,7 +145,8 @@ exports.fetchAll = async(req, res) => {
 // get cycle by cycleId for a given user
 exports.fetchOne = async (req, res) => {
 	try {
-		const { userId, cycleId } = req.params;
+		const { cycleId } = req.params;
+		const userId = req.user.id;
 
 		const user = await populateWithCyclesBy(userId, '_id', cycleId);
 		if (user === null) {
@@ -166,7 +167,8 @@ exports.fetchOne = async (req, res) => {
 // get cycle by month fora a given user
 exports.fetchMonth = async (req, res) => {
 	try {
-		let { userId, month } = req.params;
+		let { month } = req.params;
+		const userId = req.user.id;
 
 		month = month.charAt(0).toUpperCase() + month.slice(1);
 
@@ -184,7 +186,8 @@ exports.fetchMonth = async (req, res) => {
 /* update a cycle record by cycleId for a given user */
 exports.update = async(req, res) => {
 	try {
-		const { userId, cycleId } = req.params;
+		const { cycleId } = req.params;
+		const userId = req.user.id;
 		let { period, ovulation } = req.body;
 
 		const user = await User.findById(userId);
@@ -245,7 +248,8 @@ exports.update = async(req, res) => {
 /* Delete cycle by cycleId for a given user */
 exports.delete = async(req, res) => {
 	try {
-		const { userId, cycleId } = req.params;
+		const { cycleId } = req.params;
+		const userId = req.user.id;
 		const user = await populateWithCycles(userId, '_id', cycleId);
 		if (user === null) {
 			return handleResponse(res, 404, "User not found");

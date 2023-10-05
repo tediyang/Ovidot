@@ -4,6 +4,7 @@ const Cycle = require('../../models/cycle.model');
 const User = require('../../models/user.model');
 const { handleResponse } = require('../../utility/handle.response');
 const { validationResult } = require('express-validator');
+const jwt = require('jsonwebtoken');
 
 const secretKey = process.env.ADMINKEY;
 
@@ -46,7 +47,6 @@ const adminController = {
         const token = createToken(user);
         res.status(200).json({
           message: 'Authentication successful',
-          adminId: user._id,
           token
         });
       } else {
@@ -68,11 +68,7 @@ const adminController = {
    */
   viewAllusers: async (req, res) => {
     try {
-      if (!req.user.admin) {
-        return handleResponse(res, 403, 'Forbidden');
-      }
-
-      const allUsers = await User.find({}, '-password -created_at -updated_at -is_admin -reset -resetExp');
+      const allUsers = await User.find({}, '-password -reset -resetExp -__v');
       return res.status(200).json({ allUsers });
     } catch (error) {
       console.log(error);
@@ -90,13 +86,15 @@ const adminController = {
    */
   viewUser: async (req, res) => {
     try {
-      if (!req.user.admin) {
-        return handleResponse(res, 403, 'Forbidden');
+      // validate params
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return handleResponse(res, 400, "Fill required properties");
       }
 
-      const user = await User.findOne({ email: req.params.email }, '-password -created_at -updated_at -is_admin -reset -resetExp');
+      const user = await User.findOne({ email: req.body.email }, '-password -reset -resetExp -__v');
       if (!user) {
-        return handleResponse(res, 404, `User with ${req.params.email} not found`);
+        return handleResponse(res, 404, `User with ${req.body.email} not found`);
       }
       return res.status(200).json({ user });
     } catch (error) {
@@ -125,15 +123,15 @@ const adminController = {
         return handleResponse(res, 400, "Fill required properties");
       }
 
-      const user = await User.findOne({ email: req.params.email }, '-password -created_at -updated_at -is_admin -reset -resetExp');
+      const user = await User.findOne({ email: req.body.oldEmail }, '-password -reset -resetExp -__v');
       if (!user) {
-        return handleResponse(res, 404, `User with ${req.params.email} not found`);
+        return handleResponse(res, 404, `User with ${req.body.oldEmail} not found`);
       }
       const updateUser = await User.findByIdAndUpdate(user.id,
-        { email: req.body.email },
+        { email: req.body.newEmail },
         { new: true });
 
-      const updated = updateUser.email === req.body.email;
+      const updated = updateUser.email === req.body.newEmail;
       return res.status(200).json({ updated: updated });
     } catch (error) {
       console.log(error);
@@ -155,16 +153,22 @@ const adminController = {
         return handleResponse(res, 403, 'Forbidden');
       }
 
-      const user = await User.findOne({ email: req.params.email });
-      if (!user) {
-        return handleResponse(res, 404, "User not found");
+      // validate params
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return handleResponse(res, 400, "Fill required properties");
       }
-      const delUser = await user.findByIdAndDelete(user.id);
+
+      const user = await User.findOne({ email: req.body.email });
+      if (!user) {
+        return handleResponse(res, 404, `${req.body.email} not found`);
+      }
+      const delUser = await User.findByIdAndDelete(user.id);
       if (!delUser) {
         return handleResponse(res, 404, "User not found");
       }
 
-      return res.status(204).send('User deleted');
+      return res.status(204).send(`${req.body.email} deleted`);
     } catch (error) {
       console.log(error);
       return handleResponse(res, 500, 'Internal Server Error');
@@ -181,11 +185,7 @@ const adminController = {
    */
   viewAllCycles: async (req, res) => {
     try {
-      if (!req.user.admin) {
-        return handleResponse(res, 403, 'Forbidden');
-      }
-
-      const allCycleData = await Cycle.find({}, '-created_at -updated_at');
+      const allCycleData = await Cycle.find({});
       return res.status(200).json({ allCycleData });
     } catch (error) {
       console.error(error);
@@ -203,14 +203,10 @@ const adminController = {
    */
   viewCycle: async (req, res) => {
     try {
-      if (!req.user.admin) {
-        return handleResponse(res, 403, 'Forbidden');
-      }
-
       const cycleId = req.params.cycleId;
 
       // Retrieve specific cycle data by ID
-      const specificCycleData = await Cycle.findById(cycleId, '-created_at -updated_at');
+      const specificCycleData = await Cycle.findById(cycleId);
       if (!specificCycleData) {
         return handleResponse(res, 404, "Cycle data not found");
       }

@@ -1,8 +1,4 @@
-/**
- * controller for performing CRUD on a user.
- */
-
-/* import all neccessary modules & Libs*/
+// USER CONTROLLER (CRUD)
 const User = require('../models/user.model');
 const { handleResponse } = require('../utility/handle.response');
 const { validationResult } = require('express-validator');
@@ -10,8 +6,7 @@ const bcrypt = require('bcryptjs');
 
 /**
  * create the user object for the new user if it doesn't exist
- * @param {Object} data - user data
- * @param {Object} res - response set to user
+ * @data - user data passed used for creating a user.
  * @returns
  */
 exports.create = async(data, res) => {
@@ -42,14 +37,12 @@ exports.create = async(data, res) => {
 
 /**
  * Find the user and update the data passed.
- * @param {Object} res - response sent to user
- * @param {Object} req - request from user
  * @returns - updated user object
  */
 exports.update = async(req, res) => {
 	// get userId from params
 	try {
-		const userId = req.params.userId;
+		const userId = req.user.id;
 		const { username, age } = req.body;
 
 		if (!username && !age) {
@@ -88,7 +81,7 @@ exports.update = async(req, res) => {
  */
 exports.fetch = async(req, res) => {
 	try {
-		const userId = req.params.userId;
+		const userId = req.user.id;
 		const user = await User.findById(userId);
 
 		/* check for conditons */
@@ -118,7 +111,7 @@ exports.fetch = async(req, res) => {
  */
 exports.delete = async(req, res) => {
 	try {
-		const userId = req.params.userId;
+		const userId = req.user.id;
 		const user = await User.findByIdAndDelete(userId);
 		if (!user) {
 			return handleResponse(res, 404, "User not found");

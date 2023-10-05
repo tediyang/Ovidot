@@ -87,11 +87,11 @@ npm test
 ## Usage
 For local connection: http://127.0.0.1:{PORT}/{endpoint}
 
-### Authorization Endpoints
+### Non-Authorization Endpoints
 - Register a new user and get an access token for authentication purposes.
 Request
 ```bash
-POST /api/auth/signup
+POST /api/v1/signup
 body {
     "email": "<USER'S EMAIL>",
     "password": "<PASSWORD>",
@@ -105,7 +105,7 @@ Response (Status 201)
 - Login with a registered account
 Request
 ```bash
-POST /api/auth/login
+POST /api/v1/login
 body {
     "email": "<USER'S EMAIL>",
     "password": "<PASSWORD>"
@@ -115,7 +115,6 @@ Response on success (Status 200)
 ```bash
 {
   "message": "Authentication successful",
-  "userId": "user's id",
   "token": "token generated"
 }
 ```
@@ -126,29 +125,55 @@ Response on failure (Status 401)
 }
 ```
 
+- Send forget password reset link
+Request
+```bash
+POST /api/v1/forgot-password
+body {
+    "email": "<EMAIL>"
+}
+```
+Response (Status 201, Created): Password reset link sent to email
+Response (Status 500): Password reset link sent to email | Internal Server Error
+
+- Verify reset token
+Request
+```bash
+GET /api/v1//reset-password/:token
+```
+Response (Status 200)
+```bash
+{
+    message : "success" ,
+    token: <token>
+}
+```
+
+- Reset Password
+Request
+```bash
+POST /api/v1/reset-password/:token
+body {
+    "password": "<PASSWORD>",
+}
+```
+Response (Status 200): "Password changed"
+
+### Authorization Endpoints
+
 - Logout a registered account
 Request
 ```bash
-GET /api/auth/<:userId>/logout [Auth: Bearer Token]
+GET /api/v1/auth/logout [Auth: Bearer Token]
 ```
 Response (Status 200)
 
-- Change Logged-in user password
-Request
-```bash
-POST /api/auth/<:userId>/change-password [Auth: Bearer Token]
-body {
-    "currentPassword": "<OLD PASSWORD>",
-    "newPassword": "<NEW PASSWORD>"
-}
-```
-Response (Status 204)
 
-### User Endpoint
+#### User Endpoint
 - Get user by userId
 Request
 ```bash
-GET /api/users/<:userId> [Auth: Bearer token]
+GET api/v1/auth/users/get [Auth: Bearer token]
 ```
 Response (Status 200)
 ```bash
@@ -166,7 +191,7 @@ Response (Status 200)
 - Update user data
 Request
 ```bash
-PUT /api/users/<:userId> [Auth: Bearer token]
+PUT api/v1/auth/users/update [Auth: Bearer token]
 body {
     "username": "<NEW USERNAME",
     "age": <NEW AGE>
@@ -194,15 +219,27 @@ Response (Status 400)
 - Delete user data
 Request
 ```bash
-DELETE /api/users/<:userId> [Auth: Bearer token]
+DELETE api/v1/auth/users/delete [Auth: Bearer token]
 ```
 Response (Status 204)
 
-### Cycle Endpoint
+- Change Logged-in user password
+Request
+```bash
+POST /api/v1/auth/users/change-password [Auth: Bearer Token]
+body {
+    "currentPassword": "<OLD PASSWORD>",
+    "newPassword": "<NEW PASSWORD>"
+}
+```
+Response (Status 204)
+
+
+#### Cycle Endpoint
 - Create a Cycle
 Request
 ```bash
-POST /api/cycles/<:userId>/cycles [Auth: Bearer Token]
+POST api/v1/auth/cycles/create [Auth: Bearer Token]
 {
   "period": <INT: NUMBER>,
   "startdate": <DATE: CYCLE STARTDATE> | YYYY-MM-DD
@@ -219,7 +256,7 @@ Response (status 201)
 - Get a cycle by cycleId
 Request
 ```bash
-GET /api/cycles/<:userId>/cycles/<:cycleId> [Auth: Bearer Token]
+GET api/v1/auth/cycles/<:cycleId> [Auth: Bearer Token]
 ```
 Response (Status 200)
 ```bash
@@ -246,7 +283,7 @@ Response (Status 200)
 - Get all cycles for a given user
 Request
 ```bash
-GET /api/cycles/<:userId>/cycles [Auth: Bearer Token]
+GET api/v1/auth/cycles/getall [Auth: Bearer Token]
 ```
 Response (Status 200)
 ```bash
@@ -258,7 +295,7 @@ Response (Status 200)
 - Get all cycles by month
 Request
 ```bash
-GET /api/cycles/<:userId>/<:month> [Auth: Bearer Token]
+GET api/v1/auth/cycles/getall/<:month> [Auth: Bearer Token]
 ```
 Response (Status 200)
 ```bash
@@ -270,7 +307,7 @@ Response (Status 200)
 - Update a cycle by cycleId
 Request
 ```bash
-PUT /api/cycles/:userId/cycles/:cycleId [Auth: Bearer Token]
+PUT api/v1/auth/cycles/:cycleId [Auth: Bearer Token]
 body {
     "period": <INT: NUMBER>,
     "ovulation": "<DATE: DATE OVULATION OCCURED>" | YYYY-MM-DD
@@ -301,18 +338,97 @@ Response (Status 200)
 - Delete cycle by cycleId
 Request
 ```bash
-DELETE /api/cycles/:userId/cycles/:cycleId [Auth: Bearer Token]
+DELETE api/v1/auth/cycles/<:cycleId> [Auth: Bearer Token]
 ```
 Response (Status 204)
 ```bash
 Cycle deleted
 ```
 
-### Forget Password for logged out user
-- Send forget password reset link
+
+### Admin
+- Login as admin
 Request
 ```bash
-POST /api/password/forgot-password
+POST /api/v1/admin/login
+body {
+    "email": "<USERNAME>",
+    "password": "<PASSWORD>"
+}
+```
+Response on success (Status 200)
+```bash
+{
+  "message": "Authentication successful",
+  "token": "token generated"
+}
+```
+
+- Get all users
+Request
+```bash
+GET /api/v1/admin/users
+```
+Response (Status 200)
+```bash
+[
+    { <USER DATA> }
+]
+```
+
+- Get a user data
+Request
+```bash
+POST /api/v1/admin/users/email
+body {
+    "email": <USER EMAIL>
+}
+```
+Response (Status 200)
+```bash
+{
+  "user": {
+    "_id": "user's id",
+    "email": "user email",
+    "username": "username",
+    "age": <AGE>,
+    "is_admin": false,
+    "_cycles": [
+      "cycle id"
+    ],
+    "created_at": "date created",
+    "updated_at": "date updated"
+  }
+}
+```
+
+- Update a user's email
+Request
+```bash
+PUT /api/v1/admin/users/email
+body {
+    "oldEmail": "<OLD EMAIL",
+    "newEmail": "<NEW EMAIl"
+}
+```
+Response (Status 204)
+```bash
+{
+    updated: true || false
+}
+```
+
+- Delete User
+Request
+```bash
+DELETE /api/v1/admin/users/email
+```
+Response (Status 204) : email deleted
+
+- Create forgot password link for user
+Request
+```bash
+POST api/v1/admin/users/forgot-password
 body {
     "email": "<EMAIL>"
 }
@@ -320,25 +436,33 @@ body {
 Response (Status 201, Created): Password reset link sent to email
 Response (Status 500): Password reset link sent to email | Internal Server Error
 
-- Verify reset token
+- Get cycles
 Request
 ```bash
-GET /api/password/reset-password/:token
+GET /api/v1/admin/cycles
 ```
-Response (Status 200)
+Response (status 200)
+```bash
+[
+    { <CYCLE DATA> }
+]
+```
+
+- Fetch cycle
+Request
+```bash
+GET api/v1/admin/cycles/:cycleId
+```
+Response (status 200)
 ```bash
 {
-    message : "success" ,
-    token: <token>
+    <CYCLE DATA>
 }
 ```
 
-- Reset Password
+- Delete cycle
 Request
 ```bash
-POST /api/password/reset-password/:token
-body {
-    "password": "<PASSWORD>",
-}
+GET api/v1/admin/cycles/:cycleId
 ```
-Response (Status 200): "Password changed"
+Response (status 200): Cycle deleted
