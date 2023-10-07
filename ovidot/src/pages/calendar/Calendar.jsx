@@ -5,27 +5,27 @@ import './calendar.css';
 
 const App = () => {
   const [events, setEvents] = useState([]);
-  const [cycleLength, setCycleLength] = useState(28);
+  const [menstrualLength, setMenstrualLength] = useState(5);
   const [startDate, setStartDate] = useState(null);
 
   useEffect(() => {
     if (startDate) {
       handleStartDateChange();
     }
-  }, [startDate, cycleLength]);
+  }, [startDate, menstrualLength]);
 
   const handleStartDateChange = () => {
     const menstrualEndDate = new Date(startDate);
-    menstrualEndDate.setDate(menstrualEndDate.getDate() + 5);
+    menstrualEndDate.setDate(menstrualEndDate.getDate() + menstrualLength);
 
-    const follicularEndDate = new Date(startDate);
-    follicularEndDate.setDate(follicularEndDate.getDate() + (cycleLength * 0.5));
+    const follicularEndDate = new Date(menstrualEndDate);
+    follicularEndDate.setDate(follicularEndDate.getDate() + ((28 - menstrualLength) * 0.5));
 
     const ovulationDate = new Date(follicularEndDate);
     ovulationDate.setDate(ovulationDate.getDate() + 1);
 
     const lutealEndDate = new Date(ovulationDate);
-    lutealEndDate.setDate(lutealEndDate.getDate() + (cycleLength * 0.5));
+    lutealEndDate.setDate(lutealEndDate.getDate() + ((28 - menstrualLength) * 0.5));
 
     const nextPeriodStartDate = new Date(lutealEndDate);
     nextPeriodStartDate.setDate(nextPeriodStartDate.getDate() + 1);
@@ -43,19 +43,24 @@ const App = () => {
     setStartDate(new Date(e.target.value));
   }
 
-  const handleCycleLengthChange = (e) => {
-    setCycleLength(e.target.value);
+  const handleMenstrualLengthChange = (e) => {
+    setMenstrualLength(e.target.value);
   }
 
   return (
     <div className="app">
       <h1>Cycle Tracker</h1>
       <input type="date" placeholder="Start Date" onChange={handleInputDateChange} />
-      <select onChange={handleCycleLengthChange}>
-        {[...Array(15)].map((_, i) => (
-          <option key={i} value={i + 21}>{i + 21}</option>
+      <button>Last Period (Starting Date)</button>
+      <p></p>
+      <select onChange={handleMenstrualLengthChange}>
+        {[...Array(6)].map((_, i) => (
+          <option key={i} value={i + 2}>{i + 2}</option>
         ))}
       </select>
+      <button>Length of your Menstrual Phase</button>
+      <p>Tip: If you don't know the length of your menstrual phase, please select 5. </p>
+      <p></p>
       <div className="calendar-container">
         <FullCalendar
         plugins={[dayGridPlugin]}

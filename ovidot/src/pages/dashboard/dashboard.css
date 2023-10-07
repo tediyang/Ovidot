@@ -59,6 +59,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
+    margin-left: 10rem;
 }
 
 .course {
@@ -87,13 +88,22 @@
     height: auto;
     margin-right: 8.8rem;
 }
+
+.course__image2{
+    display: inline-block;
+  object-fit: cover;
+  max-width: 45%;
+  height: auto;
+  margin-right: 8.8rem;
+  margin-left: 3rem;
+}
 .course:hover {
     background: white;
     border-color: var(--color-primary);
 }
 
 .course__info {
-    padding: 2rem;
+    padding: 4rem;
 }
 
 .course__info p {
@@ -162,7 +172,7 @@ footer {
     display: flex;
   align-items: center;
   gap: 1rem;
-  margin-left: 15rem;
+  margin-left: 25rem;
 }
 
 .section__head span {
@@ -242,12 +252,38 @@ footer {
     margin-left: 11rem;
 }
 
+.courses__container {
+    display: flexbox;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-left: 40px;
+    align-items: center;
+}
+
+.course__image {
+    display: inline-block;
+    object-fit: cover;
+    max-width: 50%;
+    height: auto;
+    margin-right: 8.8rem;
+}
+
+.course__image1{
+    display: inline-block;
+    object-fit: cover;
+    max-width: 55%;
+    height: auto;
+    margin-right: 8.8rem;
+}
+
 /* FOOTER */
 .footer__container {
     grid-template-columns: 1fr 1fr 1fr;
 }
  
 }
+
+/*============= SMALL SCREENS ====================*/
 
 @media screen and (max-width: 600px) {
 .footer__container {
@@ -274,13 +310,12 @@ footer {
         border-radius: 2rem;
         margin-top: 2rem;
         width: 20rem;
-        height: rem;
     }
     
     .course__image {
         display: inline-block;
         object-fit: cover;
-        max-width: 55%;
+        max-width: 50%;
         height: auto;
         margin-right: 8.8rem;
     }

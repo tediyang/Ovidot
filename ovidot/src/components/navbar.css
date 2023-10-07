@@ -93,19 +93,6 @@ nav {
         display: none;
     }
 
-    .ov {
-        background-color: hotpink;
-        padding: 0.4rem 1.2rem;
-        font-size: 0.9rem;
-        display: flex;
-        border-radius: 1.5rem;
-    }
-
-    .ov:hover {
-        color: white;
-        transition: var(--transition);
-    }
-
     .nav__links li {
         height: 4rem;
         width: 100%;

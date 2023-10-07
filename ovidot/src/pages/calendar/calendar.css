@@ -46,9 +46,27 @@
   transition: .5s;
 }
 
-.app input, .app button {
+.app input {
     margin-left: 5px;
 }
+ .app button {
+        margin-left: 5px;
+        background: hotpink;
+        color: white;
+        margin-right: 5px;
+        padding: 9px;
+        border: 1px solid;
+        border-radius: 5px;
+ }
+
+ .app select {
+    padding: 6px;
+    background: aliceblue;
+    border: 1px solid;
+    margin-bottom: 2px;
+ }
+
+
 
 /* calendar.css */
 .calendar-container {
@@ -73,7 +91,7 @@
   /*===== MEDIA QUERIES ===== */
 @media screen and (max-width: 1024px) {
     .calendar-container {
-        margin-right: 50px;
+        margin-left: 23px;
     }
 }
 @media screen and (max-width: 600px) {

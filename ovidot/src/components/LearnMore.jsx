@@ -7,12 +7,27 @@
 import sanity from '../images/sanitary.png'
 import stable from '../images/stability.png'
 import timing from '../images/timing.jpeg'
+import phase from '../images/Phases.jpeg'
+import food from '../images/food.jpeg'
 
 
 const LearnMore = () => 
   <section className="courses">
   <h3>Know your body</h3>
   <div className="container courses__container">
+  <article className="course">
+      <div className="course__image2">
+        <img src={phase} alt='Learn'  />
+      </div>
+      <div className="course__info">
+        <h4>The four MENSTRUAL PHASES.</h4>
+        <p>Get to know The 4 Phases of your Menstrual Cycle</p>
+        <a href="https://www.mindbodygreen.com/articles/menstrual-cycle-phases" className="button">
+          {""}
+          Learn More
+        </a>
+      </div>
+    </article>
     <article className="course">
       <div className="course__image1">
         <img src={sanity} alt='Learn'  />
@@ -50,6 +65,32 @@ const LearnMore = () =>
         </p>
         <a href="https://www.medicalnewstoday.com/articles/322951" className="button button-primary">
           {" "}
+          Learn More
+        </a>
+      </div>
+    </article>
+    <article className="course">
+      <div className="course__image">
+        <img src={food} alt='Learn'  />
+      </div>
+      <div className="course__info">
+        <h4>YOU vs FOOD!!</h4>
+        <p>How to Eat for your menstrual cycle</p>
+        <a href="https://www.youtube.com/watch?v=xRT2deFsRz8&pp=ygUSZm9vZCBkdXJpbmcgbWVuc3Ry" className="button">
+          {""}
+          Watch Video
+        </a>
+      </div>
+    </article>
+    <article className="course">
+      <div className="course__image">
+        <img src={sanity} alt='Learn'  />
+      </div>
+      <div className="course__info">
+        <h4>Hygiene products</h4>
+        <p>Tampons, Pads or Menstrual Cups? What's right for you? </p>
+        <a href="https://www.healthywomen.org/content/article/tampons-pads-or-menstrual-cups-whats-right-you" className="button">
+          {""}
           Learn More
         </a>
       </div>
