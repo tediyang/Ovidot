@@ -63,7 +63,7 @@ const Register = () => {
   return (
     <div className="register">
       <form1 onSubmit={handleSubmit}>
-        <h1>Log In</h1>
+        <h1>Logout</h1>
         {inputs.map((input) => (
           <FormInput
             key={input.id}
@@ -72,7 +72,7 @@ const Register = () => {
             onChange={onChange}
           />
         ))}
-        <Link to="" className="buttonn">LOG OUT </Link>
+        <Link to="/" className="buttonn">LOG OUT </Link>
         <p></p>
       </form1>
     </div>

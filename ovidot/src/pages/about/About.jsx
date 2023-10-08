@@ -1,5 +1,5 @@
 import './about.css'
-//import HeaderImage from '../../images/wallpaper.png'
+import HeaderImage from '../../images/wallpaper.png'
 import Header from '../../components/Header'
 import StoryImage from '../../images/flowers.png'
 import VisionImage from '../../images/calendar.jpeg'
@@ -8,14 +8,14 @@ import goalImage from '../../images/happy.jpeg'
 const About = () => {
   return (
     <>
-    <Header title="About us">
+    <Header title="About us" image={HeaderImage}>
     Your Health, Your Way!
     </Header>
     
     <section className="section about__story">
       <div className="container about__story-container">
         <div className="about__section-image">
-          <img src={StoryImage} alt="Our Story Image" />
+          <img src={StoryImage} />
         </div>
         <div className="about__section-content">
           <h1>What is Ovidot</h1>

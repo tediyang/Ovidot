@@ -36,4 +36,10 @@
         border-radius: 1rem;
     }
 
+    .contact__wrapper a:hover {
+        background: pink;
+        border-color: var(--color-gray-600);
+    
+    }
+
 }
