@@ -11,7 +11,7 @@ const MainHeader = () => {
             Embrace the Beauty of Your Monthly Cycle: Your Personal Menstrual Health Partner, Guiding You Through Each Phase of Womanhood.
           </p>
 
-          <Link to="/register" className="btn lg"> Get Started</Link>
+          <Link to="/login" className="btn lg"> Get Started</Link>
         </div>
         <div className="main__header-right">
           <div className="main__header-circle"></div>

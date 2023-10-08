@@ -98,3 +98,31 @@ export const program = [
         path: 'https://youtube.com'
     */
 ]
+
+export const link = [
+    {
+        name: "Home",
+        path: '/'
+    },
+    {
+        name: "About",
+        path: '/about'
+    },
+    /*
+        name: "Calendar",
+        path: '/calendar'
+    */
+    {
+        name: "Contact",
+        path: '/contact'
+    },
+    {
+        name: "Logout",
+        path: '/logout'
+    },
+    {
+        name: "Settings",
+        path: '/settings'
+    },
+    
+]

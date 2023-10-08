@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import "./register.css";
+import "./logout.css";
 import FormInput from "../../components/FormInput";
 
 const Register = () => {
   const [values, setValues] = useState({
     username: "",
-    email: "",
-    birthday: "",
     password: "",
-    confirmPassword: "",
   });
 
   const inputs = [
@@ -18,30 +15,11 @@ const Register = () => {
       name: "username",
       type: "text",
       placeholder: "Username",
-      errorMessage:
-        "Username should be 3-16 characters and shouldn't include any special character!",
       label: "Username",
-      pattern: "^[A-Za-z0-9]{3,16}$",
       required: true,
     },
     {
       id: 2,
-      name: "email",
-      type: "email",
-      placeholder: "Email",
-      errorMessage: "It should be a valid email address!",
-      label: "Email",
-      required: true,
-    },
-    {
-      id: 3,
-      name: "birthday",
-      type: "date",
-      placeholder: "Birthday",
-      label: "Birthday",
-    },
-    {
-      id: 4,
       name: "password",
       type: "password",
       placeholder: "Password",
@@ -51,24 +29,14 @@ const Register = () => {
       pattern: `^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$`,
       required: true,
     },
-    {
-      id: 5,
-      name: "confirmPassword",
-      type: "password",
-      placeholder: "Confirm Password",
-      errorMessage: "Passwords don't match!",
-      label: "Confirm Password",
-      pattern: values.password,
-      required: true,
-    },
   ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
   };
 
-  fetch('http://127.0.0.1:5000/api/v1/signup', {
-    method: 'POST',
+  fetch('http://127.0.0.1:5000/api/v1/auth/logout [Auth: Bearer Token]', {
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -94,8 +62,8 @@ const Register = () => {
 
   return (
     <div className="register">
-      <form onSubmit={handleSubmit}>
-        <h2>Register</h2>
+      <form1 onSubmit={handleSubmit}>
+        <h1>Log In</h1>
         {inputs.map((input) => (
           <FormInput
             key={input.id}
@@ -104,10 +72,9 @@ const Register = () => {
             onChange={onChange}
           />
         ))}
-        <Link to="/dashboard" className="button">REGISTER</Link>
-        <p>Already have an account?</p>
-        <Link to="/login" className="buttonn">LOG IN </Link>
-      </form>
+        <Link to="" className="buttonn">LOG OUT </Link>
+        <p></p>
+      </form1>
     </div>
   );
 };

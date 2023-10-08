@@ -87,6 +87,12 @@
 .fc-theme-standard td, .fc-theme-standard th {
     background-color: white;
   }
+.fc-daygrid-day-frame {
+    border: none !important;
+  }
+  .fc-daygrid-day-top {
+    padding: 2px !important;
+  }
   
   /*===== MEDIA QUERIES ===== */
 @media screen and (max-width: 1024px) {

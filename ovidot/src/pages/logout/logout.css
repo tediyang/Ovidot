@@ -12,7 +12,7 @@
     background-position: center;
 }   
   
-  form{
+  form1{
       background-color: white;
       padding: 0px 60px;
       border-radius: 10px;
@@ -22,14 +22,15 @@
       left: 50%;
       position: absolute;
       width: 500px;
-      height: 635px;
+      height: 450px;
       transform: translate(-55%, -50%);
   }
 
   
-  h2{
+  h1{
       color: rgb(77, 1, 77);
       text-align: center;
+      margin-top: 1rem;
   }
   
   .button{
@@ -62,8 +63,13 @@
     width: fit-content;
     margin: 0 auto;
     transition: var(--transition);
+    align-items: center;
   }
 
+  .buttonn:hover {
+    background-color: hotpink;
+  color: white;
+  }
   .button:hover {
     background-color: hotpink;
   color: white;
