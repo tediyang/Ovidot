@@ -1,5 +1,5 @@
-# Ovidot API Backend
- A Menstrual Cycle Tracker is a web application built with Express.js that provides user management, menstrual cycle tracking, and authentication features. It enables users to sign up, log in, and securely track their menstrual cycles. Additionally, there are admin routes for managing users and cycles.
+# Ovidot API Service Backend
+ This is a Menstrual Cycle Tracker built with Express.js that provides user management, menstrual cycle tracking, and authentication features. It enables users to sign up, log in, and securely track their menstrual cycles. Additionally, there are admin routes for managing users and cycles.
 
 ## Contributors
 - [Eyang, Daniel Eyoh](https://github.com/Tediyang)
