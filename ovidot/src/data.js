@@ -33,13 +33,13 @@ export const links = [
 export const faqs = [
     {
         id: 1,
-        question: "Why use a menstrual app?",
-        answer: "A menstrual app helps track your cycle, predict your next period, and identify patterns in your cycle."
+        question: "Why use Ovidot as a menstrual app?",
+        answer: "It helps track your cycle, predict your next period, and identify patterns in your cycle."
     },
     {
         id: 2,
         question: "Can a menstrual app help me get pregnant? ",
-        answer: "Yes, many menstrual apps can predict your fertile window, which can aid in planning for pregnancy."
+        answer: "Yes, Ovidot can predict your fertile window, which can aid in planning for pregnancy."
     },
     {
         id: 3,
@@ -48,8 +48,8 @@ export const faqs = [
     },
     {
         id: 4,
-        question: "Can an app replace a doctor’s visit?",
-        answer: "While a menstrual app can provide valuable insights into your cycle, it should not replace regular check-ups with your healthcare provider. Always consult a healthcare provider for medical advice."
+        question: "Does Ovidot replace a doctor’s visit?",
+        answer: "While Ovidot can provide valuable insights into your cycle, it should not replace regular check-ups with your healthcare provider. Always consult a healthcare provider for medical advice."
     },
     /*
         id: 5,
