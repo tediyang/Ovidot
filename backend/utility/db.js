@@ -1,4 +1,4 @@
-const MongoClient = require("mongodb");
+const { MongoClient } = require("mongodb");
 
 const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT || 27017;
@@ -8,18 +8,25 @@ const client = new MongoClient(uri, { useUnifiedTopology: true });
 
 
 class DBClient {
-  constructor () {
-    client.connect(url,(err, client) => {
-      if (!err) {
-        this.db = client.db(DB);
-        this.userCollection = this.db.collection("User");
-        this.cycleCollection = this.db.collection("Cycle");
+  constructor() {
+    this.initialize();
+  }
+
+  async initialize() {
+
+    try { 
+      const connectedClient = await client.connect();
+
+      this.db = connectedClient.db(DB);
+      this.userCollection = this.db.collection("User");
+      this.cycleCollection = this.db.collection("Cycle");
       }
-      else {
-        console.log(err.message);
+      catch(error) {
+
+        console.log("Error connecting to MongoDB:", error);
+
         this.db = false;
       }
-    });
   }
 
   isAlive() {
@@ -29,13 +36,13 @@ class DBClient {
 
   /* return the number of docs in users collection */
   async nbUsers() {
-    const numberOfUsers = this.userCollection.countDocuments();
+    const numberOfUsers = await this.userCollection.countDocuments();
     return numberOfUsers;
   }
 
 
   async nbCycle() {
-    const numberOfCycles = this.cycleCollection.countDocuments();
+    const numberOfCycles = await this.cycleCollection.countDocuments();
     return numberOfCycles;
   }
 }
