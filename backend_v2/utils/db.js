@@ -21,6 +21,7 @@ class DBClient {
       this.db = mongoose.connection;
       this.userCollection = User;
       this.cycleCollection = Cycle;
+      console.log("Connection to DB successfull");
     } catch (error) {
       console.log("Error connecting to MongoDB:", error);
       this.db = null;
