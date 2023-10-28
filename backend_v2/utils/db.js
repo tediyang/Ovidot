@@ -3,8 +3,8 @@ const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT || 27017;
 const DB = process.env.DB || "test";
 const uri = `mongodb://${HOST}:${PORT}/${DB}`;
-const User = require('../models/user.model'); // Assuming these are Mongoose models
-const Cycle = require('../models/cycle.model'); // Assuming these are Mongoose models
+const User = require("../models/user.model"); 
+const Cycle = require("../models/cycle.model");
 
 class DBClient {
   constructor() {
