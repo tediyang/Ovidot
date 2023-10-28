@@ -1,10 +1,15 @@
-const { MongoClient } = require("mongodb");
-
+const mongoose = require("mongoose");
 const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT || 27017;
 const DB = process.env.DB || "test";
-const uri = `mongodb://${HOST}:${PORT}`;
-const client = new MongoClient(uri, { useUnifiedTopology: true });
+const uri = `mongodb://${HOST}:${PORT}/${DB}`;
+const User = require('../models/user.model');
+const Cycle = require('../models/cycle.model');
+
+const client = new mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 
 class DBClient {
@@ -15,11 +20,12 @@ class DBClient {
   async initialize() {
 
     try { 
-      const connectedClient = await client.connect();
+      await client;
+    }
 
-      this.db = connectedClient.db(DB);
-      this.userCollection = this.db.collection("users");
-      this.cycleCollection = this.db.collection("cycles");
+      this.db = mongoose.connection;
+      this.userCollection = User;
+      this.cycleCollection = Cycle;
       }
       catch(error) {
 
