@@ -1,14 +1,18 @@
 const redis = require("redis");
 const { promisify } = require("util");
-//import redis from "redis";
-//import { promisify } from util;
+require("dotenv").config();
 
 /* class for redis service operations */
 
 class redisClient {
   constructor() {
 
-    this.client = redis.createClient();
+    this.client = redis.createClient({
+      host: process.env.RHOST || "localhost",
+      port: process.env.RPORT || "6379"
+      password: process.env.RPASSWORD || null
+    });
+
     this.getAsync = promisify(this.client.get).bind(this.client); // create connection with redis
   
 
