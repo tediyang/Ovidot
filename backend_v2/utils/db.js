@@ -18,8 +18,8 @@ class DBClient {
       const connectedClient = await client.connect();
 
       this.db = connectedClient.db(DB);
-      this.userCollection = this.db.collection("User");
-      this.cycleCollection = this.db.collection("Cycle");
+      this.userCollection = this.db.collection("users");
+      this.cycleCollection = this.db.collection("cycles");
       }
       catch(error) {
 
@@ -48,4 +48,4 @@ class DBClient {
 }
 
 const dbClient = new DBClient();
-module.export = dbClient;
+module.exports = dbClient;
