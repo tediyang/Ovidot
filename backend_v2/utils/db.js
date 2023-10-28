@@ -25,7 +25,7 @@ class DBClient {
 
         console.log("Error connecting to MongoDB:", error);
 
-        this.db = false;
+        this.db = null;
       }
   }
 
@@ -36,14 +36,34 @@ class DBClient {
 
   /* return the number of docs in users collection */
   async nbUsers() {
-    const numberOfUsers = await this.userCollection.countDocuments();
-    return numberOfUsers;
+    if (!this.db) {
+      throw new Error("DB connection not established.");
+    }
+
+    try {
+      const numberOfUsers = await this.userCollection.countDocuments();
+      return numberOfUsers;
+    }
+    catch(error) {
+      console.error("Error counting users:", error);
+      throw error;
+    }
   }
 
 
   async nbCycle() {
-    const numberOfCycles = await this.cycleCollection.countDocuments();
-    return numberOfCycles;
+    if (!this.db) {
+      throw new Error("DB connection not established.");
+    }
+    try {
+
+      const numberOfCycles = await this.cycleCollection.countDocuments();
+      return numberOfCycles;
+    }
+    catch(error) {
+      console.error("Error counting cycles:", error);
+      throw error;
+    }
   }
 }
 
