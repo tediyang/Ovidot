@@ -27,9 +27,14 @@ const userUtils = {
    * @return {obj} user doc
    */
   async getUser(query) {
-    const user = await dbClient.userCollection.fineOne(query);
+    const user = await dbClient.userCollection.fineOne(query).exec();
     return user;
-  },
+  }
+  catch (error) {
+    console.error("error fetching user", error);
+    throw error;
+  }
+},
 };
 
 module.exports = userUtils;
