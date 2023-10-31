@@ -1,11 +1,10 @@
 const bcrypt = require("bcrypt");
 const Queue = require("bull");
-const dbClient = require("../utils/db");
 const userUtils = require("../utils/user");
 
 const userQueue = new Queue("userQueue");
 
-class userController {
+class UserController {
   
   /**
    * Creates a user using email and password
@@ -25,62 +24,76 @@ class userController {
    * password: SHA1 value of the value received
    */
   static async postNew(request, response) {
-    const {email, password} = request.body;
+    const { email, password } = request.body;
     if (!email) {
-      return response.status(400).send({error: "no email entered"});
+      return response.status(400).send({ error: "No email entered" });
     }
     if (!password) {
-      return response.status(400).send({error: "no password entered"});
+      return response.status(400).send({ error: "No password entered" });
     }
 
-    const emailExist = await dbClient.userCollection.findOne({email});
-    if (emailExist) {
-      return response.status(400).send({error: "email already exist"});
-    }
-
-    
-    /* hash password */
     try {
+      /* Check if the email already exists */
+      const emailExist = await user.model.findOne({ email });
+      if (emailExist) {
+        return response.status(400).send({ error: "Email already exists" });
+      }
+
+      /* Hash the user's password */
       const hashedPassword = await bcrypt.hash(password, 10);
-      const result = await dbClient.usersCollection.insertOne({email, password: hashedPassword});
-    }
-    catch (err) {
+
+      /* Create a new user document */
+      const newUser = new user.model({ email, password: hashedPassword });
+      await newUser.save();
+
+      /* Prepare the user response */
+      const user = {
+        id: newUser._id,
+        email
+      };
+
+      /* Add the user to the queue for further processing */
+      await userQueue.add({
+        userId: newUser._id.toString()
+      });
+
+      /* Respond with the newly created user */
+      return response.status(201).send(user);
+    } catch (err) {
+      /* Handle errors during user creation */
       await userQueue.add({});
-      return response.status(500).send({error: "error in creating user."});
+      return response.status(500).send({ error: "Error in creating user." });
     }
-
-    const user = {
-      id: result.insertedId,
-      email
-    };
-
-    await userQueue.add({
-      userId: result.insertedId.toString()
-    });
-    return response.status(201).send(user);
   }
 
-
   /**
-   *
-   * retrieve the user base on the token used
-   * if not found return unauthorized error message
-   * else return user obj
+   * Retrieve the user based on the token used
+   * If not found, return an unauthorized error message
+   * Otherwise, return the user object
    */
   static async getMe(request, response) {
-    const {userId} = await userUtils.getUserIdAndKey(request);
+    /* Get the user's ID from the token */
+    const { userId } = await userUtils.getUserIdAndKey(request);
 
-    const user = await userUtils.getUser({_id: objectId(userId)});
+    try {
+      /* Retrieve the user based on the ID */
+      const user = await user.model.findById(userId);
 
-    if(!user) {
-      return response.status(401).send({error: "unauthorized"});
+      /* If the user is not found, return an unauthorized error */
+      if (!user) {
+        return response.status(401).send({ error: "Unauthorized" });
+      }
+
+      /* Prepare the user response (excluding sensitive data) */
+      const processedUser = { id: user._id, email: user.email };
+
+      /* Respond with the user's information */
+      return response.status(200).send(processedUser);
+    } catch (error) {
+      /* Handle errors during user retrieval */
+      return response.status(500).send({ error: "Error retrieving user." });
     }
-
-    const proccessedUser = { id: user._id, ...user };
-    delete proccessedUser._id;
-    delete proccessedUser.password;
-    return response.status(200).send(proccessUser);
   }
 }
 
-module.exports = userController;
+module.exports = UserController;
