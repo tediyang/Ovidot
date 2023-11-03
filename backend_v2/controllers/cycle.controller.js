@@ -1,7 +1,7 @@
 const userUtils = require("../utils/user");
 const dbClient = require("../utils/db");
 
-Class CycleController {
+class CycleController {
   /**
    * Create a new cycle for a user and store it in the Redis cache.
    *
