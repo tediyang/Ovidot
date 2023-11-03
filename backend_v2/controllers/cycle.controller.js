@@ -140,10 +140,10 @@ class CycleController {
       if (!success) {
         return response.status(500).send({error: "Error in deleting data"});
       }
-      retirn response.status(204).send();
+      return response.status(204).send();
     }
     catch (error) {
-      return response.status(500.send({error: "error deleting cycle"});
+      return response.status(500).send({error: "error deleting cycle"});
     }
   }
 }
