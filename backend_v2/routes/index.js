@@ -1,13 +1,12 @@
 const express = require("express");
 const controllers = require("../controllers");
-const appController = controllers.appController;
-const userController = controllers.userController;
-const authController = controllers.authController;
-const cycleController = controllers.cycleController;
 
 function controllerRouting(app) {
   const router = express.Router();
   app.use("/", router);
+
+  // Destructure the controllers object
+  const { appController, userController, authController, cycleController } = controllers;
 
   // App controller routes
   router.get("/status", (req, res) => {
