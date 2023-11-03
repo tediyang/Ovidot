@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt");
 const Queue = require("bull");
 const userUtils = require("../utils/user");
-
 const userQueue = new Queue("userQueue");
 
 class UserController {
