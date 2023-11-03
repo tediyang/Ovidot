@@ -9,7 +9,7 @@ class redisClient {
 
     this.client = redis.createClient({
       host: process.env.RHOST || "localhost",
-      port: process.env.RPORT || "6379"
+      port: process.env.RPORT || "6379",
       password: process.env.RPASSWORD || null
     });
 
