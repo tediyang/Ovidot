@@ -9,8 +9,8 @@ import { sign } from 'jsonwebtoken';
 const secretKey = process.env.ADMINKEY;
 
 // Generate token
-function createToken(user) {
-  return sign({ id: user._id, admin: user.is_admin }, secretKey, { expiresIn: '1h' });
+function createToken(admin) {
+  return sign({ id: admin._id, admin: admin.is_admin }, secretKey, { expiresIn: '1h' });
 }
 
 /**
@@ -34,16 +34,16 @@ const adminController = {
       return handleResponse(res, 400, "Fill required properties");
     }
 
-    const user = await Admin.findOne({ username: username });
+    const admin = await Admin.findOne({ username: username });
 
-    if (!user) {
+    if (!admin) {
       return handleResponse(res, 404, `${username} doesn't exist`);
     }
 
-    const matched = await compare(password, user.password);
+    const matched = await compare(password, admin.password);
     try {
       if (matched) {
-        const token = createToken(user);
+        const token = createToken(admin);
         res.status(200).json({
           message: 'Authentication successful',
           token
@@ -66,6 +66,7 @@ const adminController = {
    */
   viewAllusers: async (req, res) => {
     try {
+      // Exclude these variables '-password -reset -resetExp -__v' in the result.
       const allUsers = await User.find({}, '-password -reset -resetExp -__v');
       return res.status(200).json({ allUsers });
     } catch (error) {
@@ -89,6 +90,7 @@ const adminController = {
         return handleResponse(res, 400, "Fill required properties");
       }
 
+      // Exclude these variables '-password -reset -resetExp -__v' in the result.
       const user = await User.findOne({ email: req.body.email }, '-password -reset -resetExp -__v');
       if (!user) {
         return handleResponse(res, 404, `User with ${req.body.email} not found`);
@@ -119,11 +121,12 @@ const adminController = {
         return handleResponse(res, 400, "Fill required properties");
       }
 
+      // Exclude these variables '-password -reset -resetExp -__v' in the result.
       const user = await User.findOne({ email: req.body.oldEmail }, '-password -reset -resetExp -__v');
       if (!user) {
         return handleResponse(res, 404, `User with ${req.body.oldEmail} not found`);
       }
-      const updateUser = await findByIdAndUpdate(user.id,
+      const updateUser = await User.findByIdAndUpdate(user.id,
         { email: req.body.newEmail },
         { new: true });
 
@@ -158,7 +161,7 @@ const adminController = {
       if (!user) {
         return handleResponse(res, 404, `${req.body.email} not found`);
       }
-      const delUser = await _findByIdAndDelete(user.id);
+      const delUser = await User.findByIdAndDelete(user.id);
       if (!delUser) {
         return handleResponse(res, 404, "User not found");
       }
@@ -171,8 +174,7 @@ const adminController = {
   },
 
   /**
-   * View all cycles.
-   * @async
+   * @async  View all cycles.
    * @param {Object} req - Express request object.
    * @param {Object} res - Express response object.
    * @returns {void}
@@ -189,8 +191,7 @@ const adminController = {
   },
 
   /**
-   * Fetch a cycle by ID.
-   * @async
+   * @async Fetch a cycle by ID.
    * @param {Object} req - Express request object.
    * @param {Object} res - Express response object.
    * @returns {void}
@@ -214,8 +215,7 @@ const adminController = {
   },
 
   /**
-   * Delete cycle data.
-   * @async
+   * @async Delete cycle data.
    * @param {Object} req - Express request object.
    * @param {Object} res - Express response object.
    * @returns {void}
