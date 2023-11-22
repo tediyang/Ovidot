@@ -1,7 +1,7 @@
 import { compare } from 'bcryptjs';
-import { findOne } from '../model/admin.model';
-import { find, findById, findByIdAndDelete } from '../../models/cycle.model';
-import { find as _find, findOne as _findOne, findByIdAndUpdate, findByIdAndDelete as _findByIdAndDelete } from '../../models/user.model';
+import Admin from '../model/admin.model';
+import Cycle from '../../models/cycle.model';
+import User from '../../models/user.model';
 import { handleResponse } from '../../utility/handle.response';
 import { validationResult } from 'express-validator';
 import { sign } from 'jsonwebtoken';
@@ -19,8 +19,7 @@ function createToken(user) {
  */
 const adminController = {
   /**
-   * Admin login.
-   * @async
+   * @async Login an admin user.
    * @param {Object} req - Express request object.
    * @param {Object} res - Express response object.
    * @returns {void}
@@ -35,7 +34,7 @@ const adminController = {
       return handleResponse(res, 400, "Fill required properties");
     }
 
-    const user = await findOne({ username: username });
+    const user = await Admin.findOne({ username: username });
 
     if (!user) {
       return handleResponse(res, 404, `${username} doesn't exist`);
@@ -59,8 +58,7 @@ const adminController = {
   },
 
   /**
-   * Get all users.
-   * @async
+   * @async Get all users.
    * @param {Object} req - Express request object.
    * @param {Object} res - Express response object.
    * @returns {void}
@@ -68,7 +66,7 @@ const adminController = {
    */
   viewAllusers: async (req, res) => {
     try {
-      const allUsers = await _find({}, '-password -reset -resetExp -__v');
+      const allUsers = await User.find({}, '-password -reset -resetExp -__v');
       return res.status(200).json({ allUsers });
     } catch (error) {
       console.log(error);
@@ -77,8 +75,7 @@ const adminController = {
   },
 
   /**
-   * Get user.
-   * @async
+   * @async  Get a given user.
    * @param {Object} req - Express request object.
    * @param {Object} res - Express response object.
    * @returns {void}
@@ -92,7 +89,7 @@ const adminController = {
         return handleResponse(res, 400, "Fill required properties");
       }
 
-      const user = await _findOne({ email: req.body.email }, '-password -reset -resetExp -__v');
+      const user = await User.findOne({ email: req.body.email }, '-password -reset -resetExp -__v');
       if (!user) {
         return handleResponse(res, 404, `User with ${req.body.email} not found`);
       }
@@ -104,8 +101,7 @@ const adminController = {
   },
 
   /**
-   * Update user email.
-   * @async
+   * @async Update a user email.
    * @param {Object} req - Express request object.
    * @param {Object} res - Express response object.
    * @returns {void}
@@ -123,7 +119,7 @@ const adminController = {
         return handleResponse(res, 400, "Fill required properties");
       }
 
-      const user = await _findOne({ email: req.body.oldEmail }, '-password -reset -resetExp -__v');
+      const user = await User.findOne({ email: req.body.oldEmail }, '-password -reset -resetExp -__v');
       if (!user) {
         return handleResponse(res, 404, `User with ${req.body.oldEmail} not found`);
       }
@@ -140,8 +136,7 @@ const adminController = {
   },
 
   /**
-   * Delete user.
-   * @async
+   * @async Delete a given user.
    * @param {Object} req - Express request object.
    * @param {Object} res - Express response object.
    * @returns {void}
@@ -159,7 +154,7 @@ const adminController = {
         return handleResponse(res, 400, "Fill required properties");
       }
 
-      const user = await _findOne({ email: req.body.email });
+      const user = await User.findOne({ email: req.body.email });
       if (!user) {
         return handleResponse(res, 404, `${req.body.email} not found`);
       }
@@ -185,7 +180,7 @@ const adminController = {
    */
   viewAllCycles: async (req, res) => {
     try {
-      const allCycleData = await find({});
+      const allCycleData = await Cycle.find({});
       return res.status(200).json({ allCycleData });
     } catch (error) {
       console.error(error);
@@ -206,7 +201,7 @@ const adminController = {
       const cycleId = req.params.cycleId;
 
       // Retrieve specific cycle data by ID
-      const specificCycleData = await findById(cycleId);
+      const specificCycleData = await Cycle.findById(cycleId);
       if (!specificCycleData) {
         return handleResponse(res, 404, "Cycle data not found");
       }
@@ -235,7 +230,7 @@ const adminController = {
       const cycleIdToDelete = req.params.cycleId;
 
       // Find and delete specific cycle data by ID
-      const deletedCycleData = await findByIdAndDelete(cycleIdToDelete);
+      const deletedCycleData = await Cycle.findByIdAndDelete(cycleIdToDelete);
       if (!deletedCycleData) {
         return handleResponse(res, 404, "Data not found");
       }
