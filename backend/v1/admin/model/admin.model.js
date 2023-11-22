@@ -12,7 +12,7 @@ const AdminSchema = Schema({
     },
     username: {
         type: String,
-        required: true, // 'require' should be 'required'
+        required: true,
         unique: true
     },
     password: {
