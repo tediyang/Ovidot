@@ -1,19 +1,19 @@
 // Import dependencies
 require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const verify = require('./middleware/tokenVerification');
+import express, { json } from 'express';
+import cors from 'cors';
+import { connect, connection } from 'mongoose';
+import { urlencoded } from 'body-parser';
+import verify from './middleware/tokenVerification';
 
 // Import routes
-const generalRoutes = require('./routes/general.routes');
-const authRoutes = require('./routes/auth.routes');
-const adminRoutes = require('./administrator/route/admin.routes');
+import generalRoutes from './routes/general.routes';
+import authRoutes from './routes/auth.routes';
+import adminRoutes from './administrator/route/admin.routes';
 
 // Import middlewares
-const loggerMiddleware = require('./middleware/logger.middleware');
-const errorHandle = require('./middleware/error.middleware');
+import loggerMiddleware from './middleware/logger.middleware';
+import errorHandle from './middleware/error.middleware';
 
 // start app
 const app = express();
@@ -23,13 +23,13 @@ const { HOST, DB, PORT } = process.env;
 const APP_PATH = '/api/v1';
 
 // Connect to database
-mongoose.connect(`mongodb://${HOST}/${DB}`, {
+connect(`mongodb://${HOST}/${DB}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   maxPoolSize: 2
 });
 
-const db = mongoose.connection;
+const db = connection;
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
@@ -37,8 +37,8 @@ db.once('open', () => {
 });
 
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(urlencoded({ extended: false }));
+app.use(json());
 
 // use routes
 app.use(APP_PATH+'/auth', verify, authRoutes);
