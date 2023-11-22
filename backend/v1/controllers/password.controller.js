@@ -85,6 +85,8 @@ export async function forgotPass(req, res) {
 export async function VerifyResetPass(req, res) {
   const { token } = req.params;
 
+  if (!token) return handleResponse(res, 401, 'Invalid or expired token');
+
   if (isTokenBlacklisted(token)) {
     return handleResponse(res, 401, 'Invalid or expired token');
   }
