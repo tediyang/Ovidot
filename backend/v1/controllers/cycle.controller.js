@@ -52,6 +52,22 @@ function cycleFilter(cycle) {
 	return result;
 }
 
+// mapped months names to integer
+const MONTHS = {
+	1: 'January',
+	2: 'February',
+	3: 'March',
+	4: 'April',
+	5: 'May',
+	6: 'June',
+	7: 'July',
+	8: 'August',
+	9: 'September',
+	10: 'October',
+	11: 'November',
+	12: 'December'
+}
+
 /**
  * Creates a cycle for the user with provided params.
  * @param {Object} req - Express Request
@@ -70,7 +86,7 @@ export async function createCycle(req, res) {
 
 		if (!validateCreateDate(startdate)) {
 			return handleResponse(res, 400,
-				'Specify a proper date: Date should not be less 3 days or greater than present day');
+				'Specify a proper date: Date should not be less than 3 days or greater than present day');
 		}
 
 		// Get the month for the date
@@ -83,9 +99,9 @@ export async function createCycle(req, res) {
 		if (user._cycles.length > 0) {
 			/**
 			 * 1. Get the most recent data for that month.
-			 * 2. Get the predicted nextdate for the previous cycle
+			 * 2. Get the predicted nextdate for the previous cycle.
 			 * 3. Get the difference from the new month startdate
-			 * 4. If the difference is greater than 10 (10 days) send a
+			 * 4. If the difference is greater than 7 (7 days) send a
 			 * respond requesting for update or delete cycle. This estimate is made based on
 			 * an assumption that a woman cycle can't come earlier than 7 days.
 			 */
@@ -94,7 +110,7 @@ export async function createCycle(req, res) {
 			const prevD = new Date(startdate);
 			const diff = (nextD - prevD) / (24 * 60 * 60 * 1000);
 			if (diff > 7) {
-				return handleResponse(res, 400, "Cycle already exist: Update or Delete to create another");
+				return handleResponse(res, 400, "Cycle already exist for this month: Delete to create another");
 			}
 		}
 		// if user._cycles is false (no data), create a new one.
@@ -185,7 +201,12 @@ export async function fetchMonth(req, res) {
 		let { month } = req.params;
 		const userId = req.user.id;
 
-		month = month.charAt(0).toUpperCase() + month.slice(1);
+		// If month data is sent as a Number
+		if (typeof +month === 'number' && month >= 1 && month <= 12) {
+			month = MONTHS[month];
+		} else {
+			month = month.charAt(0).toUpperCase() + month.slice(1).toLowerCase();
+		}
 
 		const user = await populateWithCyclesBy(userId, 'month', month);
 		if (user === null) {
