@@ -8,7 +8,10 @@ import { sign } from 'jsonwebtoken';
 
 const secretKey = process.env.ADMINKEY;
 
-// Generate token
+/**
+ * Generate token
+ * @param {Admin} admin - Admin Object to generate token for. 
+ */
 function createToken(admin) {
   return sign({ id: admin._id, admin: admin.is_admin }, secretKey, { expiresIn: '1h' });
 }
