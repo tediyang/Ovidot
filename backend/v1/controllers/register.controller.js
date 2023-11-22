@@ -17,7 +17,12 @@ function createToken(user) {
   return sign({ id: user._id, email: user.email }, secretKey, { expiresIn: '5h' });
 }
 
-/** Register user */
+/**
+ * Register user
+ * @param {Object} req - Express Request
+ * @param {Object} res - Express Response
+ * @return Payload on Success
+ */
 export async function signup(req, res) {
   // Validate the data
   const errors = validationResult(req);
@@ -30,7 +35,12 @@ export async function signup(req, res) {
   return await createUser({ email, password, username, age }, res);
 }
 
-/** Login user */
+/**
+ * Login user
+ * @param {Object} req - Express Request
+ * @param {Object} res - Express Response
+ * @return Payload on Success
+ */
 export async function login(req, res) {
   const { email, password } = req.body;
   const user = await User.findOne({ email: email });
@@ -55,7 +65,12 @@ export async function login(req, res) {
   }
 }
 
-/** Logout user */
+/**
+ * Logout user
+ * @param {Object} req - Express Request
+ * @param {Object} res - Express Response
+ * @return Payload on Success
+ */
 export async function logout(req, res) {
   try {
     let token = req.header('Authorization');
