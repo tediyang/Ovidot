@@ -10,9 +10,9 @@ import { validateCreateDate, validateUpdateDate } from '../utility/date.validate
 
 /**
  * Parse the data to create the cycle.
- * @param {String} month - Month of Cycle
- * @param {Number} period - Number of menstrual days
- * @param {Date} startdate - The first day of the cycle 
+ * @param {String} month - Month of Cycle.
+ * @param {Number} period - Number of menstrual days.
+ * @param {Date} startdate - The first day of the cycle.
  * @param {Object} data - The cycle calculated data.
  * @returns - Data to parse to cycle model.
  */
@@ -32,9 +32,9 @@ function cycleParser(month, period, startdate, data ) {
 }
 
 /**
- * Take in a cycle object and return selected cycle properties
- * @param {Cycle} cycle 
- * @returns cycles properties 
+ * Take in a cycle object and return selected cycle properties.
+ * @param {Cycle} cycle.
+ * @returns cycles properties.
  */
 function cycleFilter(cycle) {
 	const result = {
@@ -51,7 +51,6 @@ function cycleFilter(cycle) {
 	}
 	return result;
 }
-
 
 /**
  * Creates a cycle for the user with provided params.
