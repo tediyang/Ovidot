@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 import { genSalt, hash, compare } from 'bcryptjs';
 import { handleResponse } from '../utility/handle.response';
 import { isTokenBlacklisted, updateBlacklist } from '../middleware/tokenBlacklist';
+import { validationResult } from 'express-validator';
 
 // Host, Port
 const host = process.env.HOST;
@@ -150,6 +151,12 @@ export async function ResetPass(req, res) {
  */
 export async function changePass(req, res) {
   try {
+    // validate the request
+    const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+		  return handleResponse(res, 400, "Fill required properties");
+		}
+
     const { currentPassword, newPassword } = req.body;
 
     const userId = req.user.id;
