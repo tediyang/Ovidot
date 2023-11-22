@@ -1,9 +1,14 @@
 // logger.middleware.js
 import { createWriteStream } from 'fs';
-import { join } from 'path';
+import { join, dirname } from 'path';
+
+// Use import.meta.url to get the module's URL
+const moduleURL = new URL(import.meta.url);
+// Use dirname to get the directory name
+const moduleDir = dirname(moduleURL.pathname);
 
 // Create a writable stream to log requests and responses to a file
-const logStream = createWriteStream(join(__dirname, 'access.log'), { flags: 'a' });
+const logStream = createWriteStream(join(moduleDir, 'access.log'), { flags: 'a' });
 
 // Custom logger middleware
 const loggerMiddleware = (req, res, next) => {

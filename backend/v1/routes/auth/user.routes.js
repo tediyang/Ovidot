@@ -1,7 +1,7 @@
 // User Routes
 import { Router } from 'express';
 const router /** @type {ExpressRouter} */ = Router();
-import * as user from '../../controllers/user.controller';
+import * as user from '../../controllers/user.controller.js';
 import { changePass } from '../../controllers/password.controller.js';
 import { body } from 'express-validator';
 

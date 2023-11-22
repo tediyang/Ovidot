@@ -1,9 +1,9 @@
 // User Token Verification
-require('dotenv').config();
-import { verify } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { handleResponse } from '../utility/handle.response.js';
 import { isTokenBlacklisted } from './tokenBlacklist.js';
 
+const { verify } = jwt;
 
 /**
  * Verify user's token

@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 // Setup the calender model
 const CycleSchema = Schema({

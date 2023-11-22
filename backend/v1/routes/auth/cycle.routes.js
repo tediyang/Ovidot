@@ -2,7 +2,7 @@
 import { Router } from 'express';
 const router /** @type {ExpressRouter} */ = Router();
 import { body } from 'express-validator';
-import * as cycle from '../../controllers/cycle.controller';
+import * as cycle from '../../controllers/cycle.controller.js';
 
 // Create a cycle
 router.post('/create', [

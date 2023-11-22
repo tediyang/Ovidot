@@ -1,5 +1,5 @@
 // CYCLE CONTROLLER (CRUD)
-import Cycle from '../models/cycle.model';
+import Cycle from '../models/cycle.model.js';
 import { handleResponse } from '../utility/handle.response.js';
 import { month as _month, calculate } from '../utility/cycle.calculator.js';
 import User from '../models/user.model.js';

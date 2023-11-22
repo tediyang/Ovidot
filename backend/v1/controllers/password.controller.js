@@ -1,10 +1,12 @@
 import { createTransport } from 'nodemailer';
 import User from '../models/user.model.js';
 import { v4 } from 'uuid';
-import { genSalt, hash, compare } from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 import { handleResponse } from '../utility/handle.response.js';
 import { isTokenBlacklisted, updateBlacklist } from '../middleware/tokenBlacklist.js';
 import { validationResult } from 'express-validator';
+
+const { genSalt, hash, compare } = bcrypt;
 
 // Host, Port
 const host = process.env.HOST;

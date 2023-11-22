@@ -1,9 +1,9 @@
 // Import dependencies
-require('dotenv').config();
+import dotenv from 'dotenv';
 import express, { json } from 'express';
 import cors from 'cors';
-import { connect, connection } from 'mongoose';
-import { urlencoded } from 'body-parser';
+import mongoose from 'mongoose';
+import bodyParser from 'body-parser';
 import verify from './v1/middleware/tokenVerification.js';
 
 // Import routes
@@ -12,8 +12,12 @@ import authRoutes from './v1/routes/auth.routes.js';
 import adminRoutes from './v1/admin/route/admin.routes.js';
 
 // Import middlewares
-import loggerMiddleware from './v1/middleware/logger.middleware.js';
-import errorHandle from './v1/middleware/error.middleware.js';
+// import loggerMiddleware from './v1/middleware/logger.middleware.js';
+// import errorHandle from './v1/middleware/error.middleware.js';
+
+dotenv.config()
+const { connect, connection } = mongoose;
+const { urlencoded } = bodyParser;
 
 // start app
 const app = express();
@@ -45,8 +49,8 @@ app.use(APP_PATH+'/auth', verify, authRoutes);
 app.use(APP_PATH+'/admin', adminRoutes);
 app.use(APP_PATH, generalRoutes);
 
-app.use(loggerMiddleware);
-app.use(errorHandle);
+// app.use(loggerMiddleware);
+// app.use(errorHandle);
 
 app.listen(PORT, () => {
   console.log(`Server is now running on port ${PORT}`);

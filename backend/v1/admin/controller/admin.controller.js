@@ -1,11 +1,13 @@
-import { compare } from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
+import jsonwebtoken from 'jsonwebtoken';
 import Admin from '../model/admin.model.js';
 import Cycle from '../../models/cycle.model.js';
 import User from '../../models/user.model.js';
 import { handleResponse } from '../../utility/handle.response.js';
 import { validationResult } from 'express-validator';
-import { sign } from 'jsonwebtoken';
 
+const { compare } = bcryptjs;
+const { sign } = jsonwebtoken;
 const secretKey = process.env.ADMINKEY;
 
 /**

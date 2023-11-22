@@ -1,7 +1,9 @@
 // USER CONTROLLER (CRUD)
+import bcrypt from 'bcryptjs';
 import User from '../models/user.model.js';
 import { handleResponse } from '../utility/handle.response.js';
-import { genSalt, hash } from 'bcryptjs';
+
+const { genSalt, hash } = bcrypt;
 
 /**
  * Create the user object for the new user if it doesn't exist
