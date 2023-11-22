@@ -1,10 +1,12 @@
 import { createTransport } from 'nodemailer';
+import dotenv from 'dotenv';
 import User from '../models/user.model.js';
 import { v4 } from 'uuid';
 import bcrypt from 'bcryptjs';
 import { handleResponse } from '../utility/handle.response.js';
 import { isTokenBlacklisted, updateBlacklist } from '../middleware/tokenBlacklist.js';
 import { validationResult } from 'express-validator';
+dotenv.config();
 
 const { genSalt, hash, compare } = bcrypt;
 

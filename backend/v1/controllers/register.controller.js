@@ -1,10 +1,12 @@
 import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
 import { createUser } from './user.controller.js';
 import { validationResult } from 'express-validator';
 import { handleResponse } from '../utility/handle.response.js';
 import { updateBlacklist } from '../middleware/tokenBlacklist.js';
+dotenv.config();
 
 const { sign } = jwt;
 const { compare } = bcrypt;
