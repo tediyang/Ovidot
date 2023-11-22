@@ -2,7 +2,6 @@
 import User from '../models/user.model';
 import { handleResponse } from '../utility/handle.response';
 import { genSalt, hash } from 'bcryptjs';
-// import { validationResult } from 'express-validator';
 
 /**
  * Create the user object for the new user if it doesn't exist
