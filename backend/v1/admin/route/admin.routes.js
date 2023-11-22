@@ -1,9 +1,7 @@
 // ADMIN ROUTES
 import { Router } from 'express';
 const router /** @type {ExpressRouter} */ = Router();
-import { login, viewAllusers, viewUser,
-    updateUser, deleteUser, viewAllCycles,
-    viewCycle, deleteCycle } from '../controller/admin.controller';
+import adminController from '../controller/admin.controller';
 import { forgotPass } from '../../controllers/password.controller';
 import verifyAdmin from '../middleware/token.admin.verify';
 import { body } from 'express-validator';
@@ -14,32 +12,32 @@ router.post('/login', [
     body('username').isString().notEmpty(),
     body('password').isString().notEmpty()
     ],
-    login);
+    adminController.login);
 
 /** Logout admin */
 router.get('/logout', verifyAdmin, logout);
 
 /** Route for retrieving all users. */
-router.get('/users', verifyAdmin, viewAllusers);
+router.get('/users', verifyAdmin, adminController.viewAllusers);
 
 /** Route for retrieving a user by email. */
 router.post('/users/email', [
     body('email').isString().notEmpty()
     ],
-    verifyAdmin, viewUser);
+    verifyAdmin, adminController.viewUser);
 
 /** Route for updating a user by email. */
 router.put('/users/email', [
     body('oldEmail').isString().notEmpty(),
     body('newEmail').isString().notEmpty()
     ],
-    verifyAdmin, updateUser);
+    verifyAdmin, adminController.updateUser);
 
 /** Route for deleting a user by email. */
 router.delete('/users/email', [
     body('email').isString().notEmpty()
     ],
-    verifyAdmin, deleteUser);
+    verifyAdmin, adminController.deleteUser);
 
 /** Route for sending a forgot password link to a user. */
 router.post('/users/forgot-password', [
@@ -48,12 +46,12 @@ router.post('/users/forgot-password', [
     verifyAdmin, forgotPass);
 
 /** Route for retrieving all cycles. */
-router.get('/cycles', verifyAdmin, viewAllCycles);
+router.get('/cycles', verifyAdmin, adminController.viewAllCycles);
 
 /** Route for retrieving a cycle by cycleId. */
-router.get('/cycles/:cycleId', verifyAdmin, viewCycle);
+router.get('/cycles/:cycleId', verifyAdmin, adminController.viewCycle);
 
 /** Route for deleting a cycle by cycleId. */
-router.delete('/cycles/:cycleId', verifyAdmin, deleteCycle);
+router.delete('/cycles/:cycleId', verifyAdmin, adminController.deleteCycle);
 
 export default router;
