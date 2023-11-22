@@ -17,6 +17,7 @@ const adminTokenVerification = (req, res, next) => {
     return handleResponse(res, 401, 'Unauthorized');
   }
 
+  // import secret key
   const secretKey = process.env.ADMINKEY;
 
   // Remove 'Bearer' from the token
@@ -27,6 +28,7 @@ const adminTokenVerification = (req, res, next) => {
     return handleResponse(res, 401, 'Invalid token');
   }
 
+  // verify the token
   verify(tokenWithoutBearer, secretKey, (err, user) => {
     if (err) {
       return handleResponse(res, 401, 'Invalid token');
