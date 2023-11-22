@@ -1,4 +1,7 @@
 import { readFileSync, writeFileSync } from 'fs';
+import dotenv from 'dotenv';
+dotenv.config();
+
 const blacklist = process.env.BLACKLIST;
 
 /**
