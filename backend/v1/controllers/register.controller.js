@@ -1,6 +1,6 @@
 import { sign } from 'jsonwebtoken';
 import User from '../models/user.model';
-import { create } from './user.controller';
+import { createUser } from './user.controller';
 import { compare } from 'bcryptjs';
 import { validationResult } from 'express-validator';
 import { handleResponse } from '../utility/handle.response';
@@ -9,7 +9,10 @@ import { updateBlacklist } from '../middleware/tokenBlacklist';
 // Secret key for jwt signing and verification
 const secretKey = process.env.SECRETKEY;
 
-// Generate token for user. Expiration 5hrs
+/**
+ * Generate token for user. Expiration 5hrs
+ * @param {User} user - User object to generate token for
+ */
 function createToken(user) {
   return sign({ id: user._id, email: user.email }, secretKey, { expiresIn: '5h' });
 }
@@ -24,7 +27,7 @@ export async function signup(req, res) {
 
   const { email, password, username, age } = req.body;
 
-  return await create({ email, password, username, age }, res);
+  return await createUser({ email, password, username, age }, res);
 }
 
 /** Login user */
