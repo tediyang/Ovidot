@@ -33,7 +33,12 @@ const sender = createTransport({
   },
 });
 
-/** Send reset link password to users */
+/**
+ * Send reset link password to users
+ * @param {Object} req - Express Request
+ * @param {Object} res - Express Response
+ * @return Payload on Success
+*/
 export async function forgotPass(req, res) {
   try {
     const { email } = req.body;
@@ -70,7 +75,12 @@ export async function forgotPass(req, res) {
   }
 }
 
-/** Validate reset token */
+/**
+ * Validate reset token
+ * @param {Object} req - Express Request
+ * @param {Object} res - Express Response
+ * @return Payload on Success
+*/
 export async function VerifyResetPass(req, res) {
   const { token } = req.params;
 
@@ -93,7 +103,12 @@ export async function VerifyResetPass(req, res) {
   })
 }
 
-/** Reset user's password */
+/**
+ * Reset user's password
+ * @param {Object} req - Express Request
+ * @param {Object} res - Express Response
+ * @return Payload on Success
+ */
 export async function ResetPass(req, res) {
   const { token } = req.params;
   const { password } = req.body;
@@ -127,7 +142,12 @@ export async function ResetPass(req, res) {
   return handleResponse(res, 200, "Password changed");
 }
 
-/** Change logged-in user password */
+/**
+ * Change logged-in user password
+ * @param {Object} req - Express Request
+ * @param {Object} res - Express Response
+ * @return Payload on Success
+ */
 export async function changePass(req, res) {
   try {
     const { currentPassword, newPassword } = req.body;
