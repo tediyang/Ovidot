@@ -5,6 +5,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import verify from './v1/middleware/tokenVerification.js';
+dotenv.config();
 
 // Import routes
 import generalRoutes from './v1/routes/general.routes.js';
@@ -15,7 +16,6 @@ import adminRoutes from './v1/admin/route/admin.routes.js';
 // import loggerMiddleware from './v1/middleware/logger.middleware.js';
 // import errorHandle from './v1/middleware/error.middleware.js';
 
-dotenv.config()
 const { connect, connection } = mongoose;
 const { urlencoded } = bodyParser;
 
