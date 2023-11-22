@@ -4,16 +4,16 @@ import express, { json } from 'express';
 import cors from 'cors';
 import { connect, connection } from 'mongoose';
 import { urlencoded } from 'body-parser';
-import verify from './middleware/tokenVerification';
+import verify from './v1/middleware/tokenVerification.js';
 
 // Import routes
-import generalRoutes from './routes/general.routes';
-import authRoutes from './routes/auth.routes';
-import adminRoutes from './administrator/route/admin.routes';
+import generalRoutes from './v1/routes/general.routes.js';
+import authRoutes from './v1/routes/auth.routes.js';
+import adminRoutes from './v1/admin/route/admin.routes.js';
 
 // Import middlewares
-import loggerMiddleware from './middleware/logger.middleware';
-import errorHandle from './middleware/error.middleware';
+import loggerMiddleware from './v1/middleware/logger.middleware.js';
+import errorHandle from './v1/middleware/error.middleware.js';
 
 // start app
 const app = express();

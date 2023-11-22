@@ -1,8 +1,8 @@
 // Authenticated routes
 import { Router } from 'express';
 const router = Router();
-import userRoutes from './auth/user.routes';
-import cycleRoutes from './auth/cycle.routes';
+import userRoutes from './auth/user.routes.js';
+import cycleRoutes from './auth/cycle.routes.js';
 import { logout } from '../controllers/register.controller.js';
 
 

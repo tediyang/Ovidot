@@ -12,20 +12,20 @@ const UserSchema = Schema({
     },
     email: {
         type: String,
-        require: true,
+        required: true,
         unique: true
     },
     password: {
         type: String,
-        require: true
+        required: true
     },
     username: {
         type: String,
-        require: true
+        required: true
     },
     age: {
         type: Number,
-        require: true,
+        required: true,
         min: 8,
         max: 55
     },

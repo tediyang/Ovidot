@@ -1,6 +1,6 @@
 // USER CONTROLLER (CRUD)
-import User from '../models/user.model';
-import { handleResponse } from '../utility/handle.response';
+import User from '../models/user.model.js';
+import { handleResponse } from '../utility/handle.response.js';
 import { genSalt, hash } from 'bcryptjs';
 
 /**

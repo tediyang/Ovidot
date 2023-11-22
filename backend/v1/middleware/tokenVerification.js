@@ -1,8 +1,8 @@
 // User Token Verification
 require('dotenv').config();
 import { verify } from 'jsonwebtoken';
-import { handleResponse } from '../utility/handle.response';
-import { isTokenBlacklisted } from './tokenBlacklist';
+import { handleResponse } from '../utility/handle.response.js';
+import { isTokenBlacklisted } from './tokenBlacklist.js';
 
 
 /**

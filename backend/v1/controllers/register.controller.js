@@ -1,10 +1,10 @@
 import { sign } from 'jsonwebtoken';
-import User from '../models/user.model';
-import { createUser } from './user.controller';
+import User from '../models/user.model.js';
+import { createUser } from './user.controller.js';
 import { compare } from 'bcryptjs';
 import { validationResult } from 'express-validator';
-import { handleResponse } from '../utility/handle.response';
-import { updateBlacklist } from '../middleware/tokenBlacklist';
+import { handleResponse } from '../utility/handle.response.js';
+import { updateBlacklist } from '../middleware/tokenBlacklist.js';
 
 // Secret key for jwt signing and verification
 const secretKey = process.env.SECRETKEY;

@@ -1,11 +1,11 @@
 // ADMIN ROUTES
 import { Router } from 'express';
 const router /** @type {ExpressRouter} */ = Router();
-import adminController from '../controller/admin.controller';
-import { forgotPass } from '../../controllers/password.controller';
-import verifyAdmin from '../middleware/token.admin.verify';
+import adminController from '../controller/admin.controller.js';
+import { forgotPass } from '../../controllers/password.controller.js';
+import verifyAdmin from '../middleware/token.admin.verify.js';
 import { body } from 'express-validator';
-import { logout } from '../../controllers/register.controller';
+import { logout } from '../../controllers/register.controller.js';
 
 /** Route for logging into the admin profile. */
 router.post('/login', [

@@ -1,11 +1,11 @@
 // CYCLE CONTROLLER (CRUD)
 import Cycle from '../models/cycle.model';
-import { handleResponse } from '../utility/handle.response';
-import { month as _month, calculate } from '../utility/cycle.calculator';
-import User from '../models/user.model';
+import { handleResponse } from '../utility/handle.response.js';
+import { month as _month, calculate } from '../utility/cycle.calculator.js';
+import User from '../models/user.model.js';
 import { validationResult } from 'express-validator';
-import { populateWithCycles, populateWithCyclesBy } from '../utility/user.populate';
-import { validateCreateDate, validateUpdateDate } from '../utility/date.validate';
+import { populateWithCycles, populateWithCyclesBy } from '../utility/user.populate.js';
+import { validateCreateDate, validateUpdateDate } from '../utility/date.validate.js';
 
 
 /**

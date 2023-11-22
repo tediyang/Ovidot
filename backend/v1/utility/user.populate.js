@@ -1,4 +1,4 @@
-import { findById } from '../models/user.model';
+import User from '../models/user.model.js';
 
 /**
  * Populate the user with the data of cycles for the provided searched keyword and return the user object.
@@ -21,7 +21,7 @@ export async function populateWithCyclesBy(userId, key, value) {
      * The user object with populated cycle data.
      * @type {User|null}
      */
-    const user = await findById(userId).populate({
+    const user = await User.findById(userId).populate({
       path: '_cycles',
       match: search,
     }).exec();
@@ -44,7 +44,7 @@ export async function populateWithCycles(userId) {
      * The user object with populated cycle data.
      * @type {User|null}
      */
-    const user = await findById(userId).populate({
+    const user = await User.findById(userId).populate({
       path: '_cycles',
     }).exec();
 

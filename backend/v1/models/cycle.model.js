@@ -12,7 +12,7 @@ const CycleSchema = Schema({
     },
     month: {
         type: String,
-        require: true
+        required: true
     },
     period: {
         type: Number,
@@ -24,11 +24,11 @@ const CycleSchema = Schema({
     },
     start_date: {
         type: Date,
-        require: true
+        required: true
     },
     next_date: {
         type: Date,
-        require: true
+        required: true
     },
     days: {
 	    type: Number,

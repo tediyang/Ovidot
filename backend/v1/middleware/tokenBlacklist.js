@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'fs';
-const blacklist = 'blacklist.json';
+const blacklist = process.env.BLACKLIST;
 
 /**
  * Fuction that reads the blacklist json file

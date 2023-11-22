@@ -1,7 +1,7 @@
 require('dotenv').config();
 import { verify } from 'jsonwebtoken';
-import { handleResponse } from '../../utility/handle.response';
-import { isTokenBlacklisted } from '../../middleware/tokenBlacklist';
+import { handleResponse } from '../../utility/handle.response.js';
+import { isTokenBlacklisted } from '../../middleware/tokenBlacklist.js';
 
 /**
  * Verify admin token
