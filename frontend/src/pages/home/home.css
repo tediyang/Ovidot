@@ -1,0 +1,310 @@
+.main__header {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    margin-top: 3rem;
+}
+
+.main__header-container {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6rem;
+}
+
+.main__header-left {
+    margin-top: -3rem;
+}
+
+.main__header-left h4 {
+    margin-bottom: 1rem;
+    color: var(--color-secondary);
+    font-weight: 400;
+    
+}
+
+.main__header-left h1 {
+    padding-left: 1rem;
+    font-weight: bold;
+    
+}
+
+.main__header-left p {
+    margin: 1rem 0 3.5rem;
+    font-size: 2rem;
+    font-family: 'Cabin Sketch';
+}
+.main__header-right {
+    display: grid;
+    place-items: flex-end;
+    position: relative;
+}
+
+.main__header-image {
+    width: 70%;
+}
+
+/* ====== LEARN MORE ====== 
+.program {
+    margin-top: 4rem;
+}
+
+.program__wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3rem;
+    margin-top: 4rem;
+}
+
+.program__program a {
+    margin-top: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.program__program:hover a{
+    background: palevioletred;
+    color: peachpuff;
+}*/
+.courses {
+    margin: 7rem;
+}
+ h3 {
+    font-size: 2.5rem;
+    text-align: center;
+ }
+.courses__container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.course {
+    background: white;
+    text-align: center;
+    border: 1px solid transparent;
+    transition: var(--transition);
+    border-radius: 2rem;
+    margin-top: 2rem;
+    width: 20rem;
+    height: rem;
+}
+
+.course__image {
+    display: inline-block;
+    object-fit: cover;
+    max-width: 55%;
+    height: auto;
+    margin-right: 8.8rem;
+}
+
+.course__image1{
+    display: inline-block;
+    object-fit: cover;
+    max-width: 55%;
+    height: auto;
+    margin-right: 8.8rem;
+}
+.course:hover {
+    background: white;
+    border-color: var(--color-primary);
+}
+
+.course__info {
+    padding: 2rem;
+}
+
+.course__info p {
+    margin: 1.2rem 0 2rem;
+    font-size: 1.2rem;
+}
+
+
+
+/* ====== FOOTER ====== */
+footer {
+    background: white;
+    margin-top: 8rem;
+    padding-top: 4rem;
+    font-size: 0.9rem;
+}
+
+.footer__container {
+    display: grid;
+    grid-template-columns: 26rem 1fr 1fr;
+    gap: 6rem;
+}
+
+.footer__container article {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap:0.7rem;
+}
+
+.footer__contaier article p {
+    margin-top: 0.5rem;
+}
+
+.footer__container article h4 {
+    margin-bottom: 0.6rem;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.footer__socials {
+    margin-top: 1.5rem;
+    gap: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.footer__socials a {
+    background: var(--color-gray-100);
+    padding: 0.7rem;
+    border: 1px solid transparent;
+    border-radius: 0.6rem;
+    transition: var(--transition);
+}
+
+.footer__socials a:hover {
+    background: hotpink;
+}
+
+
+/*==== SECTION HEAD =====*/
+
+.section {
+    margin-top: 10rem;
+}
+
+.section__head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.section__head span {
+    background: blueviolet;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    color: lightseagreen;
+    font-size: 1.5rem;
+}
+
+/*==== FAQs =====*/
+.faqs__container {
+    margin-top: 3rem;
+    /*box-shadow: inset 0 0 3rem rgba(0, 0, 0, 0.5);*/
+}
+.faqs__wrapper {
+    margin-top: 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 5rem;
+    align-items: flex-start;
+}
+
+.faq {
+    background: hotpink;
+    align-items: center;
+    height: fit-content;
+    padding: 2rem;
+    border-radius: 1rem;
+    cursor: pointer;
+}
+
+.faq div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.faq__icon {
+    background: transparent;
+    color: var(--color-gray-600);
+    font-size: 1rem;
+}
+
+.faq p {
+    margin-top: 1.5rem;
+}
+
+
+
+
+/*======== MEDIA QUERIES (medium screens) ========*/
+@media screen and (max-width: 1024px) {
+/*MAIN HEADER*/
+.main__header {
+    height: fit-content;
+    padding: 12rem 0;
+}
+
+.main__header-container {
+    gap: 0;
+    grid-template-columns: 1fr;
+}
+
+.main__header-left p {
+    text-align: center;
+    text-decoration: wavy;
+    font-size: 1.5rem;
+}
+
+.main__header-left h1 {
+    font-size: 3rem;
+}
+
+.main__header-image {
+    display: none;
+}
+
+.main__header .btn {
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+/** FAQs**/
+.faqs__wrapper {
+    grid-template-columns: 1fr;
+}
+
+/* FOOTER */
+.footer__container {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+ 
+}
+
+/** ARTICLE **/
+.courses {
+    margin: 7rem;
+}
+ h3 {
+    font-size: 2rem;
+    text-align: center;
+ }
+.courses__container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+
+
+@media screen and (max-width: 600px) {
+.footer__container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+.courses__container {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 2rem;
+}
+
