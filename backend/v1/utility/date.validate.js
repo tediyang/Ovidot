@@ -48,7 +48,7 @@ export function validateCreateDate(startDate) {
  * @returns {boolean} - true if the date is valid, false otherwise
  */
 export function validateUpdateDate(prevDate, newDate, period) {
-    if (!isValidDate(prevDate) || !isValidDate(newDate)) {
+    if (!isValidDate(prevDate) || !isValidDate(newDate) || !period) {
         return false;
     }
 
