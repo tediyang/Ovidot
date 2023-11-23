@@ -1,9 +1,5 @@
-const DATE_OPTIONS = Object.freeze({
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0,
-});
+// CYCLE CALCULATOR
+
 
 const MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
 
@@ -23,35 +19,40 @@ export function calculate(period, startDate, ovulation = null) {
     return new Promise((resolve, reject) => {
         try {
             const dayOne = new Date(startDate);
-            dayOne.setHours(DATE_OPTIONS.hours, DATE_OPTIONS.minutes, DATE_OPTIONS.seconds, DATE_OPTIONS.milliseconds);
 
             const periodRange = [];
-            const unsafeDays = [];
 
             if (ovulation === null) {
                 ovulation = new Date(dayOne);
                 ovulation.setDate(dayOne.getDate() + 9 + period);
             } else {
                 ovulation = new Date(ovulation);
+                // check if ovulation occurs before or during period range.
+                // if it does, throw an error
                 let dayLast = new Date(dayOne);
-                dayLast.setDate(dayLast.getDate() + period);
+                dayLast.setDate(dayLast.getDate() + period); // The last day of menstraution
 
                 if (ovulation < dayOne || ovulation < dayLast) {
-                    const err = new Error("Invalid ovulation date");
+                    const err = new Error("Invalid ovulation date: Can't occur before menstraution");
                     err.statusCode = 400;
                     reject(err);
                 }
             }
 
+            // Get the total cycle days
             const totalCycleDays = getTotalCycleDays(dayOne, ovulation);
 
+            // Get the period range by adding each day.
             for (let i = 0; i < period; i++) {
                 const currDate = new Date(dayOne);
                 currDate.setDate(dayOne.getDate() + i);
                 periodRange.push(formatDate(currDate));
             }
 
+            // Calculate the predicted start date and end date for ovulation.
             const ovulationRange = getOvulationRange(ovulation);
+
+            // Calculate the unsafeRange
             const unsafeRange = getUnsafeRange(ovulation, new Date(periodRange[periodRange.length - 1]));
 
             let nextDate = new Date(dayOne);
@@ -64,26 +65,13 @@ export function calculate(period, startDate, ovulation = null) {
                 ovulation: ovulationRange[1],
                 ovulationRange,
                 unsafeDays: unsafeRange,
-                nextDate,
+                nextDate
             });
         } catch (err) {
             reject(err);
         }
     });
 }
-
-/**
- * Get the last day of menstruation based on the start date and period.
- *
- * @param {Date} startDate - the beginning of the user cycle
- * @param {Number} period - the number of days of menstruation
- * @returns {Date} - the last day of menstruation
- */
-const getLastDayOfMenstruation = (startDate, period) => {
-    const lastDay = new Date(startDate);
-    lastDay.setDate(lastDay.getDate() + period - 1);
-    return lastDay;
-};
 
 /**
  * Get the total number of days in the menstrual cycle.
@@ -111,6 +99,7 @@ const getOvulationRange = (ovulation) => {
     const ovulationRangeEnd = new Date(ovulation);
     ovulationRangeEnd.setDate(ovulation.getDate() + 1);
 
+    // Calculate the ovulation range
     return [
         formatDate(ovulationRangeStart),
         formatDate(ovulation),
@@ -126,6 +115,8 @@ const getOvulationRange = (ovulation) => {
  * @returns {String[]} - an array containing unsafe days for conception
  */
 const getUnsafeRange = (ovulation, lastPeriodDay) => {
+    // Get unsafeRangeStart, and if the difference between unsafeRangeStart and lastPeriodDay is less than 0.
+    // increase the unsafeRangeStart date
     let unsafeRangeStart;
     let i = 5;
     do {
@@ -138,6 +129,7 @@ const getUnsafeRange = (ovulation, lastPeriodDay) => {
     unsafeRangeEnd.setDate(ovulation.getDate() + 5);
 
     const unsafeDays = [];
+    // Append all the unsafeDays
     while (unsafeRangeStart <= unsafeRangeEnd) {
         unsafeDays.push(formatDate(unsafeRangeStart));
         unsafeRangeStart.setDate(unsafeRangeStart.getDate() + 1);
