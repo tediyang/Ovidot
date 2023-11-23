@@ -1,7 +1,7 @@
 import { createTransport } from 'nodemailer';
 import dotenv from 'dotenv';
 import User from '../models/user.model.js';
-import uuid from 'uuid';
+import { v4 } from 'uuid';
 import bcrypt from 'bcryptjs';
 import { handleResponse } from '../utility/handle.response.js';
 import { isTokenBlacklisted, updateBlacklist } from '../middleware/tokenBlacklist.js';
@@ -23,9 +23,8 @@ const emailPassword = process.env.EMAILPASSWORD;
  * @returns - a unique uuid.
  */
 function resetToken() {
-    return uuid.v4();
-  }
-
+  return v4();
+}
 
 /**
  * Create the sender details. user and pass verification is used here, but for more efficient
