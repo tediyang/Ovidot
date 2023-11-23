@@ -25,7 +25,8 @@ router.post('/login', [
 
 // Send rest link to user's email
 router.post('/forgot-password', [
-    body("email").isString().notEmpty()
+    body("email").isString().notEmpty(),
+    body('url').isString().notEmpty()
     ],
     forgotPass
 );
