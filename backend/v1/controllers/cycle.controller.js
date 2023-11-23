@@ -241,19 +241,14 @@ export async function updateCycle(req, res) {
 			return handleResponse(res, 404, "Cycle not found");
 		}
 
-		/**
-		 * validate update startDate.
-		 * This is to avoid error in date when a user doesn't visit her profile
-		 * and the model continues by predicting the cycle further. When the user visit again,
-		 * the user can change startdate but this date must fall between the valid past days.
-		 * This range is made based on the assumption that a user's cycle can't come earlier than
-		 * 10 days.
-		 */
+		// Check if the user provided at least a data to update
 		if (!period && !ovulation) {
 			return handleResponse(res, 400, "Provide atleast a param to update");
 		}
+
+		// Validate the ovulation date.
 		if (ovulation) {
-			if (!validateUpdateDate(cycle.start_date, ovulation)) {
+			if (!validateUpdateDate(cycle.start_date, ovulation, cycle.period)) {
 				return handleResponse(res, 400, 'Ovulation date must not exceed 18 days from start date');
 			}
 		}
