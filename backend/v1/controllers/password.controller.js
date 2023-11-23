@@ -1,7 +1,7 @@
 import { createTransport } from 'nodemailer';
 import dotenv from 'dotenv';
 import User from '../models/user.model.js';
-import { v4 } from 'uuid';
+import uuid from 'uuid';
 import bcrypt from 'bcryptjs';
 import { handleResponse } from '../utility/handle.response.js';
 import { isTokenBlacklisted, updateBlacklist } from '../middleware/tokenBlacklist.js';
@@ -23,7 +23,7 @@ const emailPassword = process.env.EMAILPASSWORD;
  * @returns - a unique uuid.
  */
 function resetToken() {
-    return v4();
+    return uuid.v4();
   }
 
 
@@ -46,7 +46,13 @@ const sender = createTransport({
 */
 export async function forgotPass(req, res) {
   try {
-    const { email } = req.body;
+    // validate request
+    const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+		  return handleResponse(res, 400, "Fill required properties");
+		}
+
+    const { email, url } = req.body;
     const user = await User.findOne({ email: email });
 
     if (!user) {
@@ -59,7 +65,7 @@ export async function forgotPass(req, res) {
     user.resetExp = resetExp;
     await user.save();
 
-    const resetLink = `http://${host}:${port}/api/reset-password/${token}`;
+    const resetLink = `http://${url}/${token}`;
 
     const receiver = {
       to: email,
@@ -75,7 +81,6 @@ export async function forgotPass(req, res) {
       return handleResponse(res, 201, 'Password reset link sent to email');
     });
   } catch (error) {
-    console.log(error);
     return handleResponse(res, 500, 'Internal Server Error');
   }
 }
@@ -87,27 +92,35 @@ export async function forgotPass(req, res) {
  * @return Payload on Success
 */
 export async function VerifyResetPass(req, res) {
-  const { token } = req.params;
+  try {
+    const { token } = req.params;
 
-  if (!token) return handleResponse(res, 401, 'Invalid or expired token');
+    if (!token) return handleResponse(res, 401, 'Invalid or expired token');
 
-  if (isTokenBlacklisted(token)) {
-    return handleResponse(res, 401, 'Invalid or expired token');
+    if (isTokenBlacklisted(token)) {
+      return handleResponse(res, 401, 'Invalid or expired token');
+    }
+
+    const user = await User.findOne({
+      reset: token,
+      resetExp: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return handleResponse(res, 401, 'Invalid or expired token');
+    }
+
+    return res.status(200).json({
+      message : "success" ,
+      token
+    });
+  } catch {
+    return handleResponse(res, 500, 'Internal server error');
   }
+}
 
-  const user = await User.findOne({
-    reset: token,
-    resetExp: { $gt: Date.now() },
-  });
-
-  if (!user) {
-    return handleResponse(res, 401, 'Invalid or expired token');
+/**
   }
-
-  return res.status(200).json({
-    message : "success" ,
-    token
-  })
 }
 
 /**
@@ -117,36 +130,46 @@ export async function VerifyResetPass(req, res) {
  * @return Payload on Success
  */
 export async function ResetPass(req, res) {
-  const { token } = req.params;
-  const { password } = req.body;
+  try {
+    // validate request
+    const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+		  return handleResponse(res, 400, "Fill required properties");
+		}
 
-  if (!token || !password) {
-    return handleResponse(res, 401, 'Invalid password or token');
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if (!token || !password) {
+      return handleResponse(res, 401, 'Invalid password or token');
+    }
+
+    if (isTokenBlacklisted(token)) {
+      return handleResponse(res, 401, 'Invalid or expired token');
+    }
+
+    const user = await User.findOne({
+      reset: token,
+      resetExp: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return handleResponse(res, 401, 'Invalid or expired token');
+    }
+
+    const saltRounds = 12;
+    const salt = await genSalt(saltRounds);
+    // Hash the password
+    const hashedNewPassword = await hash(password, salt);
+    user.password = hashedNewPassword;
+    await user.save();
+
+    updateBlacklist(token);
+
+    return handleResponse(res, 200, "Password changed");
+  } catch {
+    return handleResponse(res, 500, 'Internal Server Error');
   }
-
-  if (isTokenBlacklisted(token)) {
-    return handleResponse(res, 401, 'Invalid or expired token');
-  }
-
-  const user = await User.findOne({
-    reset: token,
-    resetExp: { $gt: Date.now() },
-  });
-
-  if (!user) {
-    return handleResponse(res, 401, 'Invalid or expired token');
-  }
-
-  const saltRounds = 12;
-  const salt = await genSalt(saltRounds);
-  // Hash the password
-  const hashedNewPassword = await hash(password, salt);
-  user.password = hashedNewPassword;
-  await user.save();
-
-  updateBlacklist(token);
-
-  return handleResponse(res, 200, "Password changed");
 }
 
 /**
@@ -187,7 +210,6 @@ export async function changePass(req, res) {
 
     return res.status(204).send('Password changed');
   } catch (error) {
-    console.log(error);
     return handleResponse(res, 500, 'Internal Server Error');
   }
 }
