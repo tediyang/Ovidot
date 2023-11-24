@@ -47,6 +47,12 @@ export async function signup(req, res) {
  * @return Payload on Success
  */
 export async function login(req, res) {
+  // Validate the data
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return handleResponse(res, 400, "Fill required properties");
+  };
+
   const { email, password } = req.body;
   const user = await User.findOne({ email: email });
 
@@ -62,7 +68,7 @@ export async function login(req, res) {
           message: 'Authentication successful',
           token});
     } else {
-      return handleResponse(res, 401, 'Authentication failed');
+      return handleResponse(res, 401, 'Incorrect Password');
     }
   } catch (error) {
     console.error(error);
