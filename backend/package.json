@@ -7,7 +7,7 @@
   "scripts": {
     "start": "nodemon app.js",
     "test-watch": "jest --watch",
-    "test": "mocha \"v1/tests/utility/*.js\" --recursive"
+    "test": "mocha 'v1/tests/{utility,routes}/*.js' --recursive"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +27,7 @@
     "nodemon": "^3.0.1",
     "redis": "^4.6.10",
     "sinon": "^16.0.0",
+    "supertest": "^6.3.3",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
