@@ -7,7 +7,7 @@
   "scripts": {
     "start": "nodemon app.js",
     "test-watch": "jest --watch",
-    "test": "mocha \"v1/tests/{utility, controllers}/*.js\" --recursive"
+    "test": "mocha \"v1/tests/utility/*.js\" --recursive"
   },
   "keywords": [],
   "author": "",
