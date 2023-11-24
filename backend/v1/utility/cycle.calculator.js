@@ -19,6 +19,7 @@ export function calculate(period, startDate, ovulation = null) {
     return new Promise((resolve, reject) => {
         try {
             const dayOne = new Date(startDate);
+            let dayLast;
 
             const periodRange = [];
 
@@ -29,11 +30,11 @@ export function calculate(period, startDate, ovulation = null) {
                 ovulation = new Date(ovulation);
                 // check if ovulation occurs before or during period range.
                 // if it does, throw an error
-                let dayLast = new Date(dayOne);
-                dayLast.setDate(dayLast.getDate() + period); // The last day of menstraution
+                dayLast = new Date(dayOne);
+                dayLast.setDate(dayLast.getDate() + period - 1); // The last day of menstraution
 
-                if (ovulation < dayOne || ovulation < dayLast) {
-                    const err = new Error("Invalid ovulation date: Can't occur before menstraution");
+                if (ovulation <= dayLast) {
+                    const err = new Error("Invalid ovulation date: Can't occur before or during menstraution");
                     err.statusCode = 400;
                     reject(err);
                 }
@@ -50,7 +51,7 @@ export function calculate(period, startDate, ovulation = null) {
             }
 
             // Calculate the predicted start date and end date for ovulation.
-            const ovulationRange = getOvulationRange(ovulation);
+            const ovulationRange = getOvulationRange(ovulation, dayLast);
 
             // Calculate the unsafeRange
             const unsafeRange = getUnsafeRange(ovulation, new Date(periodRange[periodRange.length - 1]));
@@ -62,7 +63,7 @@ export function calculate(period, startDate, ovulation = null) {
             resolve({
                 days: totalCycleDays,
                 periodRange,
-                ovulation: ovulationRange[1],
+                ovulation: formatDate(ovulation),
                 ovulationRange,
                 unsafeDays: unsafeRange,
                 nextDate
@@ -71,7 +72,7 @@ export function calculate(period, startDate, ovulation = null) {
             reject(err);
         }
     });
-}
+};
 
 /**
  * Get the total number of days in the menstrual cycle.
@@ -90,21 +91,27 @@ const getTotalCycleDays = (startDate, ovulation) => {
  * Get the range of ovulation dates.
  *
  * @param {Date} ovulation - the day the user experienced ovulation
+ * @param {Date} dayLast - the last day of menstraution
  * @returns {String[]} - an array containing the start, current, and end dates of ovulation
  */
-const getOvulationRange = (ovulation) => {
+const getOvulationRange = (ovulation, dayLast = null) => {
     const ovulationRangeStart = new Date(ovulation);
     ovulationRangeStart.setDate(ovulation.getDate() - 1);
 
     const ovulationRangeEnd = new Date(ovulation);
     ovulationRangeEnd.setDate(ovulation.getDate() + 1);
 
-    // Calculate the ovulation range
-    return [
+    const result = [
         formatDate(ovulationRangeStart),
         formatDate(ovulation),
         formatDate(ovulationRangeEnd),
     ];
+
+    if (dayLast && ovulationRangeStart.getTime() === dayLast.getTime()) {
+        result.shift(); // Remove the first element from the list.
+    }
+
+    return result;
 };
 
 /**
@@ -166,4 +173,4 @@ export function month(startdate) {
     const month = dateObject.toLocaleString('en-US', { month: 'long' });
 
     return month;
-}
+};
