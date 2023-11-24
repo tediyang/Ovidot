@@ -21,7 +21,8 @@ const { urlencoded } = bodyParser;
 
 // start app
 const app = express();
-const { HOST, DB, PORT } = process.env;
+const { HOST, ENVIR, PORT } = process.env;
+const DB = ENVIR !== 'test'? process.env.DB : process.env.TESTDB;
 
 // url path
 const APP_PATH = '/api/v1';
