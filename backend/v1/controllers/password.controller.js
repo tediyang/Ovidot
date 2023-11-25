@@ -163,7 +163,7 @@ export async function ResetPass(req, res) {
     updateBlacklist(token);
 
     return handleResponse(res, 200, "Password changed");
-  } catch {
+  } catch (error) {
     return handleResponse(res, 500, 'Internal Server Error');
   }
 }
