@@ -32,8 +32,8 @@ describe('POST /signup', () => {
     };
 
     const res = await request(app)
-    .post('/api/v1/signup')
-    .send(userData);
+      .post('/api/v1/signup')
+      .send(userData);
 
     expect(res.status).to.equal(400);
     expect(res.body).to.have.property('message', 'Fill required properties');
@@ -41,8 +41,8 @@ describe('POST /signup', () => {
 
   it('should return 404 error if user already exist', async () => {
     const res = await request(app)
-    .post('/api/v1/signup')
-    .send(userData);
+      .post('/api/v1/signup')
+      .send(userData);
 
     expect(res.status).to.equal(404);
     expect(res.body).to.have.property('message', `${userData.email} already exist.`);
@@ -51,13 +51,6 @@ describe('POST /signup', () => {
 
 
 describe('POST /login', () => {
-  after(async () => {
-    // drop the data from the base
-    await mongoose.connection.dropDatabase();
-    // Close the server after tests
-    await mongoose.connection.close();
-  });
-
   it('should return 200 and token on success', async () => {
     const userData = {
       email: 'daniel.eyang.ed@ovidot.com',
@@ -65,8 +58,8 @@ describe('POST /login', () => {
     };
 
     const res = await request(app)
-    .post('/api/v1/login')
-    .send(userData);
+      .post('/api/v1/login')
+      .send(userData);
 
     expect(res.status).to.equal(200);
     expect(res.body).to.have.property('message', 'Authentication successful');
@@ -79,8 +72,8 @@ describe('POST /login', () => {
     };
 
     const res = await request(app)
-    .post('/api/v1/login')
-    .send(userData);
+      .post('/api/v1/login')
+      .send(userData);
 
     expect(res.status).to.equal(400);
     expect(res.body).to.have.property('message', 'Fill required properties');
@@ -93,8 +86,8 @@ describe('POST /login', () => {
     };
 
     const res = await request(app)
-    .post('/api/v1/login')
-    .send(userData);
+      .post('/api/v1/login')
+      .send(userData);
 
     expect(res.status).to.equal(404);
     expect(res.body).to.have.property('message', "email doesn't exist");
@@ -107,8 +100,8 @@ describe('POST /login', () => {
     };
 
     const res = await request(app)
-    .post('/api/v1/login')
-    .send(userData);
+      .post('/api/v1/login')
+      .send(userData);
 
     expect(res.status).to.equal(401);
     expect(res.body).to.have.property('message', 'Incorrect Password');
