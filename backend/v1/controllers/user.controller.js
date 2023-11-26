@@ -24,7 +24,7 @@ export async function createUser(data, res) {
     	const salt = await genSalt(saltRounds);
     	// Hash the password
     	const hashedPassword = await hash(data.password, salt);
-		data.password = hashedPassword;
+			data.password = hashedPassword;
     	// Register the new user data. The create method prevents sql injection
       	const newUser = await User.create(data);
 
@@ -72,7 +72,6 @@ export async function updateUser(req, res) {
 		});
 	}
 	catch(error) {
-		console.log(error);
 		return handleResponse(res, 500, "Internal server error");
 	}
 }
@@ -102,7 +101,6 @@ export async function fetchUser(req, res) {
 		});
 
 	} catch(error) {
-		console.log(error);
 		return handleResponse(res, 500, "Internal server error");
 	}
 }
