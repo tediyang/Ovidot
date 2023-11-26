@@ -185,7 +185,6 @@ export async function fetchOneCycle(req, res) {
 		const cycle = cycleFilter(user._cycles[0]);
 		return res.status(200).json(cycle);
 	} catch (err) {
-		console.log(err);
 		return handleResponse(res, 500, 'Internal Server Error');
 	}
 }
@@ -214,7 +213,6 @@ export async function fetchMonth(req, res) {
 		}
 		return res.status(200).json(user._cycles);
 	} catch (err) {
-		console.log(err);
 		return handleResponse(res, 500, 'Internal Server Error');
 	}
 }
@@ -243,14 +241,12 @@ export async function updateCycle(req, res) {
 
 		// Check if the user provided at least a data to update
 		if (!period && !ovulation) {
-			return handleResponse(res, 400, "Provide atleast a param to update");
+			return handleResponse(res, 400, "Provide atleast a param to update: period or ovulation");
 		}
 
 		// Validate the ovulation date.
-		if (ovulation) {
-			if (!validateUpdateDate(cycle.start_date, ovulation, cycle.period)) {
-				return handleResponse(res, 400, 'Ovulation date must not exceed 18 days from start date');
-			}
+		if (ovulation && !validateUpdateDate(cycle.start_date, ovulation, cycle.period)) {
+			return handleResponse(res, 400, 'Ovulation date must not exceed 18 days from start date');
 		}
 		if (!period) {
 			period = cycle.period;
@@ -302,7 +298,6 @@ export async function deleteCycle(req, res) {
 		return res.status(204).send('Cycle deleted');
 	}
 	catch (error) {
-		console.log(err);
 		handleResponse(res, 500, "internal server error");
 	}
 };
