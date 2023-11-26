@@ -75,7 +75,6 @@ export async function forgotPass(req, res) {
 
     sender.sendMail(receiver, (error, info) => {
       if (error) {
-        console.log(error)
         return handleResponse(res, 500, 'Failed to send email');
       }
       return handleResponse(res, 201, 'Password reset link sent to email');
