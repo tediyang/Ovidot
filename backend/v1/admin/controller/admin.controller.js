@@ -5,6 +5,9 @@ import Cycle from '../../models/cycle.model.js';
 import User from '../../models/user.model.js';
 import { handleResponse } from '../../utility/handle.response.js';
 import { validationResult } from 'express-validator';
+import { populateWithCycles } from '../../utility/user.populate.js';
+import { cycleFilter } from '../../controllers/cycle.controller.js';
+
 
 const { compare } = bcryptjs;
 const { sign } = jsonwebtoken;
@@ -75,7 +78,6 @@ const adminController = {
       const allUsers = await User.find({}, '-password -reset -resetExp -__v');
       return res.status(200).json({ allUsers });
     } catch (error) {
-      console.log(error);
       handleResponse(res, 500, "Internal Server Error");
     }
   },
@@ -133,7 +135,6 @@ const adminController = {
       }
       return res.status(200).json({ user });
     } catch (error) {
-      console.log(error);
       handleResponse(res, 500, "Internal Server Error");
     }
   },
@@ -169,7 +170,6 @@ const adminController = {
       const updated = updateUser.email === req.body.newEmail;
       return res.status(200).json({ updated: updated });
     } catch (error) {
-      console.log(error);
       return handleResponse(res, 500, 'Internal Server Error');
     }
   },
@@ -204,7 +204,6 @@ const adminController = {
 
       return res.status(204).send(`${req.body.email} deleted`);
     } catch (error) {
-      console.log(error);
       return handleResponse(res, 500, 'Internal Server Error');
     }
   },
