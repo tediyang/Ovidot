@@ -165,3 +165,14 @@ describe('PUT /users/change-password', () => {
       expect(res.statusCode).to.equal(204);
   });
 });
+
+
+describe('GET /logout', () => {
+  it.skip('should log out the user', async () => {
+    const res = await request(app)
+      .get('/api/v1/auth/logout')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).to.equal(200);
+  });
+});
