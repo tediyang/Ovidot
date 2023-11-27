@@ -36,7 +36,7 @@ function cycleParser(month, period, startdate, data ) {
  * @param {Cycle} cycle.
  * @returns cycles properties.
  */
-function cycleFilter(cycle) {
+export function cycleFilter(cycle) {
 	const result = {
 		id: cycle.id,
 		month: cycle.month,
