@@ -27,7 +27,7 @@ router.post('/users/email', [
     verifyAdmin, adminController.viewUser);
 
 /** Route for retrieving all cycles for an email */
-router.get('/users/email/cycles', [
+router.post('/users/email/cycles', [
     body('email').isString().notEmpty()
     ],
     verifyAdmin, adminController.getAllCyclesByEmail);
