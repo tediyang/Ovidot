@@ -32,7 +32,6 @@ export async function createUser(data, res) {
       	return res.status(201).send();
 
   	} catch (error) {
-    	console.error(error);
       	return handleResponse(res, 500, 'Internal Server Error');
   	}
 }
@@ -120,7 +119,6 @@ export async function deleteUser(req, res) {
 		}
 		return res.status(204).send();
 	} catch (error) {
-		console.error(error);
 		handleResponse(res, 500, "Internal server error");
 	}
 };

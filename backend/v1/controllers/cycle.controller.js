@@ -135,7 +135,6 @@ export async function createCycle(req, res) {
 		if (error.statusCode == 400) {
 			handleResponse(res, 400, error.message);
 		} else {
-			console.error(error);
 			handleResponse(res, 500, "internal server error");
 		}
 	}
@@ -271,7 +270,7 @@ export async function updateCycle(req, res) {
 		if (error.statusCode == 400) {
 			handleResponse(res, 400, error.message);
 		} else {
-			console.error(error);
+
 			handleResponse(res, 500, "internal server error");
 		}
 	}
