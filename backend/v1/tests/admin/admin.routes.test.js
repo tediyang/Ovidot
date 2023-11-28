@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { expect } from 'chai';
 import app from '../../../app.js';
-import mongoose from 'mongoose';
 import sinon from 'sinon';
 import dotenv from 'dotenv';
 import User from '../../models/user.model.js';

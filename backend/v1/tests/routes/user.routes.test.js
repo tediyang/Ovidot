@@ -168,6 +168,11 @@ describe('PUT /users/change-password', () => {
 
 
 describe('GET /logout', () => {
+  // after(async () => {
+  //   // Close the database connection
+  //   await mongoose.connection.close();
+  // });
+
   it.skip('should log out the user', async () => {
     const res = await request(app)
       .get('/api/v1/auth/logout')
