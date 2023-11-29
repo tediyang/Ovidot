@@ -14,6 +14,10 @@ const CycleSchema = Schema({
         type: String,
         required: true
     },
+    year: {
+        type: String,
+        required: true
+    },
     period: {
         type: Number,
         required: true,
