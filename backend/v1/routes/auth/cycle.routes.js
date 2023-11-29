@@ -18,7 +18,7 @@ router.get('/getall', cycle.fetchAllCycles);
 router.get('/:cycleId', cycle.fetchOneCycle);
 
 // Get cycles by month
-router.get('/getall/:month', cycle.fetchMonth);
+router.get('/getcycles/:month/:year', cycle.fetchMonth);
 
 // Update cycle
 router.put('/:cycleId', cycle.updateCycle);
