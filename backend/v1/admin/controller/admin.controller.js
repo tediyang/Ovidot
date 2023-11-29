@@ -60,7 +60,7 @@ const adminController = {
         return handleResponse(res, 401, 'Authentication failed');
       }
     } catch (error) {
-      return handleResponse(res, 500, 'Internal Server Error');
+      return handleResponse(res, 500, 'Internal Server Error', error);
     }
   },
 
@@ -77,7 +77,7 @@ const adminController = {
       const allUsers = await User.find({}, '-password -reset -resetExp -__v');
       return res.status(200).json({ allUsers });
     } catch (error) {
-      handleResponse(res, 500, "Internal Server Error");
+      handleResponse(res, 500, "Internal Server Error", error);
     }
   },
 
@@ -108,7 +108,7 @@ const adminController = {
 
       return res.status(200).json({ allCycles });
     } catch (error) {
-      handleResponse(res, 500, "Internal Server Error");
+      handleResponse(res, 500, "Internal Server Error", error);
     }
   },
 
@@ -134,7 +134,7 @@ const adminController = {
       }
       return res.status(200).json({ user });
     } catch (error) {
-      handleResponse(res, 500, "Internal Server Error");
+      handleResponse(res, 500, "Internal Server Error", error);
     }
   },
 
@@ -169,7 +169,7 @@ const adminController = {
       const updated = updateUser.email === req.body.newEmail;
       return res.status(200).json({ updated: updated });
     } catch (error) {
-      return handleResponse(res, 500, 'Internal Server Error');
+      return handleResponse(res, 500, 'Internal Server Error', error);
     }
   },
 
@@ -203,7 +203,7 @@ const adminController = {
 
       return res.status(204).send(`${req.body.email} deleted`);
     } catch (error) {
-      return handleResponse(res, 500, 'Internal Server Error');
+      return handleResponse(res, 500, 'Internal Server Error', error);
     }
   },
 
@@ -219,7 +219,7 @@ const adminController = {
       const allCycleData = await Cycle.find({});
       return res.status(200).json({ allCycleData });
     } catch (error) {
-      handleResponse(res, 500, "Internal Server Error");
+      handleResponse(res, 500, "Internal Server Error", error);
     }
   },
 
@@ -242,7 +242,7 @@ const adminController = {
 
       return res.status(200).json({ specificCycleData });
     } catch (error) {
-      handleResponse(res, 500, "Internal server error");
+      handleResponse(res, 500, "Internal server error", error);
     }
   },
 
@@ -269,7 +269,7 @@ const adminController = {
 
       res.status(204).send('Cycle data deleted successfully');
     } catch (error) {
-      handleResponse(res, 500, "Internal server error");
+      handleResponse(res, 500, "Internal server error", error);
     }
   },
 };
