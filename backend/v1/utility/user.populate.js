@@ -4,22 +4,14 @@ import User from '../models/user.model.js';
  * Populate the user with the data of cycles for the provided searched keyword and return the user object.
  *
  * @param {String} userId - The ID of the user to populate.
- * @param {String} key - The variable (key) to search.
- * @param {String} value - The value to search for in the key.
+ * @param {Object} search - The variable (key) to search.
  * @returns {Promise<User|null>} - A promise that resolves to the user object with the cycles populated or null if not found.
  */
-export async function populateWithCyclesBy(userId, key, value) {
-  /**
-   * The search criteria to find cycles.
-   * @type {Object.<string, string>}
-   */
-  const search = {};
-  search[key] = value;
-
+export async function populateWithCyclesBy(userId, search) {
   try {
     /**
      * The user object with populated cycle data.
-     * @type {User|null}
+     * @type {User | null}
      */
     const user = await User.findById(userId).populate({
       path: '_cycles',
