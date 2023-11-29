@@ -20,13 +20,13 @@ describe('Test validateCreateDate function', () => {
     expect(validateCreateDate(invalidDate)).to.be.false;
   });
 
-  it('returns true for a valid date within the 3-day range', () => {
+  it('returns true for a valid date within the 21-day range', () => {
     const validDate = '2023-11-22';
     expect(validateCreateDate(validDate)).to.be.true;
   });
 
-  it('returns false for a valid date outside the 3-day range', () => {
-    const invalidDate = '2023-11-19';
+  it('returns false for a valid date outside the 21-day range', () => {
+    const invalidDate = '2023-11-01';
     expect(validateCreateDate(invalidDate)).to.be.false;
   });
 });

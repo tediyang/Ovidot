@@ -18,14 +18,14 @@ describe('POST /cycles/create', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         period: 4,
-        startdate: '2023-11-21'
+        startdate: '2023-11-01'
       });
 
     // Restore Time
     clock.restore();
 
     expect(res.statusCode).to.equal(400);
-    expect(res.body).to.have.property("message", 'Specify a proper date: Date should not be less than 3 days or greater than present day');
+    expect(res.body).to.have.property("message", 'Specify a proper date: Date should not be less than 21 days or greater than present day');
   });
 
   it('should return 400 error when no data is provided', async () => {
@@ -40,15 +40,15 @@ describe('POST /cycles/create', () => {
 
   it.skip('should create a new cycle with ovulation date provided', async () => {
     // Use fakeTimer to set Time
-    const clock = sinon.useFakeTimers(new Date('2023-11-26').getTime());
+    const clock = sinon.useFakeTimers(new Date('2024-01-23').getTime());
 
     const res = await request(app)
       .post('/api/v1/auth/cycles/create')
       .set('Authorization', `Bearer ${token}`)
       .send({
         period: 4,
-        startdate: '2023-11-26',
-        ovulation: '2023-12-10'
+        startdate: '2024-01-23',
+        ovulation: '2024-02-07'
       });
 
     // Restore Time
@@ -115,7 +115,7 @@ describe('GET /cycles/getall', () => {
 describe('GET /cycles/:cycleId', () => {
   it('should fetch a specific cycle', async () => {
     const res = await request(app)
-      .get('/api/v1/auth/cycles/65628a803cd58e95534a5547')
+      .get('/api/v1/auth/cycles/6588c6003967191f592da670')
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).to.equal(200);
@@ -136,23 +136,32 @@ describe('GET /cycles/:cycleId', () => {
 });
 
 
-describe('GET /cycles/getall/:month', () => {
-  it('should fetch all cycles for a specific month using number', async () => {
+describe('GET /cycles/getcycles/:month/:year', () => {
+  it('should fetch cycle(s) for a specific month using number', async () => {
     const res = await request(app)
-      .get('/api/v1/auth/cycles/getall/11')
+      .get('/api/v1/auth/cycles/getcycles/11/2023')
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).to.equal(200);
     expect(res.body).to.be.an('array').that.is.not.empty;
   });
 
-  it('should fetch all cycles for a specific month using string', async () => {
+  it('should fetch cycle(s) for a specific month using string', async () => {
     const res = await request(app)
-      .get('/api/v1/auth/cycles/getall/december')
+      .get('/api/v1/auth/cycles/getcycles/december/2023')
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).to.equal(200);
     expect(res.body).to.be.an('array').that.is.not.empty;
+  });
+
+  it('should return 400 if invalid year is given', async () => {
+    const res = await request(app)
+      .get('/api/v1/auth/cycles/getcycles/11/twothousandtwentythree')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).to.equal(400);
+    expect(res.body).to.have.property('message', 'Invalid month or year');
   });
 });
 
@@ -160,7 +169,7 @@ describe('GET /cycles/getall/:month', () => {
 describe('PUT /cycles/:cycleId', () => {
   it('should return 400 when no data is provided', async () => {
     const res = await request(app)
-      .put('/api/v1/auth/cycles/65628a803cd58e95534a5547')
+      .put('/api/v1/auth/cycles/65628a803967191f592da668')
       .set('Authorization', `Bearer ${token}`)
       .send({});
 
@@ -170,7 +179,7 @@ describe('PUT /cycles/:cycleId', () => {
 
   it('shoul return 400 when an invalid ovulation date is provided', async () => {
     const res = await request(app)
-      .put('/api/v1/auth/cycles/65628a803cd58e95534a5547')
+      .put('/api/v1/auth/cycles/65628a803967191f592da668')
       .set('Authorization', `Bearer ${token}`)
       .send({
         ovulation: '2023-11-21'
@@ -180,9 +189,9 @@ describe('PUT /cycles/:cycleId', () => {
     expect(res.body).to.have.property("message", 'Ovulation date must not exceed 18 days from start date');
   });
 
-  it('should update the cycle wih period given', async () => {
+  it('should update the cycle with period given', async () => {
     const res = await request(app)
-      .put('/api/v1/auth/cycles/65628a803cd58e95534a5547')
+      .put('/api/v1/auth/cycles/65628a803967191f592da668')
       .set('Authorization', `Bearer ${token}`)
       .send({
         period: 6
@@ -195,7 +204,7 @@ describe('PUT /cycles/:cycleId', () => {
 
   it('should update the cycle with ovulation date given', async () => {
     const res = await request(app)
-      .put('/api/v1/auth/cycles/65628a803cd58e95534a5547')
+      .put('/api/v1/auth/cycles/65628a803967191f592da668')
       .set('Authorization', `Bearer ${token}`)
       .send({
         ovulation: '2023-12-11'
@@ -213,7 +222,7 @@ describe('DELETE /cycles/:cycleId', () => {
     sinon.stub(Cycle, 'findByIdAndRemove').resolves(true);
 
     const res = await request(app)
-      .delete('/api/v1/auth/cycles/65628a803cd58e95534a5547')
+      .delete('/api/v1/auth/cycles/65628a803967191f592da668')
       .set('Authorization', `Bearer ${token}`);
 
     // Restore Cycle.findByIdAndRemove

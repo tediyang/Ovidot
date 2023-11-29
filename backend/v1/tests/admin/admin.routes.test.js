@@ -67,7 +67,7 @@ describe('ADMIN USER ROUTES', () => {
     const res = await request(app)
       .post('/api/v1/admin/users/email')
       .set('Authorization', `Bearer ${SUPER_ADMIN_TOKEN}`)
-      .send({ email: 'daniel.eyang.ed@ovidot.com' });
+      .send({ email: 'emmanueleyang@gmail.com' });
 
     expect(res.statusCode).to.equal(200);
   });
@@ -97,7 +97,7 @@ describe('ADMIN USER ROUTES', () => {
     const res = await request(app)
       .post('/api/v1/admin/users/email/cycles')
       .set('Authorization', `Bearer ${SUPER_ADMIN_TOKEN}`)
-      .send({ email: 'daniel.eyang.ed@ovidot.com' });
+      .send({ email: 'emmanueleyang@gmail.com' });
     
     expect(res.statusCode).to.equal(200);
     expect(res.body.allCycles).to.be.an('array').that.is.not.empty;
@@ -132,7 +132,7 @@ describe('ADMIN USER ROUTES', () => {
     const res = await request(app)
       .put('/api/v1/admin/users/email')
       .set('Authorization', `Bearer ${SUPER_ADMIN_TOKEN}`)
-      .send({ oldEmail: 'daniel.eyang.ed@ovidot.com',
+      .send({ oldEmail: 'emmanueleyang@gmail.com',
         newEmail: 'daniel.eyang@ovidot.com' });
 
     // Restore User.findByIdAndUpdate
@@ -169,7 +169,7 @@ describe('ADMIN USER ROUTES', () => {
     const res = await request(app)
       .delete('/api/v1/admin/users/email')
       .set('Authorization', `Bearer ${SUPER_ADMIN_TOKEN}`)
-      .send({ email: 'daniel.eyang.ed@ovidot.com' });
+      .send({ email: 'emmanueleyang@gmail.com' });
 
     // Restore User.findByIdAndDelete
     User.findByIdAndDelete.restore();
@@ -201,7 +201,7 @@ describe('ADMIN CYCLE ROUTES', () => {
 
   it('should fetch a single cycle', async () => {
     const res = await request(app)
-      .get('/api/v1/admin/cycles/65628a803cd58e95534a5547')
+      .get('/api/v1/admin/cycles/65628a803967191f592da668')
       .set('Authorization', `Bearer ${SUPER_ADMIN_TOKEN}`);
 
     expect(res.statusCode).to.equal(200);
@@ -222,7 +222,7 @@ describe('ADMIN CYCLE ROUTES', () => {
     sinon.stub(Cycle, 'findByIdAndDelete').resolves(true);
 
     const res = await request(app)
-      .delete('/api/v1/admin/cycles/65628a803cd58e95534a5547')
+      .delete('/api/v1/admin/cycles/65628a803967191f592da668')
       .set('Authorization', `Bearer ${SUPER_ADMIN_TOKEN}`);
 
     // Restore Cycle.findByIdAndDelete
