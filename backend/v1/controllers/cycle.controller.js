@@ -19,6 +19,7 @@ import { validateCreateDate, validateUpdateDate } from '../utility/date.validate
 function cycleParser(month, period, startdate, data ) {
 	const result = {
 		month: month,
+		year: startdate.slice(0, 4),
 		period: period,
 		ovulation: data.ovulation,
 		start_date: startdate,
@@ -40,6 +41,7 @@ export function cycleFilter(cycle) {
 	const result = {
 		id: cycle.id,
 		month: cycle.month,
+		year: cycle.year,
 		period: cycle.period,
 		ovulation: cycle.ovulation,
 		start_date: cycle.start_date,
@@ -86,7 +88,7 @@ export async function createCycle(req, res) {
 
 		if (!validateCreateDate(startdate)) {
 			return handleResponse(res, 400,
-				'Specify a proper date: Date should not be less than 3 days or greater than present day');
+				'Specify a proper date: Date should not be less than 21 days or greater than present day');
 		}
 
 		// Get the month for the date
@@ -103,7 +105,7 @@ export async function createCycle(req, res) {
 			 * 3. Get the difference from the new month startdate
 			 * 4. If the difference is greater than 7 (7 days) send a
 			 * respond requesting for update or delete cycle. This estimate is made based on
-			 * an assumption that a woman cycle can't come earlier than 7 days.
+			 * an assumption that a female cycle can't come earlier than 7 days.
 			 */
 			const lastCycle = user._cycles[user._cycles.length - 1];
 			const nextD = new Date(lastCycle.next_date);
@@ -173,7 +175,7 @@ export async function fetchOneCycle(req, res) {
 		const { cycleId } = req.params;
 		const userId = req.user.id;
 
-		const user = await populateWithCyclesBy(userId, '_id', cycleId);
+		const user = await populateWithCyclesBy(userId, {_id: cycleId});
 		if (user === null) {
 			return handleResponse(res, 404, 'User not found');
 		}
@@ -196,8 +198,14 @@ export async function fetchOneCycle(req, res) {
  */
 export async function fetchMonth(req, res) {
 	try {
-		let { month } = req.params;
+		let { month, year } = req.params;
 		const userId = req.user.id;
+
+		// validate year
+		if (typeof +year !== 'number' || isNaN(year) || isNaN(month) && typeof month !== 'string' ||
+			+year < 1900 || +year > 2100) {
+		    return handleResponse(res, 400, 'Invalid month or year');
+		};
 
 		// If month data is sent as a Number
 		if (typeof +month === 'number' && month >= 1 && month <= 12) {
@@ -206,7 +214,7 @@ export async function fetchMonth(req, res) {
 			month = month.charAt(0).toUpperCase() + month.slice(1).toLowerCase();
 		}
 
-		const user = await populateWithCyclesBy(userId, 'month', month);
+		const user = await populateWithCyclesBy(userId, {month: month, year: year});
 		if (user === null) {
 			return handleResponse(res, 404, 'User not found');
 		}
@@ -254,7 +262,7 @@ export async function updateCycle(req, res) {
 		const updated_at = new Date();
 		const month = _month(cycle.start_date);
 		const updatedData = await calculate(period, cycle.start_date, ovulation);
-		const data = cycleParser(month, period, cycle.start_date, updatedData);
+		const data = cycleParser(month, period, cycle.start_date.toISOString(), updatedData);
 		const updatecycle = await Cycle.findByIdAndUpdate(cycleId, {
 			...data,
 			updated_at: updated_at
@@ -270,7 +278,6 @@ export async function updateCycle(req, res) {
 		if (error.statusCode == 400) {
 			handleResponse(res, 400, error.message);
 		} else {
-
 			handleResponse(res, 500, "internal server error");
 		}
 	}
