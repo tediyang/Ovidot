@@ -36,7 +36,7 @@ export function validateCreateDate(startDate) {
 
     const differenceInDays = (currentDate - userDate) / MILLISECONDS_IN_A_DAY;
 
-    return differenceInDays <= 3 && differenceInDays >= 0;
+    return differenceInDays <= 21 && differenceInDays >= 0;
 }
 
 /**
