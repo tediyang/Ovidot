@@ -137,7 +137,7 @@ export async function createCycle(req, res) {
 		if (error.statusCode == 400) {
 			handleResponse(res, 400, error.message);
 		} else {
-			handleResponse(res, 500, "internal server error");
+			handleResponse(res, 500, "internal server error", error);
 		}
 	}
 }
@@ -160,7 +160,7 @@ export async function fetchAllCycles(req, res) {
 		const cycles = user._cycles.map(cycleFilter);
 		return res.status(200).json(cycles);
 	} catch (err) {
-		return handleResponse(res, 500, 'Internal Server Error');
+		return handleResponse(res, 500, 'Internal Server Error', err);
 	}
 }
 
@@ -186,7 +186,7 @@ export async function fetchOneCycle(req, res) {
 		const cycle = cycleFilter(user._cycles[0]);
 		return res.status(200).json(cycle);
 	} catch (err) {
-		return handleResponse(res, 500, 'Internal Server Error');
+		return handleResponse(res, 500, 'Internal Server Error', err);
 	}
 }
 
@@ -220,7 +220,7 @@ export async function fetchMonth(req, res) {
 		}
 		return res.status(200).json(user._cycles);
 	} catch (err) {
-		return handleResponse(res, 500, 'Internal Server Error');
+		return handleResponse(res, 500, 'Internal Server Error', err);
 	}
 }
 
@@ -278,7 +278,7 @@ export async function updateCycle(req, res) {
 		if (error.statusCode == 400) {
 			handleResponse(res, 400, error.message);
 		} else {
-			handleResponse(res, 500, "internal server error");
+			handleResponse(res, 500, "internal server error", error);
 		}
 	}
 }
@@ -304,6 +304,6 @@ export async function deleteCycle(req, res) {
 		return res.status(204).send('Cycle deleted');
 	}
 	catch (error) {
-		handleResponse(res, 500, "internal server error");
+		handleResponse(res, 500, "internal server error", error);
 	}
 };

@@ -32,7 +32,7 @@ export async function createUser(data, res) {
       	return res.status(201).send();
 
   	} catch (error) {
-      	return handleResponse(res, 500, 'Internal Server Error');
+      return handleResponse(res, 500, 'Internal Server Error', error);
   	}
 }
 
@@ -69,9 +69,8 @@ export async function updateUser(req, res) {
 			age: user.age,
 			cycles: user._cycles
 		});
-	}
-	catch(error) {
-		return handleResponse(res, 500, "Internal server error");
+	} catch(error) {
+		return handleResponse(res, 500, "Internal server error", error);
 	}
 }
 
@@ -100,7 +99,7 @@ export async function fetchUser(req, res) {
 		});
 
 	} catch(error) {
-		return handleResponse(res, 500, "Internal server error");
+		return handleResponse(res, 500, "Internal server error", error);
 	}
 }
 
@@ -119,6 +118,6 @@ export async function deleteUser(req, res) {
 		}
 		return res.status(204).send();
 	} catch (error) {
-		handleResponse(res, 500, "Internal server error");
+		handleResponse(res, 500, "Internal server error", error);
 	}
 };

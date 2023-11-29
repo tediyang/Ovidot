@@ -71,7 +71,7 @@ export async function login(req, res) {
       return handleResponse(res, 401, 'Incorrect Password');
     }
   } catch (error) {
-    return handleResponse(res, 500, 'Internal Server Error');
+    return handleResponse(res, 500, 'Internal Server Error', error);
   }
 }
 
@@ -93,6 +93,6 @@ export async function logout(req, res) {
 
     return res.status(200).send();
   } catch (error) {
-    return handleResponse(res, 500, 'Internal Server Error');
+    return handleResponse(res, 500, 'Internal Server Error', error);
   }
 }

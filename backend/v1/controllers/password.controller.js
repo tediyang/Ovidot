@@ -75,12 +75,12 @@ export async function forgotPass(req, res) {
 
     sender.sendMail(receiver, (error, info) => {
       if (error) {
-        return handleResponse(res, 500, 'Failed to send email');
+        return handleResponse(res, 500, 'Failed to send email', error);
       }
       return handleResponse(res, 201, 'Password reset link sent to email');
     });
   } catch (error) {
-    return handleResponse(res, 500, 'Internal Server Error');
+    return handleResponse(res, 500, 'Internal Server Error', error);
   }
 }
 
@@ -114,7 +114,7 @@ export async function VerifyResetPass(req, res) {
       token
     });
   } catch {
-    return handleResponse(res, 500, 'Internal server error');
+    return handleResponse(res, 500, 'Internal server error', error);
   }
 }
 
@@ -163,7 +163,7 @@ export async function ResetPass(req, res) {
 
     return handleResponse(res, 200, "Password changed");
   } catch (error) {
-    return handleResponse(res, 500, 'Internal Server Error');
+    return handleResponse(res, 500, 'Internal Server Error', error);
   }
 }
 
@@ -205,6 +205,6 @@ export async function changePass(req, res) {
 
     return res.status(204).send('Password changed');
   } catch (error) {
-    return handleResponse(res, 500, 'Internal Server Error');
+    return handleResponse(res, 500, 'Internal Server Error', error);
   }
 }
