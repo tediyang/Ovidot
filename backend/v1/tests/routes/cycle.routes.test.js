@@ -177,7 +177,7 @@ describe('PUT /cycles/:cycleId', () => {
     expect(res.body).to.have.property("message", "Provide atleast a param to update: period or ovulation");
     });
 
-  it('shoul return 400 when an invalid ovulation date is provided', async () => {
+  it('should return 400 when an invalid ovulation date is provided', async () => {
     const res = await request(app)
       .put('/api/v1/auth/cycles/65628a803967191f592da668')
       .set('Authorization', `Bearer ${token}`)
@@ -187,6 +187,24 @@ describe('PUT /cycles/:cycleId', () => {
 
     expect(res.statusCode).to.equal(400);
     expect(res.body).to.have.property("message", 'Ovulation date must not exceed 18 days from start date');
+  });
+
+  it('should return 400 when user try to update after 30days from start date', async () => {
+    // Use fakeTimer to set Time
+    const clock = sinon.useFakeTimers(new Date('2023-12-30').getTime());
+
+    const res = await request(app)
+      .put('/api/v1/auth/cycles/65628a803967191f592da668')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        period: 6
+      });
+
+    // Restore the original timer
+    clock.restore();
+
+    expect(res.statusCode).to.equal(400);
+    expect(res.body).to.have.property("message", "Update can't be made after 30 days from start date");
   });
 
   it('should update the cycle with period given', async () => {
