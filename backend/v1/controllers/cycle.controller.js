@@ -246,6 +246,11 @@ export async function updateCycle(req, res) {
 			return handleResponse(res, 404, "Cycle not found");
 		}
 
+		// if startdate is 30 days below current date, then update isn't possible
+		if (new Date() > new Date(cycle.start_date).setDate(new Date(cycle.start_date).getDate() + 30)) {
+			return handleResponse(res, 400, "Update can't be made after 30 days from start date");
+		};
+
 		// Check if the user provided at least a data to update
 		if (!period && !ovulation) {
 			return handleResponse(res, 400, "Provide atleast a param to update: period or ovulation");
