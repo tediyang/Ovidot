@@ -1,4 +1,3 @@
-import { createTransport } from 'nodemailer';
 import dotenv from 'dotenv';
 import User from '../models/user.model.js';
 import { v4 } from 'uuid';
@@ -6,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import { handleResponse } from '../utility/handle.response.js';
 import { isTokenBlacklisted, updateBlacklist } from '../middleware/tokenBlacklist.js';
 import { validationResult } from 'express-validator';
+import { sender } from '../services/notifications.js';
 dotenv.config();
 
 const { genSalt, hash, compare } = bcrypt;
@@ -14,10 +14,6 @@ const { genSalt, hash, compare } = bcrypt;
 const host = process.env.HOST;
 const port = process.env.PORT;
 
-// Sender details
-const emailAddress = process.env.EMAIL;
-const emailPassword = process.env.EMAILPASSWORD;
-
 /**
  * create a reset token using uuid.v4
  * @returns - a unique uuid.
@@ -25,17 +21,6 @@ const emailPassword = process.env.EMAILPASSWORD;
 function resetToken() {
   return v4();
 }
-
-/**
- * Create the sender details. user and pass verification is used here, but for more efficient
- * security used Auth. */
-const sender = createTransport({
-  service: 'Gmail',
-  auth: {
-    user: emailAddress,
-    pass: emailPassword,
-  },
-});
 
 /**
  * Send reset link password to users
