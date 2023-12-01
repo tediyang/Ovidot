@@ -149,19 +149,23 @@ export async function createCycle(req, res) {
  * @returns Payload on Success
  */ 
 export async function fetchAllCycles(req, res) {
-	try {
-		const id = req.user.id;
+  try {
+    const id = req.user.id;
+    const year = req.query.year;
 
-		const user = await populateWithCycles(id);
-		if (!user) {
-			return handleResponse(res, 404, 'User not found');
-		}
+    // If a 'year' is provided, use it in the search criteria
+    const search = year ? { year: year } : {};
 
-		const cycles = user._cycles.map(cycleFilter);
-		return res.status(200).json(cycles);
-	} catch (err) {
-		return handleResponse(res, 500, 'Internal Server Error', err);
-	}
+    const user = await populateWithCyclesBy(id, search);
+    if (!user) {
+      return handleResponse(res, 404, 'User not found');
+    }
+
+    const cycles = user._cycles.map(cycleFilter);
+    return res.status(200).json(cycles);
+  } catch (err) {
+    return handleResponse(res, 500, 'Internal Server Error', err);
+  }
 }
 
 /**
@@ -198,15 +202,20 @@ export async function fetchOneCycle(req, res) {
  */
 export async function fetchMonth(req, res) {
 	try {
-		let { month, year } = req.params;
+		let { month } = req.params;
+		const year = req.query.year;
 		const userId = req.user.id;
 
 		// validate year
-		if (typeof +year !== 'number' || isNaN(year) || isNaN(month) && typeof month !== 'string' ||
-			+year < 1900 || +year > 2100) {
-		    return handleResponse(res, 400, 'Invalid month or year');
+		if (year && (typeof +year !== 'number' || isNaN(year) ||+year < 1900 || +year > 2100)) {
+		  return handleResponse(res, 400, 'Invalid year');
 		};
 
+		// validate month
+		if (isNaN(month) && typeof month !== 'string') {
+			return handleResponse(res, 400, 'Invalid month');
+		}
+		
 		// If month data is sent as a Number
 		if (typeof +month === 'number' && month >= 1 && month <= 12) {
 			month = MONTHS[month];
@@ -214,7 +223,9 @@ export async function fetchMonth(req, res) {
 			month = month.charAt(0).toUpperCase() + month.slice(1).toLowerCase();
 		}
 
-		const user = await populateWithCyclesBy(userId, {month: month, year: year});
+		const search = year ? { month, year } : { month };
+		
+		const user = await populateWithCyclesBy(userId, search);
 		if (user === null) {
 			return handleResponse(res, 404, 'User not found');
 		}
@@ -298,7 +309,7 @@ export async function deleteCycle(req, res) {
 	try {
 		const { cycleId } = req.params;
 		const userId = req.user.id;
-		const user = await populateWithCycles(userId, '_id', cycleId);
+		const user = await populateWithCyclesBy(userId, {_id: cycleId});
 		if (user === null) {
 			return handleResponse(res, 404, "User not found");
 		}
