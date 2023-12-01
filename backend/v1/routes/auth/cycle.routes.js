@@ -11,14 +11,14 @@ router.post('/create', [
     ],
     cycle.createCycle);
 
-// Get user id
+// Get all cycles
 router.get('/getall', cycle.fetchAllCycles);
 
 // Get a cycle using cycleId
 router.get('/:cycleId', cycle.fetchOneCycle);
 
 // Get cycles by month
-router.get('/getcycles/:month/:year', cycle.fetchMonth);
+router.get('/getcycles/:month', cycle.fetchMonth);
 
 // Update cycle
 router.put('/:cycleId', cycle.updateCycle);
