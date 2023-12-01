@@ -109,6 +109,22 @@ describe('GET /cycles/getall', () => {
     expect(res.statusCode).to.equal(200);
     expect(res.body).to.be.an('array').that.is.not.empty;
   });
+
+  it('should fetch all cycles for a given year', async () => {
+    const res1 = await request(app)
+      .get('/api/v1/auth/cycles/getall?year=2023')
+      .set('Authorization', `Bearer ${token}`);
+
+    const res2 = await request(app)
+      .get('/api/v1/auth/cycles/getall?year=2024')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res1.statusCode).to.equal(200);
+    expect(res2.statusCode).to.equal(200);
+
+    expect(res1.body).to.be.an('array').that.have.lengthOf(2);
+    expect(res2.body).to.be.an('array').that.have.lengthOf(1);
+  });
 });
 
 
@@ -136,10 +152,10 @@ describe('GET /cycles/:cycleId', () => {
 });
 
 
-describe('GET /cycles/getcycles/:month/:year', () => {
+describe('GET /cycles/getcycles/:month', () => {
   it('should fetch cycle(s) for a specific month using number', async () => {
     const res = await request(app)
-      .get('/api/v1/auth/cycles/getcycles/11/2023')
+      .get('/api/v1/auth/cycles/getcycles/11')
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).to.equal(200);
@@ -148,7 +164,16 @@ describe('GET /cycles/getcycles/:month/:year', () => {
 
   it('should fetch cycle(s) for a specific month using string', async () => {
     const res = await request(app)
-      .get('/api/v1/auth/cycles/getcycles/december/2023')
+      .get('/api/v1/auth/cycles/getcycles/december')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).to.equal(200);
+    expect(res.body).to.be.an('array').that.is.not.empty;
+  });
+
+  it('should fetch cycle for a specific month with year query', async () => {
+    const res = await request(app)
+      .get('/api/v1/auth/cycles/getcycles/11?year=2023')
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).to.equal(200);
@@ -157,11 +182,11 @@ describe('GET /cycles/getcycles/:month/:year', () => {
 
   it('should return 400 if invalid year is given', async () => {
     const res = await request(app)
-      .get('/api/v1/auth/cycles/getcycles/11/twothousandtwentythree')
+      .get('/api/v1/auth/cycles/getcycles/11?year=twothousandtwentythree')
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).to.equal(400);
-    expect(res.body).to.have.property('message', 'Invalid month or year');
+    expect(res.body).to.have.property('message', 'Invalid year');
   });
 });
 
