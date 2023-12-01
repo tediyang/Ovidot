@@ -2,6 +2,7 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/user.model.js';
 import { handleResponse } from '../utility/handle.response.js';
+import notifications from '../services/notifications.js';
 
 const { genSalt, hash } = bcrypt;
 
@@ -26,15 +27,25 @@ export async function createUser(data, res) {
     	const hashedPassword = await hash(data.password, salt);
 			data.password = hashedPassword;
     	// Register the new user data. The create method prevents sql injection
-      	const newUser = await User.create(data);
+      const newUser = await User.create(data);
 
-      	await newUser.save();
-      	return res.status(201).send();
+			// create notification
+			const message = `${newUser.username}, your account has been created`;
+			const notify = notifications.generateNotification(newUser, 'createdUser', message);
+
+			// Add new notification
+			newUser.notificationsList.push(notify);
+
+      await newUser.save();
+
+			// send email notification
+			await notifications.sendUserCreationNotification(newUser);
+      return res.status(201).send();
 
   	} catch (error) {
       return handleResponse(res, 500, 'Internal Server Error', error);
   	}
-}
+};
 
 /**
  * Find the user and update the data passed.
@@ -50,24 +61,42 @@ export async function updateUser(req, res) {
 
 		if (!username && !age) {
 			return handleResponse(res, 400, "Provide atleast a param to update: username or age");
-		}
+		};
 
 		const updatedAt = new Date();
 		const user = await User.findByIdAndUpdate(userId,
-            {username: username, age: age, updated_at: updatedAt},
+      {username: username, age: age, updated_at: updatedAt},
 			{new: true});
 
 		/* check for conditons */
 		if(!user) {
 			return handleResponse(res, 404, "User not found");
+		};
+
+		// create notification
+		let message;
+		if (username && age) {
+			message = `Your username and age have been updated`;
+		} else {
+			message = `Your ${username ? 'username' : 'age'} has been updated`;
 		}
+
+		const notify = notifications.generateNotification(user, 'updatedUser', message);
+
+		// Add new notification
+		user.notificationsList.push(notify);
+
+		// manage noifications
+		notifications.manageNotification(user.notificationsList);
+
+		await user.save();
+
 		// else return OK response
 		res.status(200).json({
 			userId: user._id,
 			email: user.email,
 			username: user.username,
-			age: user.age,
-			cycles: user._cycles
+			age: user.age
 		});
 	} catch(error) {
 		return handleResponse(res, 500, "Internal server error", error);
@@ -116,6 +145,10 @@ export async function deleteUser(req, res) {
 		if (!user) {
 			return handleResponse(res, 404, "User not found");
 		}
+
+		// send email notification
+		await notifications.sendUserTerminationNotification(user);
+
 		return res.status(204).send();
 	} catch (error) {
 		handleResponse(res, 500, "Internal server error", error);
