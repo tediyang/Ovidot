@@ -29,7 +29,7 @@ const notifications = {
    * @return {Object} - The generated notification object.
    */
   generateNotification: (data, action, message) => {
-    const id = action.includes('User') ? null : data._id;
+    const id = action.includes('User') || action === ('deletedCycle') ? null : data._id;
     const notify = {
       date: data.updated_at,
       action: action,
