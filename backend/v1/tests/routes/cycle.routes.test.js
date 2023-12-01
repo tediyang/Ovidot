@@ -262,7 +262,9 @@ describe('PUT /cycles/:cycleId', () => {
 describe('DELETE /cycles/:cycleId', () => {
   it('should delete a cycle', async () => {
     // Mock Cycle.findByIdAndRemove
-    sinon.stub(Cycle, 'findByIdAndRemove').resolves(true);
+    sinon.stub(Cycle, 'findByIdAndRemove').resolves(
+      {start_date: new Date(), updated_at: new Date()}
+    );
 
     const res = await request(app)
       .delete('/api/v1/auth/cycles/65628a803967191f592da668')
