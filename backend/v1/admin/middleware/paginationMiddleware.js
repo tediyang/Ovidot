@@ -3,7 +3,7 @@ export default function paginationMiddleware(req, res, next) {
     const page = parseInt(req.query.page, 12) || 1;
     const limit = parseInt(req.query.limit, 12) || 12;
 
-    skip = (page - 1) * limit;
+    const skip = (page - 1) * limit;
 
     res.locals.pagination = {
       page,
