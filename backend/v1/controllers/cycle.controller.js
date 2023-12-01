@@ -6,6 +6,7 @@ import User from '../models/user.model.js';
 import { validationResult } from 'express-validator';
 import { populateWithCycles, populateWithCyclesBy } from '../utility/user.populate.js';
 import { validateCreateDate, validateUpdateDate } from '../utility/date.validate.js';
+import notifications from '../services/notifications.js';
 
 
 /**
@@ -121,11 +122,23 @@ export async function createCycle(req, res) {
 		const data = cycleParser(month, period, startdate, cycleData);
 		const newCycle = await Cycle({ ...data });
 
-		// Save the new cycle created and update the user with the cycleId
+		// Save the new cycle created
 		await newCycle.save();
+
+		const message = `Cycle created for ${startdate}}`;
+
+		const notify = notifications.generateNotification(newCycle, 'createdCycle', message);
+
+		// Add new notification
+		user.notificationsList.push(notify);
+
+		// manage noifications
+		notifications.manageNotification(user.notificationsList);
+
 		user._cycles.push(newCycle._id);
 		await User.findByIdAndUpdate(user.id, {
-			_cycles: user._cycles
+			_cycles: user._cycles,
+			notificationsList: user.notificationsList
 		});
 
 		return res.status(201).json({
@@ -263,7 +276,7 @@ export async function updateCycle(req, res) {
 		};
 
 		// Check if the user provided at least a data to update
-		if (!period && !ovulation) {
+		if ((!period && !ovulation) || (period === cycle.period && ovulation === cycle.ovulation)) {
 			return handleResponse(res, 400, "Provide atleast a param to update: period or ovulation");
 		}
 
@@ -284,6 +297,19 @@ export async function updateCycle(req, res) {
 			updated_at: updated_at
 		},
 		{ new: true });
+
+		// Generate notification
+		const message = `Cycle for ${cycle.start_date.toISOString().split('T')[0]} was updated`;
+
+		const notify = notifications.generateNotification(updatecycle, 'updatedCycle', message);
+
+		// Add new notification
+		user.notificationsList.push(notify);
+
+		// manage noifications
+		notifications.manageNotification(user.notificationsList);
+
+		await user.save();
 
 		const updated = cycleFilter(updatecycle);
 		return res.status(200).json({
@@ -316,7 +342,23 @@ export async function deleteCycle(req, res) {
 		if (user._cycles.length == 0) {
 			return handleResponse(res, 404, "Cycle not found");
 		}
-		await Cycle.findByIdAndRemove(cycleId);
+
+		const cycle = await Cycle.findByIdAndRemove(cycleId);
+		cycle.updated_at = new Date();
+
+		// Generate notification
+		const message = `Cycle deleted for ${cycle.start_date.toISOString().split('T')[0]}`;
+
+		const notify = notifications.generateNotification(cycle, 'deletedCycle', message);
+
+		// Add new notification
+		user.notificationsList.push(notify);
+
+		// manage noifications
+		notifications.manageNotification(user.notificationsList);
+
+		await user.save();
+
 		return res.status(204).send('Cycle deleted');
 	}
 	catch (error) {
