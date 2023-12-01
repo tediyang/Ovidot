@@ -29,6 +29,11 @@ const UserSchema = Schema({
         min: 8,
         max: 55
     },
+    notificationsList: [
+        {
+            type: Object
+        }
+    ],
     is_admin: {
         type: Boolean,
         default: false
