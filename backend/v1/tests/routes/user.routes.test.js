@@ -164,6 +164,16 @@ describe('PUT /users/change-password', () => {
 
       expect(res.statusCode).to.equal(204);
   });
+
+  it.skip('should return 400 when the two passwords are the same', async () => {
+    const res = await request(app)
+      .put('/api/v1/auth/users/change-password')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ currentPassword: 'Ovidotsuper', newPassword: 'Ovidotsuper'});
+
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.have.property("message", "Please provide a new password");
+  });
 });
 
 
