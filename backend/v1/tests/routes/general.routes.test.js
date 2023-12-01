@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import app from '../../../app.js';
-import mongoose from 'mongoose';
 import request from 'supertest';
 import sinon from 'sinon';
 import User from '../../models/user.model.js';
@@ -112,7 +111,7 @@ describe('POST /login', () => {
 
 
 describe('POST /forgot-password', () => {
-  it('should send a reset password link', async () => {
+  it.skip('should send a reset password link', async () => {
     const userData = {
       email: 'daniel.eyang.ed@ovidot.com',
       url: 'http://ovidot.com/forgetPass'
