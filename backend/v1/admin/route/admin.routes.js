@@ -4,6 +4,7 @@ const router /** @type {ExpressRouter} */ = Router();
 import adminController from '../controller/admin.controller.js';
 import { forgotPass } from '../../controllers/password.controller.js';
 import verifyAdmin from '../middleware/token.admin.verify.js';
+import paginationMiddleware from "../middleware/paginationMiddleware.js";
 import { body } from 'express-validator';
 import { logout } from '../../controllers/register.controller.js';
 
@@ -18,7 +19,7 @@ router.post('/login', [
 router.get('/logout', verifyAdmin, logout);
 
 /** Route for retrieving all users. */
-router.get('/users', verifyAdmin, adminController.viewAllusers);
+router.get('/users', verifyAdmin, paginationMiddleware, adminController.viewAllusers);
 
 /** Route for retrieving a user by email. */
 router.post('/users/email', [
@@ -52,10 +53,10 @@ router.post('/users/forgot-password', [
     verifyAdmin, forgotPass);
 
 /** Route for retrieving all cycles. */
-router.get('/cycles', verifyAdmin, adminController.viewAllCycles);
+router.get('/cycles', verifyAdmin, paginationMiddleware, adminController.viewAllCycles);
 
 /** Route for retrieving a cycle by cycleId. */
-router.get('/cycles/:cycleId', verifyAdmin, adminController.viewCycle);
+router.get('/cycles/:cycleId', verifyAdmin, paginationMiddleware, adminController.viewCycle);
 
 /** Route for deleting a cycle by cycleId. */
 router.delete('/cycles/:cycleId', verifyAdmin, adminController.deleteCycle);

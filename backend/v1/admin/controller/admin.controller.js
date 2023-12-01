@@ -73,9 +73,12 @@ const adminController = {
    */
   viewAllusers: async (req, res) => {
     try {
-      // Exclude these variables '-password -reset -resetExp -__v' in the result.
-      const allUsers = await User.find({}, '-password -reset -resetExp -__v');
-      return res.status(200).json({ allUsers });
+      const { page, limit, links } = res.locals.pagination;
+
+      const allUsers = await User.find({}, '-password -reset -resetExp -__v')
+      .skip((page - 1) * limit)
+      .limit(limit);
+      return res.status(200).json({ allUsers, links });
     } catch (error) {
       handleResponse(res, 500, "Internal Server Error", error);
     }
@@ -216,8 +219,13 @@ const adminController = {
    */
   viewAllCycles: async (req, res) => {
     try {
-      const allCycleData = await Cycle.find({});
-      return res.status(200).json({ allCycleData });
+      const { page, limit, links } = res.locals.pagination;
+
+      const allCycleData = await Cycle.find({})
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+      return res.status(200).json({ allCycleData, links });
     } catch (error) {
       handleResponse(res, 500, "Internal Server Error", error);
     }
