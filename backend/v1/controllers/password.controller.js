@@ -169,6 +169,10 @@ export async function changePass(req, res) {
 
     const { currentPassword, newPassword } = req.body;
 
+    if (currentPassword === newPassword) {
+      return handleResponse(res, 400, "Please provide a new password");
+    };
+
     const userId = req.user.id;
     const user = await User.findById(userId);
 
