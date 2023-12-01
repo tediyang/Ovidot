@@ -6,6 +6,7 @@ import { handleResponse } from '../utility/handle.response.js';
 import { isTokenBlacklisted, updateBlacklist } from '../middleware/tokenBlacklist.js';
 import { validationResult } from 'express-validator';
 import { sender } from '../services/notifications.js';
+import notifications from '../services/notifications.js';
 dotenv.config();
 
 const { genSalt, hash, compare } = bcrypt;
@@ -186,6 +187,16 @@ export async function changePass(req, res) {
     const hashedNewPassword = await hash(newPassword, salt);
 
     user.password = hashedNewPassword;
+
+    // create notification
+		const notify = notifications.generateNotification(user, 'updatedUser', 'Password changed');
+
+		// Add new notification
+		user.notificationsList.push(notify);
+
+		// manage noifications
+		notifications.manageNotification(user.notificationsList);
+
     await user.save();
 
     return res.status(204).send('Password changed');
