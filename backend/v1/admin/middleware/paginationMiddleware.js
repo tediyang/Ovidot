@@ -22,7 +22,8 @@ export default function paginationMiddleware(req, res, next) {
     res.locals.pagination.links = links;
     next();
   }
-  catch (erro) {
+  catch (error) {
+    res.locals.pagination = null;
     res.status(500).json({error: "internal server error"});
   }
 }

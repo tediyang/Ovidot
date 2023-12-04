@@ -1,0 +1,25 @@
+2023-12-04T15:04:58.307Z INFO: Server is now running on port 5000 
+2023-12-04T15:04:58.351Z INFO: MongoDB connected! 
+2023-12-04T15:10:35.406Z WARN: GET /users 404 3ms 404
+2023-12-04T15:17:23.150Z WARN: POST /signup 404 2ms 404
+2023-12-04T15:17:29.672Z WARN: POST /signup 404 1ms 404
+2023-12-04T15:18:41.616Z INFO: Server is now running on port 5000 
+2023-12-04T15:18:41.640Z INFO: MongoDB connected! 
+2023-12-04T15:19:01.511Z WARN: POST /signup 404 3ms 404
+2023-12-04T15:22:03.649Z WARN: POST /signup?email=emamawoda@gmail.com&username=mawodaekabua&password=emawodaa&age=20 404 1ms 404
+2023-12-04T15:22:05.377Z WARN: POST /signup?email=emamawoda@gmail.com&username=mawodaekabua&password=emawodaa&age=20 404 0ms 404
+2023-12-04T15:27:23.192Z WARN: POST /signup?email=1mawoda@gmail.com&password=mawodaekabua&username=emawoda&age=20 404 0ms 404
+2023-12-04T15:53:44.527Z INFO: Server is now running on port 5000 
+2023-12-04T15:53:44.565Z INFO: MongoDB connected! 
+2023-12-04T15:55:24.358Z WARN: POST /signup?email=1mawoda@gmail.com&password=mawodaekabua&username=emawoda&age=20 404 2ms 404
+2023-12-04T16:03:01.917Z WARN: POST /signup?email=1mawoda@gmail.com&password=mawodaekabua&username=emawoda&age=20 404 1ms 404
+2023-12-04T16:04:06.094Z WARN: POST /signup?email=1mawoda@gmail.com&password=mawodaekabua&username=emawoda&age=20 404 1ms 404
+2023-12-04T16:08:45.501Z INFO: Server is now running on port 5000 
+2023-12-04T16:08:45.525Z INFO: MongoDB connected! 
+2023-12-04T16:08:54.216Z WARN: POST /signup?email=1mawoda@gmail.com&password=mawodaekabua&username=emawoda&age=20 404 2ms 404
+2023-12-04T16:12:00.662Z INFO: MongoDB connected! 
+2023-12-04T16:12:38.874Z INFO: MongoDB connected! 
+2023-12-04T16:13:15.223Z INFO: Server is now running on port 5000 
+2023-12-04T16:13:15.245Z INFO: MongoDB connected! 
+2023-12-04T16:14:10.518Z INFO: Server is now running on port 5000 
+2023-12-04T16:14:10.548Z INFO: MongoDB connected! 
