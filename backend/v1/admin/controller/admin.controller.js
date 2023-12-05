@@ -97,17 +97,20 @@ const adminController = {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return handleResponse(res, 400, "Fill required properties");
-      };
+      }
+      const { page, limit, links } = res.locals.pagination;
 
       // Exclude these variables '-password -reset -resetExp -__v' in the result.
       const user = await User.findOne({ email: req.body.email }, '-password -reset -resetExp -__v');
       if (!user) {
         return handleResponse(res, 404, `User with ${req.body.email} not found`);
-      };
+      }
 
       const populate_user = await populateWithCycles(user.id);
   
-      const allCycles = populate_user._cycles.map(cycleFilter);
+      const allCycles = populate_user._cycles
+      .slice((page - 1) * limit, page * limit)
+      .map(cycleFilter);
 
       return res.status(200).json({ allCycles });
     } catch (error) {
@@ -219,13 +222,10 @@ const adminController = {
    */
   viewAllCycles: async (req, res) => {
     try {
-      const { page, limit, links } = res.locals.pagination;
 
-      const allCycleData = await Cycle.find({})
-      .skip((page - 1) * limit)
-      .limit(limit);
+      const allCycleData = await Cycle.find({});
 
-      return res.status(200).json({ allCycleData, links });
+      return res.status(200).json({ allCycleData });
     } catch (error) {
       handleResponse(res, 500, "Internal Server Error", error);
     }
