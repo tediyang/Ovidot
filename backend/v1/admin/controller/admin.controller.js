@@ -112,7 +112,7 @@ const adminController = {
       .slice((page - 1) * limit, page * limit)
       .map(cycleFilter);
 
-      return res.status(200).json({ allCycles });
+      return res.status(200).json({ allCycles, links });
     } catch (error) {
       handleResponse(res, 500, "Internal Server Error", error);
     }
