@@ -39,7 +39,8 @@ describe('ADMIN USER ROUTES', () => {
       .set('Authorization', `Bearer ${SUPER_ADMIN_TOKEN}`);
 
     expect(res.statusCode).to.equal(200);
-    expect(res.body.allUsers).to.be.an('array').that.is.not.empty;
+    expect(res.body.allUsers.length).to.be.lessThan(13);
+    expect(res.body.links).to.exist;
   });
 
   // POST /users/email - Get a specific user data by email
@@ -100,7 +101,8 @@ describe('ADMIN USER ROUTES', () => {
       .send({ email: 'emmanueleyang@gmail.com' });
     
     expect(res.statusCode).to.equal(200);
-    expect(res.body.allCycles).to.be.an('array').that.is.not.empty;
+    expect(res.body.allCycles.length).to.be.lessThan(13);
+    expect(res.body.links).to.exist;
   });
 
   // PUT /users/email - Update user email
