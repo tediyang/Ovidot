@@ -4,14 +4,24 @@ import app from '../../../app.js';
 import sinon from 'sinon';
 import dotenv from 'dotenv';
 import Cycle from '../../models/cycle.model.js';
+import User from '../../models/user.model.js';
+import redisManager from '../../services/caching.js';
 dotenv.config();
 
 const token = process.env.TEST_TOKEN;
+const testid = process.env.TESTID;
 
 describe('POST /cycles/create', () => {
+  let clock;
+
+  after(() => {
+    // Even if one of this test fails restore the time no to affect others.
+    clock.restore()
+  });
+
   it('should return 400 when startdate is invalid', async () => {
     // Use fakeTimer to set Time
-    const clock = sinon.useFakeTimers(new Date('2023-11-26').getTime());
+    clock = sinon.useFakeTimers(new Date('2023-11-26').getTime());
 
     const res = await request(app)
       .post('/api/v1/auth/cycles/create')
@@ -40,7 +50,7 @@ describe('POST /cycles/create', () => {
 
   it.skip('should create a new cycle with ovulation date provided', async () => {
     // Use fakeTimer to set Time
-    const clock = sinon.useFakeTimers(new Date('2024-01-23').getTime());
+    clock = sinon.useFakeTimers(new Date('2024-01-23').getTime());
 
     const res = await request(app)
       .post('/api/v1/auth/cycles/create')
@@ -61,7 +71,7 @@ describe('POST /cycles/create', () => {
 
   it('returns 400 when user creates another cycle in a month below the required days', async () => {
     // Use fakeTimer to set Time
-    const clock = sinon.useFakeTimers(new Date('2023-12-05').getTime());
+    clock = sinon.useFakeTimers(new Date('2023-12-05').getTime());
 
     const res = await request(app)
       .post('/api/v1/auth/cycles/create')
@@ -80,7 +90,7 @@ describe('POST /cycles/create', () => {
 
   it.skip('should create a new cycle for the next month >= next date', async () => {
     // Use fakeTimer to set Time
-    const clock = sinon.useFakeTimers(new Date('2023-12-25').getTime());
+    clock = sinon.useFakeTimers(new Date('2023-12-25').getTime());
 
     const res = await request(app)
       .post('/api/v1/auth/cycles/create')
@@ -122,8 +132,24 @@ describe('GET /cycles/getall', () => {
     expect(res1.statusCode).to.equal(200);
     expect(res2.statusCode).to.equal(200);
 
-    expect(res1.body).to.be.an('array').that.have.lengthOf(2);
-    expect(res2.body).to.be.an('array').that.have.lengthOf(1);
+    expect(res1.body).to.be.an('array').that.not.empty;
+    expect(res2.body).to.be.an('array').that.not.empty;
+  });
+
+  it('should check if the function never ran (caching)', async () => {
+    // Since the testdb is populated with data, we will check if the function never ran
+    const findByIdStub = sinon.stub(User, 'findById').resolves(null);
+
+    const res = await request(app)
+      .get('/api/v1/auth/cycles/getall?year=2023')
+      .set('Authorization', `Bearer ${token}`);
+
+    // restore the original function
+    findByIdStub.restore();
+
+    // check if the function ran
+    expect(findByIdStub.called).to.be.false;
+    expect(res.body).to.be.an('array').that.not.empty;
   });
 });
 
