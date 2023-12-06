@@ -6,7 +6,7 @@ import User from '../../models/user.model.js';
 import { handleResponse } from '../../utility/handle.response.js';
 import { validationResult } from 'express-validator';
 import { populateWithCycles } from '../../utility/user.populate.js';
-import { cycleFilter } from '../../controllers/cycle.controller.js';
+import { cycleFilter } from '../../utility/cycle.parsers.js';
 
 
 const { compare } = bcryptjs;
