@@ -30,12 +30,20 @@ const url = ENVIR !== 'test'? process.env.URL : process.env.TESTURL;
 // url path
 const APP_PATH = '/api/v1';
 
-// Connect to database
-connect(`mongodb://${HOST}/${DB}`, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  maxPoolSize: 2
-});
+// Connect to mongodb database
+if (ENVIR !== 'test') {
+  connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    maxPoolSize: 2
+  });
+} else {
+  connect(`mongodb://${HOST}/${DB}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    maxPoolSize: 2
+  });
+}
 
 const db = connection;
 
