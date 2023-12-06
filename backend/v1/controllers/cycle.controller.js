@@ -1,75 +1,17 @@
 // CYCLE CONTROLLER (CRUD)
 import Cycle from '../models/cycle.model.js';
-import { handleResponse } from '../utility/handle.response.js';
 import { month as _month, calculate } from '../utility/cycle.calculator.js';
 import User from '../models/user.model.js';
 import { validationResult } from 'express-validator';
 import { populateWithCycles, populateWithCyclesBy } from '../utility/user.populate.js';
 import { validateCreateDate, validateUpdateDate } from '../utility/date.validate.js';
-import notifications from '../services/notifications.js';
+import redisManager from '../services/caching.js';
+import { cycleFilter, cycleParser, MONTHS } from '../utility/cycle.parsers.js';
+import { checkExistingCycle, createCycleAndNotifyUser,
+	performUpdateAndNotify, performDeleteAndNotify } from '../utility/cycle.helpers.js';
+import { handleResponse } from '../utility/handle.response.js';
+import { logger } from '../middleware/logger.js';
 
-
-/**
- * Parse the data to create the cycle.
- * @param {String} month - Month of Cycle.
- * @param {Number} period - Number of menstrual days.
- * @param {Date} startdate - The first day of the cycle.
- * @param {Object} data - The cycle calculated data.
- * @returns - Data to parse to cycle model.
- */
-function cycleParser(month, period, startdate, data ) {
-	const result = {
-		month: month,
-		year: startdate.slice(0, 4),
-		period: period,
-		ovulation: data.ovulation,
-		start_date: startdate,
-		next_date: data.nextDate,
-		days: data.days,
-		period_range: data.periodRange,
-		ovulation_range: data.ovulationRange,
-		unsafe_days: data.unsafeDays
-	}
-	return result;
-}
-
-/**
- * Take in a cycle object and return selected cycle properties.
- * @param {Cycle} cycle.
- * @returns cycles properties.
- */
-export function cycleFilter(cycle) {
-	const result = {
-		id: cycle.id,
-		month: cycle.month,
-		year: cycle.year,
-		period: cycle.period,
-		ovulation: cycle.ovulation,
-		start_date: cycle.start_date,
-		next_date: cycle.next_date,
-		days: cycle.days,
-		period_range: cycle.period_range,
-		ovulation_range: cycle.ovulation_range,
-		unsafe_days: cycle.unsafe_days
-	}
-	return result;
-}
-
-// mapped months names to integer
-const MONTHS = {
-	1: 'January',
-	2: 'February',
-	3: 'March',
-	4: 'April',
-	5: 'May',
-	6: 'June',
-	7: 'July',
-	8: 'August',
-	9: 'September',
-	10: 'October',
-	11: 'November',
-	12: 'December'
-}
 
 /**
  * Creates a cycle for the user with provided params.
@@ -81,15 +23,14 @@ export async function createCycle(req, res) {
 	try {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
-		  return handleResponse(res, 400, "Fill required properties");
+			return handleResponse(res, 400, 'Fill required properties');
 		}
 
 		const id = req.user.id;
 		const { period, ovulation, startdate } = req.body;
 
 		if (!validateCreateDate(startdate)) {
-			return handleResponse(res, 400,
-				'Specify a proper date: Date should not be less than 21 days or greater than present day');
+			return handleResponse(res, 400, 'Specify a proper date: Date should not be less than 21 days or greater than present day');
 		}
 
 		// Get the month for the date
@@ -99,47 +40,22 @@ export async function createCycle(req, res) {
 		if (user === null) {
 			return handleResponse(res, 404, 'User not found');
 		}
-		if (user._cycles.length > 0) {
-			/**
-			 * 1. Get the most recent data for that month.
-			 * 2. Get the predicted nextdate for the previous cycle.
-			 * 3. Get the difference from the new month startdate
-			 * 4. If the difference is greater than 7 (7 days) send a
-			 * respond requesting for update or delete cycle. This estimate is made based on
-			 * an assumption that a female cycle can't come earlier than 7 days.
-			 */
-			const lastCycle = user._cycles[user._cycles.length - 1];
-			const nextD = new Date(lastCycle.next_date);
-			const prevD = new Date(startdate);
-			const diff = (nextD - prevD) / (24 * 60 * 60 * 1000);
-			if (diff > 7) {
-				return handleResponse(res, 400, "Cycle already exist for this month: Delete to create another");
-			}
-		}
+
+		if (checkExistingCycle(user, startdate)) {
+			return handleResponse(res, 400, "Cycle already exist for this month: Delete to create another");
+		};
+
 		// if user._cycles is false (no data), create a new one.
 		const cycleData = await calculate(period, startdate, ovulation);
 
 		const data = cycleParser(month, period, startdate, cycleData);
-		const newCycle = await Cycle({ ...data });
+		const newCycle = await Cycle.create({...data});
 
-		// Save the new cycle created
-		await newCycle.save();
+		// Create the cycle and notification for the user
+		await createCycleAndNotifyUser(newCycle, user, startdate);
 
-		const message = `Cycle created for ${startdate}}`;
-
-		const notify = notifications.generateNotification(newCycle, 'createdCycle', message);
-
-		// Add new notification
-		user.notificationsList.push(notify);
-
-		// manage noifications
-		notifications.manageNotification(user.notificationsList);
-
-		user._cycles.push(newCycle._id);
-		await User.findByIdAndUpdate(user.id, {
-			_cycles: user._cycles,
-			notificationsList: user.notificationsList
-		});
+		// Handle cache
+		await Promise.resolve(redisManager.cacheDel(id, newCycle.year.toString()));
 
 		return res.status(201).json({
 			message: 'Cycle created',
@@ -147,11 +63,7 @@ export async function createCycle(req, res) {
 		});
 
 	} catch (error) {
-		if (error.statusCode == 400) {
-			handleResponse(res, 400, error.message);
-		} else {
 			handleResponse(res, 500, "internal server error", error);
-		}
 	}
 }
 
@@ -169,12 +81,27 @@ export async function fetchAllCycles(req, res) {
     // If a 'year' is provided, use it in the search criteria
     const search = year ? { year: year } : {};
 
+		// If there's a cache data for the year given then return the data
+		if (year) {
+			const data = await redisManager.cacheGet(id, year.toString());
+			if (data) {
+				logger.info(`${year} cache retrieved`)
+				return res.status(200).json(JSON.parse(data));
+			}
+		}
+
     const user = await populateWithCyclesBy(id, search);
     if (!user) {
       return handleResponse(res, 404, 'User not found');
-    }
+    };
 
     const cycles = user._cycles.map(cycleFilter);
+
+		// Cache data if year is provided
+		if (year) {
+			await redisManager.cacheSet(id, year.toString(), JSON.stringify(cycles));
+		};
+
     return res.status(200).json(cycles);
   } catch (err) {
     return handleResponse(res, 500, 'Internal Server Error', err);
@@ -228,7 +155,7 @@ export async function fetchMonth(req, res) {
 		if (isNaN(month) && typeof month !== 'string') {
 			return handleResponse(res, 400, 'Invalid month');
 		}
-		
+
 		// If month data is sent as a Number
 		if (typeof +month === 'number' && month >= 1 && month <= 12) {
 			month = MONTHS[month];
@@ -270,48 +197,34 @@ export async function updateCycle(req, res) {
 			return handleResponse(res, 404, "Cycle not found");
 		}
 
-		// if startdate is 30 days below current date, then update isn't possible
-		if (new Date() > new Date(cycle.start_date).setDate(new Date(cycle.start_date).getDate() + 30)) {
-			return handleResponse(res, 400, "Update can't be made after 30 days from start date");
-		};
-
 		// Check if the user provided at least a data to update
 		if ((!period && !ovulation) || (period === cycle.period && ovulation === cycle.ovulation)) {
 			return handleResponse(res, 400, "Provide atleast a param to update: period or ovulation");
 		}
 
+		// if startdate is 30 days below current date, then update isn't possible
+		if (new Date() > new Date(cycle.start_date).setDate(new Date(cycle.start_date).getDate() + 30)) {
+			return handleResponse(res, 400, "Update can't be made after 30 days from start date");
+		};
+
 		// Validate the ovulation date.
 		if (ovulation && !validateUpdateDate(cycle.start_date, ovulation, cycle.period)) {
 			return handleResponse(res, 400, 'Ovulation date must not exceed 18 days from start date');
 		}
+
+		// If period is not provided, then use the current period
 		if (!period) {
 			period = cycle.period;
 		}
 
-		const updated_at = new Date();
-		const month = _month(cycle.start_date);
-		const updatedData = await calculate(period, cycle.start_date, ovulation);
-		const data = cycleParser(month, period, cycle.start_date.toISOString(), updatedData);
-		const updatecycle = await Cycle.findByIdAndUpdate(cycleId, {
-			...data,
-			updated_at: updated_at
-		},
-		{ new: true });
+		// Update and notify user
+		const updatedCycle = await performUpdateAndNotify(cycle, period, ovulation, cycleId, user);
 
-		// Generate notification
-		const message = `Cycle for ${cycle.start_date.toISOString().split('T')[0]} was updated`;
+		const updated = cycleFilter(updatedCycle);
 
-		const notify = notifications.generateNotification(updatecycle, 'updatedCycle', message);
+		// Handle cache
+		await Promise.resolve(redisManager.cacheDel(userId, updated.year.toString()));		
 
-		// Add new notification
-		user.notificationsList.push(notify);
-
-		// manage noifications
-		notifications.manageNotification(user.notificationsList);
-
-		await user.save();
-
-		const updated = cycleFilter(updatecycle);
 		return res.status(200).json({
 			updated
 		});
@@ -335,6 +248,7 @@ export async function deleteCycle(req, res) {
 	try {
 		const { cycleId } = req.params;
 		const userId = req.user.id;
+
 		const user = await populateWithCyclesBy(userId, {_id: cycleId});
 		if (user === null) {
 			return handleResponse(res, 404, "User not found");
@@ -343,25 +257,14 @@ export async function deleteCycle(req, res) {
 			return handleResponse(res, 404, "Cycle not found");
 		}
 
-		const cycle = await Cycle.findByIdAndRemove(cycleId);
-		cycle.updated_at = new Date();
+		// Delete and notify user
+		const deletdCycle = await performDeleteAndNotify(cycleId, user)
 
-		// Generate notification
-		const message = `Cycle deleted for ${cycle.start_date.toISOString().split('T')[0]}`;
-
-		const notify = notifications.generateNotification(cycle, 'deletedCycle', message);
-
-		// Add new notification
-		user.notificationsList.push(notify);
-
-		// manage noifications
-		notifications.manageNotification(user.notificationsList);
-
-		await user.save();
+		// Handle cache
+		await Promise.resolve(redisManager.cacheDel(userId, deletdCycle.year.toString()));
 
 		return res.status(204).send('Cycle deleted');
-	}
-	catch (error) {
+	} catch (error) {
 		handleResponse(res, 500, "internal server error", error);
 	}
 };
