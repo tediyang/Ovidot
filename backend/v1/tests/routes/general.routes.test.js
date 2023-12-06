@@ -55,7 +55,7 @@ describe('POST /login', () => {
   it('should return 200 and token on success', async () => {
     const userData = {
       email: 'daniel.eyang.ed@ovidot.com',
-      password: 'Ovidotsuper'
+      password: 'ovidot123#'
     };
 
     const res = await request(app)
