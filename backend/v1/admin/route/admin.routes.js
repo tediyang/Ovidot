@@ -31,7 +31,7 @@ router.post('/users/email', [
 router.post('/users/email/cycles', [
     body('email').isString().notEmpty()
     ],
-    verifyAdmin, adminController.getAllCyclesByEmail);
+    verifyAdmin, paginationMiddleware, adminController.getAllCyclesByEmail);
 
 /** Route for updating a user by email. */
 router.put('/users/email', [
@@ -53,10 +53,10 @@ router.post('/users/forgot-password', [
     verifyAdmin, forgotPass);
 
 /** Route for retrieving all cycles. */
-router.get('/cycles', verifyAdmin, paginationMiddleware, adminController.viewAllCycles);
+router.get('/cycles', verifyAdmin, adminController.viewAllCycles);
 
 /** Route for retrieving a cycle by cycleId. */
-router.get('/cycles/:cycleId', verifyAdmin, paginationMiddleware, adminController.viewCycle);
+router.get('/cycles/:cycleId', verifyAdmin, adminController.viewCycle);
 
 /** Route for deleting a cycle by cycleId. */
 router.delete('/cycles/:cycleId', verifyAdmin, adminController.deleteCycle);
