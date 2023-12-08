@@ -7,6 +7,8 @@ import { isTokenBlacklisted, updateBlacklist } from '../middleware/tokenBlacklis
 import { validationResult } from 'express-validator';
 import { sender } from '../services/notifications.js';
 import notifications from '../services/notifications.js';
+import { renderForgetTemplate } from '../services/views/handle.template.js';
+import { logger } from '../middleware/logger.js';
 dotenv.config();
 
 const { genSalt, hash, compare } = bcrypt;
@@ -50,17 +52,19 @@ export async function forgotPass(req, res) {
     user.resetExp = resetExp;
     await user.save();
 
-    const resetLink = `http://${url}/${token}`;
+    const resetLink = `${url}/${token}`;
+
+    const forgetPass = await renderForgetTemplate(req, user, resetLink);
 
     const receiver = {
       to: email,
       subject: 'Password Reset',
-      text: `Click the following link to reset your password: ${resetLink}, do not share this link with anyone.
-      This link will expire in 30 mins. If you didn't make this request then ignore it.`,
+      html: forgetPass
     };
 
     sender.sendMail(receiver, (error, info) => {
       if (error) {
+        logger.error('Failed to send email')
         return handleResponse(res, 500, 'Failed to send email', error);
       }
       return handleResponse(res, 201, 'Password reset link sent to email');
