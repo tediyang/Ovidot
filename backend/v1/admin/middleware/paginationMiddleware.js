@@ -1,8 +1,18 @@
+/**
+ * Constants for pagination parameters and default values.
+ */
 const PAGE_PARAM = "page";
 const LIMIT_PARAM = "limit";
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 12;
 
+/**
+ * Generates pagination links based on the current page and limit.
+ *
+ * @param {number} page - Current page number.
+ * @param {number} limit - Number of items per page.
+ * @returns {Object} Object containing pagination links.
+ */
 function generatePaginationLinks(page, limit) {
   return {
     first: `?${PAGE_PARAM}=${DEFAULT_PAGE}&${LIMIT_PARAM}=${limit}`,
@@ -12,7 +22,13 @@ function generatePaginationLinks(page, limit) {
   };
 }
 
-
+/**
+ * Express middleware for handling pagination.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @param {Function} next - Next middleware function.
+ */
 export default function paginationMiddleware(req, res, next) {
   try {
     const page = parseInt(req.query[PAGE_PARAM], 10) || DEFAULT_PAGE;
