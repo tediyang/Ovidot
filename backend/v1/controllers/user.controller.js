@@ -123,8 +123,7 @@ export async function fetchUser(req, res) {
 			userId: user._id,
 			email: user.email,
 			username: user.username,
-			age: user.age,
-			cycles: user._cycles
+			age: user.age
 		});
 
 	} catch(error) {

@@ -32,32 +32,50 @@ User@User ~
 $ cd ovidot/backend
 ```
 
-3. Change branch from master to development
+3. Change branch to master branch
 ```bash
 User@User ~/ovidot/backend (master)
-$ git switch development
+$ git switch master
 ```
 
 4. Use the package manager [npm](https://docs.npmjs.com/cli/v9/commands/npm-install) to install all dependencies in package.json file
 ```bash
-User@User ~/ovidot/backend (development)
+User@User ~/ovidot/backend (master)
 $ npm install
 ```
 
-5. Create a .env file in the project root directory. In the .env file create environment variables for development in this manner:
+5. Create a .env file in the project root directory. In the .env file create environment variables for master in this manner:
 ```bash
 User@User ~/ovidot/backend 
 $ vi .env
 ```
 
-6. Then create the following evironmental variables in the .env file with the appropriate values.
-```vi
+6. Then create the following environmental variables in the .env file with the appropriate values.
+```bash
 SECRETKEY=your-aplhanumeric-secret-key
 ADMINKEY=your-alphanumeric-admin-key
 HOST = 'your-local-host'
-DB='your-mongo-db'
+DB='your-mongo-db-url-connection'
 EMAIL = "sender-email"
 EMAILPASSWORD = "sender-email-address"
+PORT = 'your-preferred-port'
+ENVIR = 'test or production'
+TESTDB = 'your-mongo-db-test-url'
+ADMINKEY = 'your-admin-secret-key'
+USERNAME = 'your-redis-username'
+PASSWORD = 'your-redis-password'
+REDISPORT = 'your-redis-port'
+SECRETKEY = 'your-app-secret-key'
+EMAIL = 'your-email-address-for-SMTP'
+EMAILPASSWORD = 'your-email-password (this setup uses email-pass config)'
+BLACKLIST = 'blacklist.json'
+TEST_TOKEN = "user-test-token"
+SUPERADMIN = 'superadmin username'
+SUBADMIN = 'sub admin username'
+ADMINPASS = "superadmin password"
+SUPER_ADMIN_TOKEN = "super admin test token"
+SUB_ADMIN_TOKEN = "subadmin test token"
+TESTID = 'user test id'
 ```
 
 7. To start the service
@@ -65,7 +83,8 @@ EMAILPASSWORD = "sender-email-address"
 User@User ~/ovidot/backend
 npm start
 ```
-```
+
+```bash
 > backend@1.0.0 start
 > nodemon app.js
 
@@ -77,6 +96,8 @@ npm start
 Server is now running on port {specified port}
 MongoDB connected!
 ```
+##### N.B No Redis connection will pop up error. But on success, there won't be
+
 
 To run test
 ```bash
@@ -90,36 +111,36 @@ For local connection: http://127.0.0.1:{PORT}/{endpoint}
 ### Non-Authorization Endpoints
 - Register a new user and get an access token for authentication purposes.
 Request
-```bash
+```json
 POST /api/v1/signup
 body {
     "email": "<USER'S EMAIL>",
     "password": "<PASSWORD>",
     "username": "<USERNAME>",
     "age": "<AGE>"
-}
+  }
 ```
 Response (Status 201)
 
 
 - Login with a registered account
 Request
-```bash
+```json
 POST /api/v1/login
 body {
     "email": "<USER'S EMAIL>",
     "password": "<PASSWORD>"
-}
+  }
 ```
 Response on success (Status 200)
-```bash
+```json
 {
   "message": "Authentication successful",
   "token": "token generated"
 }
 ```
 Response on failure (Status 401)
-```bash
+```json
 {
   "message": "Authentication failed"
 }
@@ -127,35 +148,36 @@ Response on failure (Status 401)
 
 - Send forget password reset link
 Request
-```bash
+```json
 POST /api/v1/forgot-password
 body {
-    "email": "<EMAIL>"
-}
+    "email": "<EMAIL>",
+    "url": "<URL TO REDIRECT THE PASS>"
+  }
 ```
 Response (Status 201, Created): Password reset link sent to email
 Response (Status 500): Password reset link sent to email | Internal Server Error
 
 - Verify reset token
 Request
-```bash
-GET /api/v1//reset-password/:token
+```json
+GET /api/v1/reset-password/:token
 ```
 Response (Status 200)
-```bash
+```json
 {
-    message : "success" ,
-    token: <token>
+  "message" : "success" ,
+  "token": "<token>"
 }
 ```
 
 - Reset Password
 Request
-```bash
+```json
 POST /api/v1/reset-password/:token
 body {
     "password": "<PASSWORD>",
-}
+  }
 ```
 Response (Status 200): "Password changed"
 
@@ -163,7 +185,7 @@ Response (Status 200): "Password changed"
 
 - Logout a registered account
 Request
-```bash
+```json
 GET /api/v1/auth/logout [Auth: Bearer Token]
 ```
 Response (Status 200)
@@ -172,45 +194,39 @@ Response (Status 200)
 #### User Endpoint
 - Get user by userId
 Request
-```bash
+```json
 GET api/v1/auth/users/get [Auth: Bearer token]
 ```
 Response (Status 200)
-```bash
+```json
 {
   "userId": "<USER ID>",
   "email": "<USER EMAIL>",
   "username": "<USERNAME>",
-  "age": <AGE>,
-  "cycles": [
-    "<CYCLE ID>"
-  ]
+  "age": "<AGE>"
 }
 ```
 
 - Update user data
 Request
-```bash
+```json
 PUT api/v1/auth/users/update [Auth: Bearer token]
 body {
     "username": "<NEW USERNAME",
-    "age": <NEW AGE>
-}
+    "age": "<NEW AGE>"
+  }
 ```
 Response (Status 200)
-```bash
+```json
 {
   "userId": "<USER ID>",
   "email": "<USER EMAIL>",
   "username": "<NEW USERNAME>",
-  "age": <NEW AGE>,
-  "cycles": [
-    "<CYCLE ID>"
-  ]
+  "age": "<NEW AGE>"
 }
 ```
 Response (Status 400)
-```bash
+```json
 {
   "message": "Provide atleast a param to update: username or age"
 }
@@ -218,19 +234,19 @@ Response (Status 400)
 
 - Delete user data
 Request
-```bash
+```json
 DELETE api/v1/auth/users/delete [Auth: Bearer token]
 ```
 Response (Status 204)
 
 - Change Logged-in user password
 Request
-```bash
+```json
 POST /api/v1/auth/users/change-password [Auth: Bearer Token]
 body {
     "currentPassword": "<OLD PASSWORD>",
     "newPassword": "<NEW PASSWORD>"
-}
+  }
 ```
 Response (Status 204)
 
@@ -238,36 +254,37 @@ Response (Status 204)
 #### Cycle Endpoint
 - Create a Cycle
 Request
-```bash
+```json
 POST api/v1/auth/cycles/create [Auth: Bearer Token]
 {
-  "period": <INT: NUMBER>,
-  "startdate": <DATE: CYCLE STARTDATE> | YYYY-MM-DD
+  "period": "<INT: NUMBER>",
+  "startdate": "<DATE: CYCLE STARTDATE> | YYYY-MM-DD"
 }
 ```
 Response (status 201)
-```bash
+```json
 {
-    message: 'Cycle created',
-    cycleId: "<CYCLE ID>"
+  "message": "Cycle created",
+  "cycleId": "<CYCLE ID>"
 }
 ```
 
 - Get a cycle by cycleId
 Request
-```bash
+```json
 GET api/v1/auth/cycles/<:cycleId> [Auth: Bearer Token]
 ```
 Response (Status 200)
-```bash
+```json
 {
   "_id": "<CYCLE ID>",
   "month": "<MONTH>",
-  "period": <NUM: PERIOD LENGTH>,
+  "year": "<YEAR>",
+  "period": "<NUM: PERIOD LENGTH>",
   "ovulation": "<DATE: OVULATION DAY>",
   "start_date": "<DATE: CYCLE START DATE>",
   "next_date": "<DATE: NEXT CYCLE START DATE>",
-  "days": <NUM: CYCLE DURATION DAYS>,
+  "days": "<NUM: CYCLE DURATION DAYS>",
   "period_range": [
     "<DATE: MENSTRAUTION DAYS>",
   ],
@@ -280,49 +297,50 @@ Response (Status 200)
 }
 ```
 
-- Get all cycles for a given user
+- Get all cycles for a given user with year as query parameter
 Request
-```bash
-GET api/v1/auth/cycles/getall [Auth: Bearer Token]
+```json
+GET api/v1/auth/cycles/getall?year=year [Auth: Bearer Token]
 ```
 Response (Status 200)
-```bash
+```json
 [
-    { <CYCLE DATA> }
+    "{ <CYCLE DATA> }"
 ]
 ```
 
-- Get all cycles by month
+- Get all cycles by month with year as query parameter
 Request
-```bash
-GET api/v1/auth/cycles/getall/<:month> [Auth: Bearer Token]
+```json
+GET api/v1/auth/cycles/getall/<:month>?year=year [Auth: Bearer Token]
 ```
 Response (Status 200)
-```bash
+```json
 [
-    { <CYCLE DATA> }
+    "{ <CYCLE DATA> }"
 ]
 ```
 
 - Update a cycle by cycleId
 Request
-```bash
+```json
 PUT api/v1/auth/cycles/:cycleId [Auth: Bearer Token]
 body {
-    "period": <INT: NUMBER>,
-    "ovulation": "<DATE: DATE OVULATION OCCURED>" | YYYY-MM-DD
+    "period": "<INT: NUMBER>",
+    "ovulation": "<DATE: DATE OVULATION OCCURED> | YYYY-MM-DD"
 }
 ```
 Response (Status 200)
-```bash
+```json
 {
   "_id": "<CYCLE ID>",
   "month": "<MONTH>",
-  "period": <NUM: UPDATED PERIOD LENGTH>,
+  "year": "<YEAR>",
+  "period": "<NUM: UPDATED PERIOD LENGTH>",
   "ovulation": "<DATE: UPDATED OVULATION DAY>",
   "start_date": "<DATE: CYCLE START DATE>",
   "next_date": "<DATE: UPDATED NEXT CYCLE START DATE>",
-  "days": <NUM: UPDATED CYCLE DURATION DAYS>,
+  "days": "<NUM: UPDATED CYCLE DURATION DAYS>",
   "period_range": [
     "<DATE: UPDATED MENSTRAUTION DAYS>",
   ],
@@ -337,11 +355,11 @@ Response (Status 200)
 
 - Delete cycle by cycleId
 Request
-```bash
+```json
 DELETE api/v1/auth/cycles/<:cycleId> [Auth: Bearer Token]
 ```
 Response (Status 204)
-```bash
+```json
 Cycle deleted
 ```
 
@@ -349,49 +367,49 @@ Cycle deleted
 ### Admin
 - Login as admin
 Request
-```bash
+```json
 POST /api/v1/admin/login
 body {
     "email": "<USERNAME>",
     "password": "<PASSWORD>"
-}
+  }
 ```
 Response on success (Status 200)
-```bash
+```json
 {
   "message": "Authentication successful",
   "token": "token generated"
 }
 ```
 
-- Get all users
+- Get all users with page and limit as parameter
 Request
-```bash
-GET /api/v1/admin/users
+```json
+GET /api/v1/admin/users?page=page&limit=limit
 ```
 Response (Status 200)
-```bash
+```json
 [
-    { <USER DATA> }
+  "{ <USER DATA> }"
 ]
 ```
 
 - Get a user data
 Request
-```bash
+```json
 POST /api/v1/admin/users/email
 body {
-    "email": <USER EMAIL>
-}
+    "email": "<USER EMAIL>"
+  }
 ```
 Response (Status 200)
-```bash
+```json
 {
   "user": {
     "_id": "user's id",
     "email": "user email",
     "username": "username",
-    "age": <AGE>,
+    "age": "<AGE>",
     "is_admin": false,
     "_cycles": [
       "cycle id"
@@ -402,35 +420,49 @@ Response (Status 200)
 }
 ```
 
+- Get cycles for a given user by email
+```json
+POST /api/v1/admin/users/email/cycles?page=page&limit=limit
+body {
+  "email": "user email"
+}
+```
+Response (Status 200)
+```json
+[
+  "{ <CYCLE DATA> }"
+]
+```
+
 - Update a user's email
 Request
-```bash
+```json
 PUT /api/v1/admin/users/email
 body {
     "oldEmail": "<OLD EMAIL",
     "newEmail": "<NEW EMAIl"
-}
+  }
 ```
 Response (Status 204)
-```bash
+```json
 {
-    updated: true || false
+  "updated": "true || false"
 }
 ```
 
 - Delete User
 Request
-```bash
+```json
 DELETE /api/v1/admin/users/email
 ```
 Response (Status 204) : email deleted
 
 - Create forgot password link for user
 Request
-```bash
+```json
 POST api/v1/admin/users/forgot-password
 body {
-    "email": "<EMAIL>"
+  "email": "<EMAIL>"
 }
 ```
 Response (Status 201, Created): Password reset link sent to email
@@ -438,31 +470,31 @@ Response (Status 500): Password reset link sent to email | Internal Server Error
 
 - Get cycles
 Request
-```bash
+```json
 GET /api/v1/admin/cycles
 ```
 Response (status 200)
-```bash
+```json
 [
-    { <CYCLE DATA> }
+  "{ <CYCLE DATA> }"
 ]
 ```
 
 - Fetch cycle
 Request
-```bash
+```json
 GET api/v1/admin/cycles/:cycleId
 ```
 Response (status 200)
-```bash
+```json
 {
-    <CYCLE DATA>
+  "<CYCLE DATA>"
 }
 ```
 
 - Delete cycle
 Request
-```bash
+```json
 GET api/v1/admin/cycles/:cycleId
 ```
 Response (status 200): Cycle deleted
