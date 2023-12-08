@@ -99,7 +99,7 @@ export async function fetchAllCycles(req, res) {
 
 		// Cache data if year is provided
 		if (year) {
-			await redisManager.cacheSet(id, year.toString(), JSON.stringify(cycles));
+			redisManager.cacheSet(id, year.toString(), JSON.stringify(cycles));
 		};
 
     return res.status(200).json(cycles);
