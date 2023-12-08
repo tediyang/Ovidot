@@ -7,6 +7,7 @@ import { handleResponse } from '../../utility/handle.response.js';
 import { validationResult } from 'express-validator';
 import { populateWithCycles } from '../../utility/user.populate.js';
 import { cycleFilter } from '../../utility/cycle.parsers.js';
+import paginationMiddleware from "../middleware/paginationMiddleware.js";
 
 
 const { compare } = bcryptjs;
