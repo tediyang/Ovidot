@@ -24,26 +24,17 @@ const app = express();
 // get environment variables
 const { HOST, ENVIR, PORT } = process.env;
 const { USERNAME, PASSWORD, REDISPORT } = process.env;
-const DB = ENVIR !== 'test'? process.env.DB : process.env.TESTDB;
-const url = ENVIR !== 'test'? process.env.URL : process.env.TESTURL;
+const url = ENVIR !== 'test'? process.env.DB : process.env.TESTDB;
 
 // url path
 const APP_PATH = '/api/v1';
 
 // Connect to mongodb database
-if (ENVIR !== 'test') {
-  connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    maxPoolSize: 2
-  });
-} else {
-  connect(`mongodb://${HOST}/${DB}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    maxPoolSize: 2
-  });
-}
+connect(url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  maxPoolSize: 2
+});
 
 const db = connection;
 
