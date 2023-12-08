@@ -1,27 +1,39 @@
+const PAGE_PARAM = "page";
+const LIMIT_PARAM = "limit";
+const DEFAULT_PAGE = 1;
+const DEFAULT_LIMIT = 12;
+
+function generatePaginationLinks(page, limit) {
+  return {
+    first: `?${PAGE_PARAM}=${DEFAULT_PAGE}&${LIMIT_PARAM}=${limit}`,
+    prev: page > DEFAULT_PAGE && `?${PAGE_PARAM}=${page - 1}&${LIMIT_PARAM}=${limit}`,
+    self: `?${PAGE_PARAM}=${page}&${LIMIT_PARAM}=${limit}`,
+    next: `?${PAGE_PARAM}=${page + 1}&${LIMIT_PARAM}=${limit}`,
+  };
+}
+
+
 export default function paginationMiddleware(req, res, next) {
   try {
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 12;
+    const page = parseInt(req.query[PAGE_PARAM], 10) || DEFAULT_PAGE;
+    const limit = parseInt(req.query[LIMIT_PARAM], 10) || DEFAULT_LIMIT;
 
     res.locals.pagination = {
       page,
-      limit
+      limit,
+      hasMorePages: true,
     };
 
-    const links = {
-      first: `?page=1&limit=${limit}`,
-      prev: page > 1 ? `?page=${page - 1}&limit=${limit}` : null,
-      self: `?page=${page}&limit=${limit}`,
-      next: `?page=${page + 1}&limit=${limit}`,
-    };
+    const links = generatePaginationLinks(page, limit);
+    res.locals.pagination.links = Object.fromEntries(Object.entries(links).filter(([_ , value]) => value !== null));
 
-    Object.keys(links).forEach((key) => links[key] === null && delete links[key]);
+    res.locals.pagination.hasMorepages = res.locals.pagination.links.next !== undefined;
 
-    res.locals.pagination.links = links;
     next();
   }
   catch (error) {
     res.locals.pagination = null;
-    res.status(500).json({error: "internal server error"});
+    res.status(500).json({ error: "internal server error" });
   }
 }
+
