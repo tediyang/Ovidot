@@ -1,5 +1,6 @@
 import { createTransport } from 'nodemailer';
 import { logger } from '../middleware/logger.js';
+import { renderWelcomeTemplate, renderGoodbyeTemplate } from './views/handle.template.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -61,21 +62,12 @@ const notifications = {
    * @throws {Error} - If there is an error sending the email.
    */
   sendUserCreationNotification: async (data) => {
+    const welcomeTemplate = await renderWelcomeTemplate(data);
+
     const receiver = {
       to: data.email,
       subject: 'Welcome to Ovidot - Your Personal Cycle Calendar',
-      text: `
-Dear ${data.username},
-
-Welcome to Ovidot, your personalized cycle calendar app! 🌸 We're thrilled to have you on board.
-
-
-To get started, simply log in to your account using the credentials you provided during registration.
-If you ever forget your password, don't worry! You can easily reset it using the 'Forgot Password' link on the login page.
-
-Best regards,
-
-The Ovidot Team 🌟`
+      html: welcomeTemplate
     };
 
     try {
@@ -94,21 +86,12 @@ The Ovidot Team 🌟`
    * @throws {Error} - If there is an error sending the email.
    */
   sendUserTerminationNotification: async (data) => {
+    const goodbyeTemplate = await renderGoodbyeTemplate(data);
+
     const receiver = {
       to: data.email,
       subject: 'Account Deletion - Ovidot',
-      text: `
-Dear ${data.username},
-
-We received your request to delete your Ovidot account, and we want to inform you that your account has been successfully deleted. We appreciate the time you spent using Ovidot, and we're here to support you in any way we can.
-
-If you ever decide to return, your data will no longer be available, and you'll need to create a new account.
-
-Wishing you all the best on your journey, and should you ever decide to return, we'll be here for you. Contact us at support@ovidot.com if you have any questions.
-
-Thank you,
-
-The Ovidot Team 🌸`
+      html: goodbyeTemplate
     };
 
     try {
