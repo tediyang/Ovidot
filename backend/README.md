@@ -111,8 +111,10 @@ For local connection: http://127.0.0.1:{PORT}/{endpoint}
 ### Non-Authorization Endpoints
 - Register a new user and get an access token for authentication purposes.
 Request
-```json
+```bash
+```
 POST /api/v1/signup
+```json
 body {
     "email": "<USER'S EMAIL>",
     "password": "<PASSWORD>",
@@ -125,8 +127,10 @@ Response (Status 201)
 
 - Login with a registered account
 Request
-```json
+```bash
 POST /api/v1/login
+```
+```json
 body {
     "email": "<USER'S EMAIL>",
     "password": "<PASSWORD>"
@@ -148,8 +152,10 @@ Response on failure (Status 401)
 
 - Send forget password reset link
 Request
-```json
+```bash
 POST /api/v1/forgot-password
+```
+```json
 body {
     "email": "<EMAIL>",
     "url": "<URL TO REDIRECT THE PASS>"
@@ -173,8 +179,10 @@ Response (Status 200)
 
 - Reset Password
 Request
-```json
+```bash
 POST /api/v1/reset-password/:token
+```
+```json
 body {
     "password": "<PASSWORD>",
   }
@@ -185,7 +193,7 @@ Response (Status 200): "Password changed"
 
 - Logout a registered account
 Request
-```json
+```
 GET /api/v1/auth/logout [Auth: Bearer Token]
 ```
 Response (Status 200)
@@ -194,7 +202,7 @@ Response (Status 200)
 #### User Endpoint
 - Get user by userId
 Request
-```json
+```
 GET api/v1/auth/users/get [Auth: Bearer token]
 ```
 Response (Status 200)
@@ -209,8 +217,10 @@ Response (Status 200)
 
 - Update user data
 Request
-```json
+```
 PUT api/v1/auth/users/update [Auth: Bearer token]
+```
+```json
 body {
     "username": "<NEW USERNAME",
     "age": "<NEW AGE>"
@@ -234,15 +244,17 @@ Response (Status 400)
 
 - Delete user data
 Request
-```json
+```
 DELETE api/v1/auth/users/delete [Auth: Bearer token]
 ```
 Response (Status 204)
 
 - Change Logged-in user password
 Request
-```json
+```
 POST /api/v1/auth/users/change-password [Auth: Bearer Token]
+```
+```json
 body {
     "currentPassword": "<OLD PASSWORD>",
     "newPassword": "<NEW PASSWORD>"
@@ -254,8 +266,10 @@ Response (Status 204)
 #### Cycle Endpoint
 - Create a Cycle
 Request
-```json
+```
 POST api/v1/auth/cycles/create [Auth: Bearer Token]
+```
+```json
 {
   "period": "<INT: NUMBER>",
   "startdate": "<DATE: CYCLE STARTDATE> | YYYY-MM-DD"
@@ -271,7 +285,7 @@ Response (status 201)
 
 - Get a cycle by cycleId
 Request
-```json
+```
 GET api/v1/auth/cycles/<:cycleId> [Auth: Bearer Token]
 ```
 Response (Status 200)
@@ -299,7 +313,7 @@ Response (Status 200)
 
 - Get all cycles for a given user with year as query parameter
 Request
-```json
+```
 GET api/v1/auth/cycles/getall?year=year [Auth: Bearer Token]
 ```
 Response (Status 200)
@@ -311,7 +325,7 @@ Response (Status 200)
 
 - Get all cycles by month with year as query parameter
 Request
-```json
+```
 GET api/v1/auth/cycles/getall/<:month>?year=year [Auth: Bearer Token]
 ```
 Response (Status 200)
@@ -323,8 +337,10 @@ Response (Status 200)
 
 - Update a cycle by cycleId
 Request
-```json
+```
 PUT api/v1/auth/cycles/:cycleId [Auth: Bearer Token]
+```
+```json
 body {
     "period": "<INT: NUMBER>",
     "ovulation": "<DATE: DATE OVULATION OCCURED> | YYYY-MM-DD"
@@ -355,7 +371,7 @@ Response (Status 200)
 
 - Delete cycle by cycleId
 Request
-```json
+```
 DELETE api/v1/auth/cycles/<:cycleId> [Auth: Bearer Token]
 ```
 Response (Status 204)
@@ -367,8 +383,10 @@ Cycle deleted
 ### Admin
 - Login as admin
 Request
-```json
+```
 POST /api/v1/admin/login
+```
+```json
 body {
     "email": "<USERNAME>",
     "password": "<PASSWORD>"
@@ -384,7 +402,7 @@ Response on success (Status 200)
 
 - Get all users with page and limit as parameter
 Request
-```json
+```
 GET /api/v1/admin/users?page=page&limit=limit
 ```
 Response (Status 200)
@@ -396,8 +414,10 @@ Response (Status 200)
 
 - Get a user data
 Request
-```json
+```
 POST /api/v1/admin/users/email
+```
+```json
 body {
     "email": "<USER EMAIL>"
   }
@@ -421,8 +441,10 @@ Response (Status 200)
 ```
 
 - Get cycles for a given user by email
-```json
+```
 POST /api/v1/admin/users/email/cycles?page=page&limit=limit
+```
+```json
 body {
   "email": "user email"
 }
@@ -436,8 +458,10 @@ Response (Status 200)
 
 - Update a user's email
 Request
-```json
+```
 PUT /api/v1/admin/users/email
+```
+```json
 body {
     "oldEmail": "<OLD EMAIL",
     "newEmail": "<NEW EMAIl"
@@ -452,15 +476,17 @@ Response (Status 204)
 
 - Delete User
 Request
-```json
+```
 DELETE /api/v1/admin/users/email
 ```
 Response (Status 204) : email deleted
 
 - Create forgot password link for user
 Request
-```json
+```
 POST api/v1/admin/users/forgot-password
+```
+```json
 body {
   "email": "<EMAIL>"
 }
@@ -470,7 +496,7 @@ Response (Status 500): Password reset link sent to email | Internal Server Error
 
 - Get cycles
 Request
-```json
+```
 GET /api/v1/admin/cycles
 ```
 Response (status 200)
@@ -482,7 +508,7 @@ Response (status 200)
 
 - Fetch cycle
 Request
-```json
+```
 GET api/v1/admin/cycles/:cycleId
 ```
 Response (status 200)
@@ -494,7 +520,7 @@ Response (status 200)
 
 - Delete cycle
 Request
-```json
+```
 GET api/v1/admin/cycles/:cycleId
 ```
 Response (status 200): Cycle deleted
