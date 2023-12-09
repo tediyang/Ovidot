@@ -8,6 +8,7 @@ import verify from './v1/middleware/tokenVerification.js';
 import { logger, appLogger} from './v1/middleware/logger.js';
 import { createClient } from 'redis';
 import { readFileSync } from 'fs';
+import useragent from 'express-useragent';
 dotenv.config();
 
 // Import routes
@@ -82,6 +83,9 @@ if (ENVIR !== 'test') {
 app.use(cors());
 app.use(urlencoded({ extended: false }));
 app.use(json());
+
+// agent library
+app.use(useragent.express());
 
 // use loggers
 app.use(appLogger);
