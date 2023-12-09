@@ -114,13 +114,14 @@ Request
 ```bash
 ```
 POST /api/v1/signup
+body:
 ```json
-body {
-    "email": "<USER'S EMAIL>",
-    "password": "<PASSWORD>",
-    "username": "<USERNAME>",
-    "age": "<AGE>"
-  }
+{
+  "email": "<USER'S EMAIL>",
+  "password": "<PASSWORD>",
+  "username": "<USERNAME>",
+  "age": "<AGE>"
+}
 ```
 Response (Status 201)
 
@@ -130,11 +131,12 @@ Request
 ```bash
 POST /api/v1/login
 ```
+body:
 ```json
-body {
-    "email": "<USER'S EMAIL>",
-    "password": "<PASSWORD>"
-  }
+{
+  "email": "<USER'S EMAIL>",
+  "password": "<PASSWORD>"
+}
 ```
 Response on success (Status 200)
 ```json
@@ -155,18 +157,19 @@ Request
 ```bash
 POST /api/v1/forgot-password
 ```
+body:
 ```json
-body {
-    "email": "<EMAIL>",
-    "url": "<URL TO REDIRECT THE PASS>"
-  }
+{
+  "email": "<EMAIL>",
+  "url": "<URL TO REDIRECT THE PASS>"
+}
 ```
 Response (Status 201, Created): Password reset link sent to email
 Response (Status 500): Password reset link sent to email | Internal Server Error
 
 - Verify reset token
 Request
-```json
+```
 GET /api/v1/reset-password/:token
 ```
 Response (Status 200)
@@ -179,13 +182,14 @@ Response (Status 200)
 
 - Reset Password
 Request
-```bash
+```
 POST /api/v1/reset-password/:token
 ```
+body:
 ```json
-body {
-    "password": "<PASSWORD>",
-  }
+{
+  "password": "<PASSWORD>",
+}
 ```
 Response (Status 200): "Password changed"
 
@@ -220,11 +224,12 @@ Request
 ```
 PUT api/v1/auth/users/update [Auth: Bearer token]
 ```
+body:
 ```json
-body {
-    "username": "<NEW USERNAME",
-    "age": "<NEW AGE>"
-  }
+{
+  "username": "<NEW USERNAME",
+  "age": "<NEW AGE>"
+}
 ```
 Response (Status 200)
 ```json
@@ -254,11 +259,12 @@ Request
 ```
 POST /api/v1/auth/users/change-password [Auth: Bearer Token]
 ```
+body:
 ```json
-body {
-    "currentPassword": "<OLD PASSWORD>",
-    "newPassword": "<NEW PASSWORD>"
-  }
+{
+  "currentPassword": "<OLD PASSWORD>",
+  "newPassword": "<NEW PASSWORD>"
+}
 ```
 Response (Status 204)
 
@@ -319,7 +325,7 @@ GET api/v1/auth/cycles/getall?year=year [Auth: Bearer Token]
 Response (Status 200)
 ```json
 [
-    "{ <CYCLE DATA> }"
+  "{ <CYCLE DATA> }"
 ]
 ```
 
@@ -331,7 +337,7 @@ GET api/v1/auth/cycles/getall/<:month>?year=year [Auth: Bearer Token]
 Response (Status 200)
 ```json
 [
-    "{ <CYCLE DATA> }"
+  "{ <CYCLE DATA> }"
 ]
 ```
 
@@ -340,10 +346,11 @@ Request
 ```
 PUT api/v1/auth/cycles/:cycleId [Auth: Bearer Token]
 ```
+body:
 ```json
-body {
-    "period": "<INT: NUMBER>",
-    "ovulation": "<DATE: DATE OVULATION OCCURED> | YYYY-MM-DD"
+{
+  "period": "<INT: NUMBER>",
+  "ovulation": "<DATE: DATE OVULATION OCCURED> | YYYY-MM-DD"
 }
 ```
 Response (Status 200)
@@ -375,7 +382,7 @@ Request
 DELETE api/v1/auth/cycles/<:cycleId> [Auth: Bearer Token]
 ```
 Response (Status 204)
-```json
+```
 Cycle deleted
 ```
 
@@ -386,11 +393,12 @@ Request
 ```
 POST /api/v1/admin/login
 ```
+body:
 ```json
-body {
-    "email": "<USERNAME>",
-    "password": "<PASSWORD>"
-  }
+{
+  "email": "<USERNAME>",
+  "password": "<PASSWORD>"
+}
 ```
 Response on success (Status 200)
 ```json
@@ -417,10 +425,11 @@ Request
 ```
 POST /api/v1/admin/users/email
 ```
+body:
 ```json
-body {
+{
     "email": "<USER EMAIL>"
-  }
+}
 ```
 Response (Status 200)
 ```json
@@ -444,8 +453,9 @@ Response (Status 200)
 ```
 POST /api/v1/admin/users/email/cycles?page=page&limit=limit
 ```
+body:
 ```json
-body {
+{
   "email": "user email"
 }
 ```
@@ -461,11 +471,12 @@ Request
 ```
 PUT /api/v1/admin/users/email
 ```
+body:
 ```json
-body {
-    "oldEmail": "<OLD EMAIL",
-    "newEmail": "<NEW EMAIl"
-  }
+{
+  "oldEmail": "<OLD EMAIL",
+  "newEmail": "<NEW EMAIl"
+}
 ```
 Response (Status 204)
 ```json
@@ -486,8 +497,9 @@ Request
 ```
 POST api/v1/admin/users/forgot-password
 ```
+body:
 ```json
-body {
+{
   "email": "<EMAIL>"
 }
 ```
