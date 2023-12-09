@@ -1,5 +1,5 @@
 # Ovidot
-Ovidot is a web application that aims to revolutionize women's health tracking by offering cycle predictions, fertility insights, and comprehensive health guidance.
+Ovidot is a web application that aims to revolutionize women's health tracking by tracking cycle predictions, fertility insights, and comprehensive health guidance.
 
 ## Contributors
 - [Eyang, Daniel Eyoh](https://github.com/Tediyang)
@@ -7,4 +7,4 @@ Ovidot is a web application that aims to revolutionize women's health tracking b
 - [Elisha, Esther Essie ](https://github.com/3SSI3)
 - Olalekan Alao
 
-## Note: This branch is the development branch.
+## Note: This branch is the Production branch and codes push here have been tested properly and ready for deployment. Check development branch for codes.
