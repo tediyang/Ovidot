@@ -1,0 +1,97 @@
+2023-12-09T14:07:25.059Z ERROR: uncaughtException: PRIKEY is not defined
+ReferenceError: PRIKEY is not defined
+    at file:///home/mdstorms/Ovidot/backend/app.js:108:30
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T14:07:25.064Z ERROR: MongoDB connection error: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string. 
+2023-12-09T14:07:25.066Z ERROR: uncaughtException: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string.
+MongooseError: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string.
+    at NativeConnection.createClient (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/drivers/node-mongodb-native/connection.js:206:11)
+    at NativeConnection.openUri (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/connection.js:759:34)
+    at connect (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/index.js:404:15)
+    at file:///home/mdstorms/Ovidot/backend/app.js:78:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T14:46:05.800Z ERROR: uncaughtException: PRIKEY is not defined
+ReferenceError: PRIKEY is not defined
+    at file:///home/mdstorms/Ovidot/backend/app.js:108:30
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T14:46:05.805Z ERROR: MongoDB connection error: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string. 
+2023-12-09T14:46:05.807Z ERROR: uncaughtException: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string.
+MongooseError: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string.
+    at NativeConnection.createClient (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/drivers/node-mongodb-native/connection.js:206:11)
+    at NativeConnection.openUri (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/connection.js:759:34)
+    at connect (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/index.js:404:15)
+    at file:///home/mdstorms/Ovidot/backend/app.js:78:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T14:47:33.364Z ERROR: uncaughtException: Router is not defined
+ReferenceError: Router is not defined
+    at file:///home/mdstorms/Ovidot/backend/v1/routes/auth.routes.js:21:16
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T15:00:06.971Z ERROR: uncaughtException: PRIKEY is not defined
+ReferenceError: PRIKEY is not defined
+    at file:///home/mdstorms/Ovidot/backend/app.js:108:30
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T15:00:06.976Z ERROR: MongoDB connection error: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string. 
+2023-12-09T15:00:06.978Z ERROR: uncaughtException: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string.
+MongooseError: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string.
+    at NativeConnection.createClient (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/drivers/node-mongodb-native/connection.js:206:11)
+    at NativeConnection.openUri (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/connection.js:759:34)
+    at connect (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/index.js:404:15)
+    at file:///home/mdstorms/Ovidot/backend/app.js:78:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T15:10:22.714Z ERROR: uncaughtException: PRIKEY is not defined
+ReferenceError: PRIKEY is not defined
+    at file:///home/mdstorms/Ovidot/backend/app.js:108:30
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T15:10:22.719Z ERROR: MongoDB connection error: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string. 
+2023-12-09T15:10:22.720Z ERROR: uncaughtException: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string.
+MongooseError: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string.
+    at NativeConnection.createClient (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/drivers/node-mongodb-native/connection.js:206:11)
+    at NativeConnection.openUri (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/connection.js:759:34)
+    at connect (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/index.js:404:15)
+    at file:///home/mdstorms/Ovidot/backend/app.js:78:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T15:11:42.497Z ERROR: uncaughtException: PRIKEY is not defined
+ReferenceError: PRIKEY is not defined
+    at file:///home/mdstorms/Ovidot/backend/app.js:108:30
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T15:11:42.502Z ERROR: MongoDB connection error: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string. 
+2023-12-09T15:11:42.504Z ERROR: uncaughtException: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string.
+MongooseError: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string.
+    at NativeConnection.createClient (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/drivers/node-mongodb-native/connection.js:206:11)
+    at NativeConnection.openUri (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/connection.js:759:34)
+    at connect (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/index.js:404:15)
+    at file:///home/mdstorms/Ovidot/backend/app.js:78:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 

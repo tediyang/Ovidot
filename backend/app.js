@@ -1,3 +1,4 @@
+
 // Import dependencies
 import dotenv from 'dotenv';
 import express, { json } from 'express';
@@ -5,10 +6,13 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import verify from './v1/middleware/tokenVerification.js';
-import { logger, appLogger} from './v1/middleware/logger.js';
+import { logger, appLogger } from './v1/middleware/logger.js';
 import { createClient } from 'redis';
 import { readFileSync } from 'fs';
 import useragent from 'express-useragent';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUI from 'swagger-ui-express';
+
 dotenv.config();
 
 // Import routes
@@ -19,22 +23,41 @@ import adminRoutes from './v1/admin/route/admin.routes.js';
 const { connect, connection } = mongoose;
 const { urlencoded } = bodyParser;
 
-// start app
+// Start app
 const app = express();
 
-// get environment variables
-const { HOST, ENVIR, PORT } = process.env;
-const { USERNAME, PASSWORD, REDISPORT } = process.env;
-const url = ENVIR !== 'test'? process.env.DB : process.env.TESTDB;
+// Get environment variables
+const { HOST, ENVIR, PORT, USERNAME, PASSWORD, REDISPORT, PRIKEY, CRT, PEMFILE } = process.env;
+const url = ENVIR !== 'test' ? process.env.DB : process.env.TESTDB;
 
-// url path
+// URL path
 const APP_PATH = '/api/v1';
 
-// Connect to mongodb database
+// Swagger JSDoc configuration
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Your API Title',
+      version: '1.0.0',
+      description: 'Your API Description',
+    },
+    servers: [
+      {
+        url: `http://${HOST}:${PORT}${APP_PATH}`,
+      },
+    ],
+  },
+  apis: ['./v1/routes/*.js', "./v1/routes/auth/*.js", "./v1/admin/route/*.js"]
+};
+
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
+
+// Connect to MongoDB database
 connect(url, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  maxPoolSize: 2
+  maxPoolSize: 2,
 });
 
 const db = connection;
@@ -46,7 +69,7 @@ db.once('open', () => {
   logger.info('MongoDB connected!');
 });
 
-// Connect to redis database
+// Connect to Redis database
 export let redisClient;
 
 if (ENVIR !== 'test') {
@@ -63,19 +86,20 @@ if (ENVIR !== 'test') {
       reconnectStrategy: retries => {
         if (retries > 10) return new Error('Max reconnection attempts exceeded');
         return Math.min(retries * 50, 2000);
-      }
-    }
+      },
+    },
   })
     .on('error', err => logger.error('Redis Client Error', err))
     .connect();
-
 } else {
-  redisClient = await createClient({socket: {
-    reconnectStrategy: retries => {
-      if (retries > 10) return new Error('Max reconnection attempts exceeded');
-      return Math.min(retries * 50, 2000);
-    }
-  }})
+  redisClient = await createClient({
+    socket: {
+      reconnectStrategy: retries => {
+        if (retries > 10) return new Error('Max reconnection attempts exceeded');
+        return Math.min(retries * 50, 2000);
+      },
+    },
+  })
     .on('error', err => logger.error('Redis Client Error', err))
     .connect();
 }
@@ -84,17 +108,19 @@ app.use(cors());
 app.use(urlencoded({ extended: false }));
 app.use(json());
 
-// agent library
+// Agent library
 app.use(useragent.express());
 
-// use loggers
+// Use loggers
 app.use(appLogger);
 
-// use routes
-app.use(APP_PATH+'/auth', verify, authRoutes);
-app.use(APP_PATH+'/admin', adminRoutes);
-app.use(APP_PATH, generalRoutes);
+// Use Swagger UI
+app.use(APP_PATH + '/swagger', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
+// Use routes
+app.use(APP_PATH + '/auth', verify, authRoutes);
+app.use(APP_PATH + '/admin', adminRoutes);
+app.use(APP_PATH, generalRoutes);
 
 app.listen(PORT, () => {
   logger.info(`Server is now running on port ${PORT}`);

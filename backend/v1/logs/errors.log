@@ -1,0 +1,124 @@
+2023-12-08T19:27:22.511Z ERROR: MongoDB connection error: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://" 
+2023-12-08T19:27:22.662Z ERROR: uncaughtException: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://"
+MongoParseError: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://"
+    at new ConnectionString (/home/mdstorms/Ovidot/backend/node_modules/mongodb-connection-string-url/lib/index.js:86:19)
+    at parseOptions (/home/mdstorms/Ovidot/backend/node_modules/mongodb/lib/connection_string.js:191:17)
+    at new MongoClient (/home/mdstorms/Ovidot/backend/node_modules/mongodb/lib/mongo_client.js:48:63)
+    at NativeConnection.createClient (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/drivers/node-mongodb-native/connection.js:288:14)
+    at NativeConnection.openUri (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/connection.js:759:34)
+    at connect (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/index.js:404:15)
+    at file:///home/mdstorms/Ovidot/backend/app.js:33:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7) 
+2023-12-08T19:34:04.378Z ERROR: MongoDB connection error: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://" 
+2023-12-08T19:34:04.383Z ERROR: uncaughtException: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://"
+MongoParseError: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://"
+    at new ConnectionString (/home/mdstorms/Ovidot/backend/node_modules/mongodb-connection-string-url/lib/index.js:86:19)
+    at parseOptions (/home/mdstorms/Ovidot/backend/node_modules/mongodb/lib/connection_string.js:191:17)
+    at new MongoClient (/home/mdstorms/Ovidot/backend/node_modules/mongodb/lib/mongo_client.js:48:63)
+    at NativeConnection.createClient (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/drivers/node-mongodb-native/connection.js:288:14)
+    at NativeConnection.openUri (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/connection.js:759:34)
+    at connect (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/index.js:404:15)
+    at file:///home/mdstorms/Ovidot/backend/app.js:33:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7) 
+2023-12-09T12:18:26.748Z ERROR: MongoDB connection error: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://" 
+2023-12-09T12:18:26.759Z ERROR: uncaughtException: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://"
+MongoParseError: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://"
+    at new ConnectionString (/home/mdstorms/Ovidot/backend/node_modules/mongodb-connection-string-url/lib/index.js:86:19)
+    at parseOptions (/home/mdstorms/Ovidot/backend/node_modules/mongodb/lib/connection_string.js:191:17)
+    at new MongoClient (/home/mdstorms/Ovidot/backend/node_modules/mongodb/lib/mongo_client.js:48:63)
+    at NativeConnection.createClient (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/drivers/node-mongodb-native/connection.js:288:14)
+    at NativeConnection.openUri (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/connection.js:759:34)
+    at connect (/home/mdstorms/Ovidot/backend/node_modules/mongoose/lib/index.js:404:15)
+    at file:///home/mdstorms/Ovidot/backend/app.js:53:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7) 
+2023-12-09T14:48:08.219Z ERROR: uncaughtException: Router is not defined
+ReferenceError: Router is not defined
+    at file:///home/mdstorms/Ovidot/backend/v1/routes/auth.routes.js:21:16
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T14:49:34.848Z ERROR: uncaughtException: Router is not defined
+ReferenceError: Router is not defined
+    at file:///home/mdstorms/Ovidot/backend/v1/routes/auth.routes.js:21:16
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T14:58:38.526Z ERROR: uncaughtException: Router is not defined
+ReferenceError: Router is not defined
+    at file:///home/mdstorms/Ovidot/backend/v1/routes/auth.routes.js:21:16
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T15:07:21.756Z ERROR: uncaughtException: Router is not defined
+ReferenceError: Router is not defined
+    at file:///home/mdstorms/Ovidot/backend/v1/routes/auth.routes.js:21:16
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T15:20:42.631Z ERROR: uncaughtException: Cannot read properties of null (reading 'indexOf')
+TypeError: Cannot read properties of null (reading 'indexOf')
+    at Object.parse (/home/mdstorms/Ovidot/backend/node_modules/yaml/dist/parse-3997f544.js:1874:11)
+    at Object.parseDocument (/home/mdstorms/Ovidot/backend/node_modules/yaml/dist/index.js:41:24)
+    at build (/home/mdstorms/Ovidot/backend/node_modules/swagger-jsdoc/src/specification.js:229:45)
+    at module.exports (/home/mdstorms/Ovidot/backend/node_modules/swagger-jsdoc/src/lib.js:32:10)
+    at file:///home/mdstorms/Ovidot/backend/app.js:41:21
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T15:23:49.009Z ERROR: uncaughtException: Cannot read properties of null (reading 'indexOf')
+TypeError: Cannot read properties of null (reading 'indexOf')
+    at Object.parse (/home/mdstorms/Ovidot/backend/node_modules/yaml/dist/parse-3997f544.js:1874:11)
+    at Object.parseDocument (/home/mdstorms/Ovidot/backend/node_modules/yaml/dist/index.js:41:24)
+    at build (/home/mdstorms/Ovidot/backend/node_modules/swagger-jsdoc/src/specification.js:229:45)
+    at module.exports (/home/mdstorms/Ovidot/backend/node_modules/swagger-jsdoc/src/lib.js:32:10)
+    at file:///home/mdstorms/Ovidot/backend/app.js:43:21
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T15:26:36.708Z ERROR: uncaughtException: Cannot read properties of null (reading 'indexOf')
+TypeError: Cannot read properties of null (reading 'indexOf')
+    at Object.parse (/home/mdstorms/Ovidot/backend/node_modules/yaml/dist/parse-3997f544.js:1874:11)
+    at Object.parseDocument (/home/mdstorms/Ovidot/backend/node_modules/yaml/dist/index.js:41:24)
+    at build (/home/mdstorms/Ovidot/backend/node_modules/swagger-jsdoc/src/specification.js:229:45)
+    at module.exports (/home/mdstorms/Ovidot/backend/node_modules/swagger-jsdoc/src/lib.js:32:10)
+    at file:///home/mdstorms/Ovidot/backend/app.js:43:21
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-09T16:25:25.632Z ERROR: uncaughtException: require is not defined in ES module scope, you can use import instead
+This file is being treated as an ES module because it has a '.js' file extension and '/home/mdstorms/Ovidot/backend/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+ReferenceError: require is not defined in ES module scope, you can use import instead
+This file is being treated as an ES module because it has a '.js' file extension and '/home/mdstorms/Ovidot/backend/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+    at file:///home/mdstorms/Ovidot/backend/v1/services/caching.js:3:25
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-10T19:43:24.549Z ERROR: uncaughtException: Cannot read properties of null (reading 'indexOf')
+TypeError: Cannot read properties of null (reading 'indexOf')
+    at Object.parse (/home/mdstorms/Ovidot/backend/node_modules/yaml/dist/parse-3997f544.js:1874:11)
+    at Object.parseDocument (/home/mdstorms/Ovidot/backend/node_modules/yaml/dist/index.js:41:24)
+    at build (/home/mdstorms/Ovidot/backend/node_modules/swagger-jsdoc/src/specification.js:229:45)
+    at module.exports (/home/mdstorms/Ovidot/backend/node_modules/swagger-jsdoc/src/lib.js:32:10)
+    at file:///home/mdstorms/Ovidot/backend/app.js:53:21
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12) 
+2023-12-10T19:53:14.997Z ERROR: uncaughtException: db.on is not a function
+TypeError: db.on is not a function
+    at setup (file:///home/mdstorms/Ovidot/backend/app.js:85:6)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 

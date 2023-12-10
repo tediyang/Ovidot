@@ -1,4 +1,4 @@
-import { redisClient } from '../../app.js';
+import redisClient from '../../app.js';
 import { logger } from '../middleware/logger.js';
 
 
