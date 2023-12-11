@@ -78,3 +78,5 @@
 2023-12-11T10:27:38.163Z INFO: GET /api/v1/swagger/swagger-ui-standalone-preset.js 304 2ms 304
 2023-12-11T10:27:38.168Z INFO: GET /api/v1/swagger/swagger-ui-init.js 304 1ms 304
 2023-12-11T10:27:39.339Z INFO: GET /api/v1/swagger/favicon-32x32.png 304 1ms 304
+2023-12-11T10:43:45.692Z INFO: Server is now running on port 5000 
+2023-12-11T10:43:45.706Z INFO: MongoDB connected! 
