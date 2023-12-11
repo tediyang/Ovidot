@@ -1,6 +1,9 @@
-import redisClient from '../../app.js';
+
+import { redisClient } from '../../app.js';
 import { logger } from '../middleware/logger.js';
 
+// Default constant for cache expiration time in seconds (20 days).
+const CACHE_EXPIRATION_TIME = 20 * 86400;
 
 const redisManager = {
   /**
@@ -34,7 +37,7 @@ const redisManager = {
     try {
       await Promise.all([
         redisClient.hSet(hash, key, value),
-        redisClient.expire(hash, 20 * 86400) // Set expiration to 20 days
+        redisClient.expire(hash, CACHE_EXPIRATION_TIME)
       ]);
       logger.info(`${key} cache data created`);
       return;
