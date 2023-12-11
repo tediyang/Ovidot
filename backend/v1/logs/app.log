@@ -66,3 +66,15 @@
 2023-12-10T20:51:46.996Z INFO: GET /api/v1/swagger/swagger-ui-bundle.js 304 0ms 304
 2023-12-10T20:51:47.027Z INFO: GET /api/v1/swagger/swagger-ui-standalone-preset.js 304 10ms 304
 2023-12-10T20:51:48.230Z INFO: GET /api/v1/swagger/favicon-32x32.png 304 1ms 304
+2023-12-11T10:09:17.085Z INFO: MongoDB connected! 
+2023-12-11T10:09:17.154Z INFO: Server is now running on port 5000 
+2023-12-11T10:22:28.842Z INFO: MongoDB connected! 
+2023-12-11T10:22:28.860Z INFO: Server is now running on port 5000 
+2023-12-11T10:27:12.394Z INFO: MongoDB connected! 
+2023-12-11T10:27:12.416Z INFO: Server is now running on port 5000 
+2023-12-11T10:27:37.968Z INFO: GET /api/v1/swagger/ 304 46ms 304
+2023-12-11T10:27:38.089Z INFO: GET /api/v1/swagger/swagger-ui.css 304 19ms 304
+2023-12-11T10:27:38.145Z INFO: GET /api/v1/swagger/swagger-ui-bundle.js 304 7ms 304
+2023-12-11T10:27:38.163Z INFO: GET /api/v1/swagger/swagger-ui-standalone-preset.js 304 2ms 304
+2023-12-11T10:27:38.168Z INFO: GET /api/v1/swagger/swagger-ui-init.js 304 1ms 304
+2023-12-11T10:27:39.339Z INFO: GET /api/v1/swagger/favicon-32x32.png 304 1ms 304
