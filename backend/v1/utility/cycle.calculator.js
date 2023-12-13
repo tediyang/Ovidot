@@ -12,6 +12,18 @@ const MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
 const DEFAULT_CYCLE_DURATION = 28;
 
 /**
+ * The date format used for formatting dates as strings.
+ * @constant {string}
+ */
+const DATE_FORMAT = 'YYYY-MM-DD';
+
+/**
+ * The number of days used in calculations for unsafe days.
+ * @constant {number}
+ */
+const DAYS_FOR_UNSAFE_CALCULATIONS = 5;
+
+/**
  * Calculate the estimated menstrual cycle for an individual.
  *
  * @param {number} period - The number of days of menstruation.
@@ -19,51 +31,48 @@ const DEFAULT_CYCLE_DURATION = 28;
  * @param {Date|null} ovulation - The day the user experienced ovulation in the cycle (YYYY-MM-DD), or null for default.
  * @returns {Promise} - A promise that resolves to an object with variables for cycle information.
  */
-export function calculate(period, startDate, ovulation = null) {
-    return new Promise((resolve, reject) => {
-        try {
-            // Initialization
-            const dayOne = new Date(startDate);
-            let dayLast;
+export async function calculate(period, startDate, ovulation = null) {
+    try {
+        const dayOne = new Date(startDate);
+        let dayLast;
 
-            // Generate the period range
-            const periodRange = generateDateRange(dayOne, period);
+        // Generate the period range
+        const periodRange = generateDateRange(dayOne, period);
 
-            // Initialize the ovulation date
-            ovulation = initializeOvulationDate(ovulation, dayOne, period);
+        // Initialize the ovulation date
+        ovulation = initializeOvulationDate(ovulation, dayOne, period);
 
-            // Determine the last day of menstruation
-            dayLast = getLastDayOfMenstruation(dayOne, period);
+        // Determine the last day of menstruation
+        dayLast = getLastDayOfMenstruation(dayOne, period);
 
-            // Validate ovulation date
-            validateOvulationDate(ovulation, dayLast);
+        // Validate ovulation date
+        validateOvulationDate(ovulation, dayLast);
 
-            // Calculate total cycle days
-            const totalCycleDays = getTotalCycleDays(dayOne, ovulation, DEFAULT_CYCLE_DURATION);
+        // Calculate total cycle days
+        const totalCycleDays = getTotalCycleDays(dayOne, ovulation, DEFAULT_CYCLE_DURATION);
 
-            // Get the range of ovulation
-            const ovulationRange = getOvulationRange(ovulation, dayLast);
+        // Get the range of ovulation
+        const ovulationRange = getOvulationRange(ovulation, dayLast);
 
-            // Get the range of unsafe days
-            const unsafeRange = getUnsafeRange(ovulation, periodRange[periodRange.length - 1]);
+        // Get the range of unsafe days
+        const unsafeRange = getUnsafeRange(ovulation, periodRange[periodRange.length - 1]);
 
-            // Calculate the next date
-            const nextDate = calculateNextDate(dayOne, totalCycleDays);
+        // Calculate the next date
+        const nextDate = calculateNextDate(dayOne, totalCycleDays);
 
-            // Resolve the promise with the calculated information
-            resolve({
-                days: totalCycleDays,
-                periodRange,
-                ovulation: formatDate(ovulation),
-                ovulationRange,
-                unsafeDays: unsafeRange,
-                nextDate
-            });
-        } catch (err) {
-            // Reject the promise with an error if any exception occurs
-            reject(err);
-        }
-    });
+        // Resolve the promise with the calculated information
+        return {
+            days: totalCycleDays,
+            periodRange,
+            ovulation: formatDate(ovulation),
+            ovulationRange,
+            unsafeDays: unsafeRange,
+            nextDate
+        };
+    } catch (err) {
+        // Reject the promise with an error if any exception occurs
+        throw err;
+    }
 }
 
 /**
@@ -178,7 +187,7 @@ const getOvulationRange = (ovulation, dayLast = null) => {
  */
 const getUnsafeRange = (ovulation, lastPeriodDay) => {
     let unsafeRangeStart;
-    let i = 5;
+    let i = DAYS_FOR_UNSAFE_CALCULATIONS;
     do {
         unsafeRangeStart = new Date(ovulation);
         unsafeRangeStart.setDate(unsafeRangeStart.getDate() - i);
@@ -186,7 +195,7 @@ const getUnsafeRange = (ovulation, lastPeriodDay) => {
     } while (differenceInDays(unsafeRangeStart, lastPeriodDay) <= 0 && i >= 0);
 
     const unsafeRangeEnd = new Date(ovulation);
-    unsafeRangeEnd.setDate(ovulation.getDate() + 5);
+    unsafeRangeEnd.setDate(ovulation.getDate() + DAYS_FOR_UNSAFE_CALCULATIONS);
 
     const unsafeDays = [];
     while (unsafeRangeStart <= unsafeRangeEnd) {
