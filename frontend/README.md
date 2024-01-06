@@ -12,10 +12,11 @@
 
 ## Tech Used
 
-`React JS` `CSS` `Express JS` `Mongo DB` 
+`React JS` `CSS`
 
 ## Note: This branch is the Production branch and codes push here have been tested properly.
 ## Author
 
 * [Essie Elisha](https://github.com/3SSI3)
 * Olalekan Alao
+* [Eyang Daniel](https://github.com/Tediyang)
