@@ -57,7 +57,7 @@ export async function forgotPass(req, res) {
     // validate request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return handleResponse(res, 400, "Fill required properties");
+      return handleResponse(res, 400, errors.array()[0].msg);
     }
 
     const { email, url } = req.body;
@@ -140,7 +140,7 @@ export async function ResetPass(req, res) {
     // validate request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return handleResponse(res, 400, "Fill required properties");
+      return handleResponse(res, 400, errors.array()[0].msg);
     }
 
     const { token } = req.params;
@@ -189,7 +189,7 @@ export async function changePass(req, res) {
     // validate the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return handleResponse(res, 400, "Fill required properties");
+      return handleResponse(res, 400, errors.array()[0].msg);
     }
 
     const { currentPassword, newPassword } = req.body;
