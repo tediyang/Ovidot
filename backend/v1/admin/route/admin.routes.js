@@ -14,7 +14,7 @@ const router /** @type {ExpressRouter} */ = Router();
 /**
  * @swagger
  * tags:
- *   name: Admin Routes
+ *   name: Admin Routes | Admin Authentication Needed
  *   description: Endpoints related to admin operations
  */
 
@@ -24,7 +24,7 @@ const router /** @type {ExpressRouter} */ = Router();
  * /admin/login:
  *   post:
  *     summary: Log into the admin profile
- *     tags: [Admin Routes]
+ *     tags: [Admin Routes | Admin Authentication Needed]
  *     requestBody:
  *       required: true
  *       content:
@@ -55,7 +55,7 @@ router.post('/login', [
  * /admin/logout:
  *   get:
  *     summary: Logout admin
- *     tags: [Admin Routes]
+ *     tags: [Admin Routes | Admin Authentication Needed]
  *     security:
  *       - adminToken: []
  *     responses:
@@ -72,7 +72,7 @@ router.get('/logout', verifyAdmin, logout);
  * /admin/users:
  *   get:
  *     summary: Retrieve all users
- *     tags: [Admin Routes]
+ *     tags: [Admin Routes | Admin Authentication Needed]
  *     security:
  *       - adminToken: []
  *     parameters:
@@ -107,7 +107,7 @@ router.get('/users', verifyAdmin, paginationMiddleware, adminController.viewAllu
  * /admin/users/email:
  *   post:
  *     summary: Retrieve a user by email
- *     tags: [Admin Routes]
+ *     tags: [Admin Routes | Admin Authentication Needed]
  *     security:
  *       - adminToken: []
  *     requestBody:
@@ -128,7 +128,7 @@ router.get('/users', verifyAdmin, paginationMiddleware, adminController.viewAllu
  *         description: Bad request
  */
 router.post('/users/email', [
-    body('email').isString().notEmpty()
+    body("email").isEmail(),
     ],
     verifyAdmin, adminController.viewUser
 );
@@ -139,7 +139,7 @@ router.post('/users/email', [
  * /admin/users/email/cycles:
  *   post:
  *     summary: Retrieve all cycles for a user by email
- *     tags: [Admin Routes]
+ *     tags: [Admin Routes | Admin Authentication Needed]
  *     security:
  *       - adminToken: []
  *     requestBody:
@@ -176,7 +176,7 @@ router.post('/users/email', [
  *         description: Bad request
  */
 router.post('/users/email/cycles', [
-    body('email').isString().notEmpty()
+    body("email").isEmail(),
     ],
     verifyAdmin, paginationMiddleware, adminController.getAllCyclesByEmail
 );
@@ -187,7 +187,7 @@ router.post('/users/email/cycles', [
  * /admin/users/email:
  *   put:
  *     summary: Update a user by email
- *     tags: [Admin Routes]
+ *     tags: [Admin Routes | Admin Authentication Needed]
  *     security:
  *       - adminToken: []
  *     requestBody:
@@ -210,8 +210,8 @@ router.post('/users/email/cycles', [
  *         description: Bad request
  */
 router.put('/users/email', [
-    body('oldEmail').isString().notEmpty(),
-    body('newEmail').isString().notEmpty()
+    body('oldEmail').isEmail(),
+    body('newEmail').isEmail()
     ],
     verifyAdmin, adminController.updateUser
 );
@@ -222,7 +222,7 @@ router.put('/users/email', [
  * /admin/users/email:
  *   delete:
  *     summary: Delete a user by email
- *     tags: [Admin Routes]
+ *     tags: [Admin Routes | Admin Authentication Needed]
  *     security:
  *       - adminToken: []
  *     requestBody:
@@ -243,7 +243,7 @@ router.put('/users/email', [
  *         description: Bad request
  */
 router.delete('/users/email', [
-    body('email').isString().notEmpty()
+    body("email").isEmail(),
     ],
     verifyAdmin, adminController.deleteUser
 );
@@ -254,7 +254,7 @@ router.delete('/users/email', [
  * /admin/users/forgot-password:
  *   post:
  *     summary: Send a forgot password link to a user
- *     tags: [Admin Routes]
+ *     tags: [Admin Routes | Admin Authentication Needed]
  *     security:
  *       - adminToken: []
  *     requestBody:
@@ -275,7 +275,7 @@ router.delete('/users/email', [
  *         description: Bad request
  */
 router.post('/users/forgot-password', [
-    body('email').isString().notEmpty()
+    body("email").isEmail(),
     ],
     verifyAdmin, forgotPass
 );
@@ -286,7 +286,7 @@ router.post('/users/forgot-password', [
  * /admin/cycles:
  *   get:
  *     summary: Retrieve all cycles
- *     tags: [Admin Routes]
+ *     tags: [Admin Routes | Admin Authentication Needed]
  *     security:
  *       - adminToken: []
  *     parameters:
@@ -321,7 +321,7 @@ router.get('/cycles', verifyAdmin, paginationMiddleware, adminController.viewAll
  * /admin/cycles/{cycleId}:
  *   get:
  *     summary: Retrieve a cycle by cycleId
- *     tags: [Admin Routes]
+ *     tags: [Admin Routes | Admin Authentication Needed]
  *     security:
  *       - adminToken: []
  *     parameters:
@@ -346,7 +346,7 @@ router.get('/cycles/:cycleId', verifyAdmin, adminController.viewCycle);
  * /admin/cycles/{cycleId}:
  *   delete:
  *     summary: Delete a cycle by cycleId
- *     tags: [Admin Routes]
+ *     tags: [Admin Routes | Admin Authentication Needed]
  *     security:
  *       - adminToken: []
  *     parameters:
