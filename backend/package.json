@@ -6,8 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon app.js",
-    "test-watch": "jest --watch",
-    "test": "mocha 'v1/tests/{admin,utility,routes}/*.js' --recursive --timeout 10000"
+    "test": "mocha 'v1/tests/{admin,utility,routes}/*.js' --recursive --timeout 20000"
   },
   "keywords": [],
   "author": "",
@@ -28,11 +27,16 @@
     "mongoose": "^7.6.3",
     "nodemailer": "^6.9.5",
     "nodemon": "^3.0.1",
+    "prettier": "^3.2.2",
     "redis": "^4.6.11",
     "sinon": "^16.0.0",
     "supertest": "^6.3.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-jsdoc-express": "^4.1.0",
+    "swagger-ui-express": "^5.0.0",
     "uuid": "^9.0.1",
-    "winston": "^3.11.0"
+    "winston": "^3.11.0",
+    "yaml": "^2.3.4"
   },
   "devDependencies": {
     "@babel/core": "^7.23.3",

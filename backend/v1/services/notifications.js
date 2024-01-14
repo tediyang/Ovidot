@@ -1,19 +1,19 @@
+
 import { createTransport } from 'nodemailer';
 import { logger } from '../middleware/logger.js';
 import { renderWelcomeTemplate, renderGoodbyeTemplate } from './views/handle.template.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
-
-// Sender details
+// Default constants for sender details
 const emailAddress = process.env.EMAIL;
 const emailPassword = process.env.EMAILPASSWORD;
+const EMAIL_SERVICE = 'Gmail';
+const CACHE_EXPIRATION_TIME = 20 * 86400; // 20 days in seconds
 
-/**
- * Create the sender details. user and pass verification is used here, but for more efficient
- * security used Auth. */
+// Create the sender details
 export const sender = createTransport({
-  service: 'Gmail',
+  service: EMAIL_SERVICE,
   auth: {
     user: emailAddress,
     pass: emailPassword
@@ -49,7 +49,7 @@ const notifications = {
   manageNotification: (data) => {
     if (data.length > 15) {
       data.shift();
-    };
+    }
   },
 
   /**
@@ -59,7 +59,6 @@ const notifications = {
    * @property {string} email - The user's email.
    * @property {string} username - The user's username.
    * @return {Promise} A promise that resolves when the notification is sent.
-   * @throws {Error} - If there is an error sending the email.
    */
   sendUserCreationNotification: async (data) => {
     const welcomeTemplate = await renderWelcomeTemplate(data);
@@ -72,10 +71,11 @@ const notifications = {
 
     try {
       const info = await sender.sendMail(receiver);
-      logger.info(`Email sent: ${info.response}`);
+      logger.info(`Email sent for user creation: ${info.response}`);
     } catch (error) {
-      throw new Error(error);
-    };
+      logger.error(`Error sending email for user creation: ${error.message}`);
+      throw error;
+    }
   },
 
   /**
@@ -83,7 +83,6 @@ const notifications = {
    *
    * @param {Object} data - The data object containing the user's email and username.
    * @return {Promise} - A Promise that resolves with the information about the sent email.
-   * @throws {Error} - If there is an error sending the email.
    */
   sendUserTerminationNotification: async (data) => {
     const goodbyeTemplate = await renderGoodbyeTemplate(data);
@@ -96,10 +95,11 @@ const notifications = {
 
     try {
       const info = await sender.sendMail(receiver);
-      logger.info('Email sent');
+      logger.info(`Email sent for user termination: ${info.response}`);
     } catch (error) {
-      throw new Error(error);
-    };
+      logger.error(`Error sending email for user termination: ${error.message}`);
+      throw error;
+    }
   }
 };
 

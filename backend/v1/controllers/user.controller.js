@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import User from '../models/user.model.js';
 import { handleResponse } from '../utility/handle.response.js';
 import notifications from '../services/notifications.js';
+import { validationResult } from 'express-validator';
 
 const { genSalt, hash } = bcrypt;
 
@@ -16,35 +17,35 @@ export async function createUser(data, res) {
 	// create a user
 	const email = data.email
 	const existUser = await User.findOne({ email });
-  	if (existUser) {
-    	return handleResponse(res, 404, `${email} already exist.`);
-  	}
+	if (existUser) {
+		return handleResponse(res, 404, `${email} already exist.`);
+	}
 
-  	try {
-    	const saltRounds = 12;
-    	const salt = await genSalt(saltRounds);
-    	// Hash the password
-    	const hashedPassword = await hash(data.password, salt);
-			data.password = hashedPassword;
-    	// Register the new user data. The create method prevents sql injection
-      const newUser = await User.create(data);
+	try {
+		const saltRounds = 12;
+		const salt = await genSalt(saltRounds);
+		// Hash the password
+		const hashedPassword = await hash(data.password, salt);
+				data.password = hashedPassword;
+		// Register the new user data. The create method prevents sql injection
+		const newUser = await User.create(data);
 
-			// create notification
-			const message = `${newUser.username}, your account has been created`;
-			const notify = notifications.generateNotification(newUser, 'createdUser', message);
+		// create notification
+		const message = `${newUser.username}, your account has been created`;
+		const notify = notifications.generateNotification(newUser, 'createdUser', message);
 
-			// Add new notification
-			newUser.notificationsList.push(notify);
+		// Add new notification
+		newUser.notificationsList.push(notify);
 
-      await newUser.save();
+		await newUser.save();
 
-			// send email notification
-			await notifications.sendUserCreationNotification(newUser);
-      return res.status(201).send();
+		// send email notification
+		await notifications.sendUserCreationNotification(newUser);
+		return res.status(201).send();
 
-  	} catch (error) {
-      return handleResponse(res, 500, 'Internal Server Error', error);
-  	}
+	} catch (error) {
+		return handleResponse(res, 500, 'Internal Server Error', error);
+	}
 };
 
 /**
@@ -56,16 +57,26 @@ export async function createUser(data, res) {
 export async function updateUser(req, res) {
 	// get userId from params
 	try {
-		const userId = req.user.id;
-		const { username, age } = req.body;
+		// validate the params
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return handleResponse(res, 400, errors.array()[0].msg);
+		}
 
-		if (!username && !age) {
-			return handleResponse(res, 400, "Provide atleast a param to update: username or age");
+		const userId = req.user.id;
+		const { username, age, period } = req.body;
+
+		if (age <= 0 || period <= 0) {
+			return handleResponse(res, 400, "Invalid value");
+		}
+
+		if (!username && !age && !period) {
+			return handleResponse(res, 400, "Provide atleast a param to update: username, period or age");
 		};
 
 		const updatedAt = new Date();
 		const user = await User.findByIdAndUpdate(userId,
-      {username: username, age: age, updated_at: updatedAt},
+      {username: username, age: age, period: period, updated_at: updatedAt},
 			{new: true});
 
 		/* check for conditons */
@@ -74,12 +85,7 @@ export async function updateUser(req, res) {
 		};
 
 		// create notification
-		let message;
-		if (username && age) {
-			message = `Your username and age have been updated`;
-		} else {
-			message = `Your ${username ? 'username' : 'age'} has been updated`;
-		}
+		const message = 'Your profile has been updated'
 
 		const notify = notifications.generateNotification(user, 'updatedUser', message);
 
@@ -96,7 +102,8 @@ export async function updateUser(req, res) {
 			userId: user._id,
 			email: user.email,
 			username: user.username,
-			age: user.age
+			age: user.age,
+			period: user.period
 		});
 	} catch(error) {
 		return handleResponse(res, 500, "Internal server error", error);
@@ -123,7 +130,8 @@ export async function fetchUser(req, res) {
 			userId: user._id,
 			email: user.email,
 			username: user.username,
-			age: user.age
+			age: user.age,
+			period: user.period
 		});
 
 	} catch(error) {

@@ -20,6 +20,7 @@ describe('GET /users/get', () => {
     expect(res.body).to.have.property('email');
     expect(res.body).to.have.property('username');
     expect(res.body).to.have.property('age');
+    expect(res.body).to.have.property('period');
   });
 
   it('should return 404 when no user is found', async () => {
@@ -47,7 +48,7 @@ describe('PUT /users/update', () => {
       .send({});
 
     expect(res.statusCode).to.equal(400);
-    expect(res.body).to.have.property('message', 'Provide atleast a param to update: username or age');    
+    expect(res.body).to.have.property('message', 'Provide atleast a param to update: username, period or age');    
   });
 
   it('should update the user data', async () => {
@@ -61,7 +62,38 @@ describe('PUT /users/update', () => {
     expect(res.body).to.have.property('email');
     expect(res.body).to.have.property('username');
     expect(res.body).to.have.property('age');
+    expect(res.body).to.have.property('period');
   });
+
+  it('should return 400 when invalid username is provided', async () => {
+    const res = await request(app)
+      .put('/api/v1/auth/users/update')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ username: 9});
+    
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.have.property("message", "Invalid value");
+  });
+
+  it('should return 400 when invalid age is provided', async () => {
+    const res = await request(app)
+      .put('/api/v1/auth/users/update')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ age: 7});
+    
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.have.property("message", "Invalid value");
+  });
+
+  it('should return 400 when invalid period is provided', async () => {
+    const res = await request(app)
+      .put('/api/v1/auth/users/update')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ period: 0});
+    
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.have.property("message", "Invalid value");
+  })
 
   it('should return 404 when no user is found', async () => {
     // Mock the User.findById method to return null
@@ -128,7 +160,7 @@ describe('PUT /users/change-password', () => {
       .send({});
 
     expect(res.statusCode).to.equal(400)
-    expect(res.body).to.have.property("message", "Fill required properties");
+    expect(res.body).to.have.property("message", "Invalid value");
   });
 
   it('should return 404 when no user is found', async () => {

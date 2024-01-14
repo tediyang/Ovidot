@@ -1,3 +1,4 @@
+
 import dotenv from 'dotenv';
 import User from '../models/user.model.js';
 import { v4 } from 'uuid';
@@ -13,31 +14,51 @@ dotenv.config();
 
 const { genSalt, hash, compare } = bcrypt;
 
-// Host, Port
-const host = process.env.HOST;
-const port = process.env.PORT;
+/**
+ * Default URL host for generating reset links.
+ * @constant {string}
+ */
+const HOST = process.env.HOST || 'localhost';
 
 /**
- * create a reset token using uuid.v4
- * @returns - a unique uuid.
+ * Default port for generating reset links.
+ * @constant {string}
+ */
+const PORT = process.env.PORT || '3000';
+
+/**
+ * Default reset token expiration time (30 minutes).
+ * @constant {number}
+ */
+const RESET_TOKEN_EXPIRATION = 30 * 60 * 1000;
+
+/**
+ * Default number of allowed notifications (15).
+ * @constant {number}
+ */
+const MAX_NOTIFICATIONS = 15;
+
+/**
+ * Generate a reset token using uuid.v4.
+ * @returns {string} A unique uuid.
  */
 function resetToken() {
   return v4();
 }
 
 /**
- * Send reset link password to users
+ * Send reset link password to users.
  * @param {Object} req - Express Request
  * @param {Object} res - Express Response
- * @return Payload on Success
-*/
+ * @return {void}
+ */
 export async function forgotPass(req, res) {
   try {
     // validate request
     const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-		  return handleResponse(res, 400, "Fill required properties");
-		}
+    if (!errors.isEmpty()) {
+      return handleResponse(res, 400, errors.array()[0].msg);
+    }
 
     const { email, url } = req.body;
     const user = await User.findOne({ email: email });
@@ -47,7 +68,7 @@ export async function forgotPass(req, res) {
     }
 
     const token = resetToken();
-    const resetExp = new Date(Date.now() + 1800000); // 30mins
+    const resetExp = new Date(Date.now() + RESET_TOKEN_EXPIRATION);
     user.reset = token;
     user.resetExp = resetExp;
     await user.save();
@@ -64,7 +85,7 @@ export async function forgotPass(req, res) {
 
     sender.sendMail(receiver, (error, info) => {
       if (error) {
-        logger.error('Failed to send email')
+        logger.error('Failed to send email');
         return handleResponse(res, 500, 'Failed to send email', error);
       }
       return handleResponse(res, 201, 'Password reset link sent to email');
@@ -75,11 +96,11 @@ export async function forgotPass(req, res) {
 }
 
 /**
- * Validate reset token
+ * Validate reset token.
  * @param {Object} req - Express Request
  * @param {Object} res - Express Response
- * @return Payload on Success
-*/
+ * @return {void}
+ */
 export async function VerifyResetPass(req, res) {
   try {
     const { token } = req.params;
@@ -100,27 +121,27 @@ export async function VerifyResetPass(req, res) {
     }
 
     return res.status(200).json({
-      message : "success" ,
+      message: "success",
       token
     });
-  } catch {
+  } catch (error) {
     return handleResponse(res, 500, 'Internal server error', error);
   }
 }
 
 /**
- * Reset user's password
+ * Reset user's password.
  * @param {Object} req - Express Request
  * @param {Object} res - Express Response
- * @return Payload on Success
+ * @return {void}
  */
 export async function ResetPass(req, res) {
   try {
     // validate request
     const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-		  return handleResponse(res, 400, "Fill required properties");
-		}
+    if (!errors.isEmpty()) {
+      return handleResponse(res, 400, errors.array()[0].msg);
+    }
 
     const { token } = req.params;
     const { password } = req.body;
@@ -158,24 +179,24 @@ export async function ResetPass(req, res) {
 }
 
 /**
- * Change logged-in user password
+ * Change logged-in user password.
  * @param {Object} req - Express Request
  * @param {Object} res - Express Response
- * @return Payload on Success
+ * @return {void}
  */
 export async function changePass(req, res) {
   try {
     // validate the request
     const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-		  return handleResponse(res, 400, "Fill required properties");
-		}
+    if (!errors.isEmpty()) {
+      return handleResponse(res, 400, errors.array()[0].msg);
+    }
 
     const { currentPassword, newPassword } = req.body;
 
     if (currentPassword === newPassword) {
       return handleResponse(res, 400, "Please provide a new password");
-    };
+    }
 
     const userId = req.user.id;
     const user = await User.findById(userId);
@@ -197,13 +218,13 @@ export async function changePass(req, res) {
     user.password = hashedNewPassword;
 
     // create notification
-		const notify = notifications.generateNotification(user, 'updatedUser', 'Password changed');
+    const notify = notifications.generateNotification(user, 'updatedUser', 'Password changed');
 
-		// Add new notification
-		user.notificationsList.push(notify);
+    // Add new notification
+    user.notificationsList.push(notify);
 
-		// manage noifications
-		notifications.manageNotification(user.notificationsList);
+    // manage notifications
+    notifications.manageNotification(user.notificationsList);
 
     await user.save();
 
