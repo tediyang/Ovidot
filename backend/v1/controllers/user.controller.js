@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import User from '../models/user.model.js';
 import { handleResponse } from '../utility/handle.response.js';
 import notifications from '../services/notifications.js';
+import { validationResult } from 'express-validator';
 
 const { genSalt, hash } = bcrypt;
 
@@ -56,16 +57,26 @@ export async function createUser(data, res) {
 export async function updateUser(req, res) {
 	// get userId from params
 	try {
-		const userId = req.user.id;
-		const { username, age } = req.body;
+		// validate the params
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return handleResponse(res, 400, errors.array()[0].msg);
+		}
 
-		if (!username && !age) {
-			return handleResponse(res, 400, "Provide atleast a param to update: username or age");
+		const userId = req.user.id;
+		const { username, age, period } = req.body;
+
+		if (age <= 0 || period <= 0) {
+			return handleResponse(res, 400, "Invalid value");
+		}
+
+		if (!username && !age && !period) {
+			return handleResponse(res, 400, "Provide atleast a param to update: username, period or age");
 		};
 
 		const updatedAt = new Date();
 		const user = await User.findByIdAndUpdate(userId,
-      {username: username, age: age, updated_at: updatedAt},
+      {username: username, age: age, period: period, updated_at: updatedAt},
 			{new: true});
 
 		/* check for conditons */
@@ -74,12 +85,7 @@ export async function updateUser(req, res) {
 		};
 
 		// create notification
-		let message;
-		if (username && age) {
-			message = `Your username and age have been updated`;
-		} else {
-			message = `Your ${username ? 'username' : 'age'} has been updated`;
-		}
+		const message = 'Your profile has been updated'
 
 		const notify = notifications.generateNotification(user, 'updatedUser', message);
 
@@ -96,7 +102,8 @@ export async function updateUser(req, res) {
 			userId: user._id,
 			email: user.email,
 			username: user.username,
-			age: user.age
+			age: user.age,
+			period: user.period
 		});
 	} catch(error) {
 		return handleResponse(res, 500, "Internal server error", error);
@@ -123,7 +130,8 @@ export async function fetchUser(req, res) {
 			userId: user._id,
 			email: user.email,
 			username: user.username,
-			age: user.age
+			age: user.age,
+			period: user.period
 		});
 
 	} catch(error) {
