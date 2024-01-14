@@ -32,12 +32,12 @@ export async function signup(req, res) {
   // Validate the data
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return handleResponse(res, 400, "Fill required properties");
+    return handleResponse(res, 400, errors.array()[0].msg);
   }
 
-  const { email, password, username, age } = req.body;
+  const { email, password, username, age, period } = req.body;
 
-  return await createUser({ email, password, username, age }, res);
+  return await createUser({ email, password, username, age, period }, res);
 }
 
 /**
@@ -50,7 +50,7 @@ export async function login(req, res) {
   // Validate the data
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return handleResponse(res, 400, "Fill required properties");
+    return handleResponse(res, 400, errors.array()[0].msg);
   };
 
   const { email, password } = req.body;
