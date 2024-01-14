@@ -38,13 +38,36 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Your API Title',
+      title: 'Ovidot Backend API',
       version: '1.0.0',
-      description: 'Your API Description',
+      description: 'Ovidot Backend API Documentation',
+    },
+    components: {
+      securitySchemes: {
+        adminToken: { // This name must match the name used in the security section of your path
+          type: 'http', // The type of the security scheme
+          scheme: 'bearer', // The name of the HTTP Authorization scheme to be used
+          bearerFormat: 'JWT', // Optional, only needed if using bearer tokens
+        },
+        userToken: { // This name must match the name used in the security section of your path
+          type: 'http', // The type of the security scheme
+          scheme: 'bearer', // The name of the HTTP Authorization scheme to be used
+          bearerFormat: 'JWT', // Optional, only needed if using bearer tokens
+        },
+      },
     },
     servers: [
       {
+        url: `http://${HOST}:${PORT}${APP_PATH}/admin`,
+        description: 'Admin Routes Server',
+      },
+      {
+        url: `http://${HOST}:${PORT}${APP_PATH}/auth`,
+        description: 'Authenticated Routes server',
+      },
+      {
         url: `http://${HOST}:${PORT}${APP_PATH}`,
+        description: 'General Routes server',
       },
     ],
   },
@@ -106,7 +129,7 @@ if (ENVIR !== 'test') {
 
 app.use(cors());
 app.use(urlencoded({ extended: false }));
-app.use(json());
+app.use(express.json());
 
 // Agent library
 app.use(useragent.express());
