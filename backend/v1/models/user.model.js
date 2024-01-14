@@ -29,6 +29,12 @@ const UserSchema = Schema({
         min: 8,
         max: 55
     },
+    period: {
+        type: Number,
+        required: true,
+        min: 2,
+        max: 8
+    },
     notificationsList: [
         {
             type: Object
