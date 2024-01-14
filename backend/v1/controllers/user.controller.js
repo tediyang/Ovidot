@@ -16,35 +16,35 @@ export async function createUser(data, res) {
 	// create a user
 	const email = data.email
 	const existUser = await User.findOne({ email });
-  	if (existUser) {
-    	return handleResponse(res, 404, `${email} already exist.`);
-  	}
+	if (existUser) {
+		return handleResponse(res, 404, `${email} already exist.`);
+	}
 
-  	try {
-    	const saltRounds = 12;
-    	const salt = await genSalt(saltRounds);
-    	// Hash the password
-    	const hashedPassword = await hash(data.password, salt);
-			data.password = hashedPassword;
-    	// Register the new user data. The create method prevents sql injection
-      const newUser = await User.create(data);
+	try {
+		const saltRounds = 12;
+		const salt = await genSalt(saltRounds);
+		// Hash the password
+		const hashedPassword = await hash(data.password, salt);
+				data.password = hashedPassword;
+		// Register the new user data. The create method prevents sql injection
+		const newUser = await User.create(data);
 
-			// create notification
-			const message = `${newUser.username}, your account has been created`;
-			const notify = notifications.generateNotification(newUser, 'createdUser', message);
+		// create notification
+		const message = `${newUser.username}, your account has been created`;
+		const notify = notifications.generateNotification(newUser, 'createdUser', message);
 
-			// Add new notification
-			newUser.notificationsList.push(notify);
+		// Add new notification
+		newUser.notificationsList.push(notify);
 
-      await newUser.save();
+		await newUser.save();
 
-			// send email notification
-			await notifications.sendUserCreationNotification(newUser);
-      return res.status(201).send();
+		// send email notification
+		await notifications.sendUserCreationNotification(newUser);
+		return res.status(201).send();
 
-  	} catch (error) {
-      return handleResponse(res, 500, 'Internal Server Error', error);
-  	}
+	} catch (error) {
+		return handleResponse(res, 500, 'Internal Server Error', error);
+	}
 };
 
 /**
