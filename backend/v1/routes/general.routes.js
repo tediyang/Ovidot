@@ -47,7 +47,8 @@ router.post('/signup', [
     body("email").isString().notEmpty(),
     body("password").isString().notEmpty(),
     body("username").isString().notEmpty(),
-    body("age").isNumeric().notEmpty()
+    body("age").isNumeric().notEmpty(),
+    body("period").isNumeric().notEmpty()
     ],
     signup
 );
