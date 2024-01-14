@@ -10,7 +10,7 @@ const router /** @type {ExpressRouter} */ = Router();
 /**
  * @swagger
  * tags:
- *   name: Cycle Routes
+ *   name: Cycle Routes | Authentication Needed
  *   description: Endpoints related to cycles
  */
 
@@ -20,7 +20,9 @@ const router /** @type {ExpressRouter} */ = Router();
  * /cycles/create:
  *   post:
  *     summary: Create a new cycle
- *     tags: [Cycle Routes]
+ *     tags: [Cycle Routes | Authentication Needed]
+ *     security:
+ *       - userToken: []
  *     requestBody:
  *       required: true
  *       content:
@@ -40,7 +42,7 @@ const router /** @type {ExpressRouter} */ = Router();
  */
 router.post('/create', [
     body("period").isNumeric().notEmpty(),
-    body("startdate").isString().notEmpty()
+    body("startdate").isISO8601().notEmpty()
     ],
     cycle.createCycle
 );
@@ -51,7 +53,9 @@ router.post('/create', [
  * /cycles/getall:
  *   get:
  *     summary: Get all cycles
- *     tags: [Cycle Routes]
+ *     tags: [Cycle Routes | Authentication Needed]
+ *     security:
+ *       - userToken: []
  *     responses:
  *       '200':
  *         description: Successfully retrieved all cycles
@@ -66,7 +70,9 @@ router.get('/getall', cycle.fetchAllCycles);
  * /cycles/{cycleId}:
  *   get:
  *     summary: Get a cycle by cycleId
- *     tags: [Cycle Routes]
+ *     tags: [Cycle Routes | Authentication Needed]
+ *     security:
+ *       - userToken: []
  *     parameters:
  *       - in: path
  *         name: cycleId
@@ -87,7 +93,9 @@ router.get('/:cycleId', cycle.fetchOneCycle);
  * /cycles/getcycles/{month}:
  *   get:
  *     summary: Get cycles by month
- *     tags: [Cycle Routes]
+ *     tags: [Cycle Routes | Authentication Needed]
+ *     security:
+ *       - userToken: []
  *     parameters:
  *       - in: path
  *         name: month
@@ -108,7 +116,9 @@ router.get('/getcycles/:month', cycle.fetchMonth);
  * /cycles/{cycleId}:
  *   put:
  *     summary: Update a cycle
- *     tags: [Cycle Routes]
+ *     tags: [Cycle Routes | Authentication Needed]
+ *     security:
+ *       - userToken: []
  *     parameters:
  *       - in: path
  *         name: cycleId
@@ -123,7 +133,11 @@ router.get('/getcycles/:month', cycle.fetchMonth);
  *       '400':
  *         description: Bad request
  */
-router.put('/:cycleId', cycle.updateCycle);
+router.put('/:cycleId', [
+    body("period").optional({ checkFalsy: true }).isInt({ min: 2, max: 8 }),
+    body("ovulation").optional({ checkFalsy: true }).isISO8601()
+    ],
+    cycle.updateCycle);
 
 // Route to delete a cycle by cycleId
 /**
@@ -131,7 +145,9 @@ router.put('/:cycleId', cycle.updateCycle);
  * /cycles/{cycleId}:
  *   delete:
  *     summary: Delete a cycle by cycleId
- *     tags: [Cycle Routes]
+ *     tags: [Cycle Routes | Authentication Needed]
+ *     security:
+ *       - userToken: []
  *     parameters:
  *       - in: path
  *         name: cycleId
