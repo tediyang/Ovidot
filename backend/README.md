@@ -108,6 +108,9 @@ npm test
 ## Usage
 For local connection: http://127.0.0.1:{PORT}/{endpoint}
 
+### UI Documentaion
+UI docmentation: http://127.0.0.1:{PORT}/{endpoint}/api/v1/swagger/documentation
+
 ### Non-Authorization Endpoints
 - Register a new user and get an access token for authentication purposes.
 Request
@@ -120,7 +123,8 @@ body:
   "email": "<USER'S EMAIL>",
   "password": "<PASSWORD>",
   "username": "<USERNAME>",
-  "age": "<AGE>"
+  "age": "<AGE>",
+  "period": "<PERIOD>"
 }
 ```
 Response (Status 201)
@@ -204,7 +208,7 @@ Response (Status 200)
 
 
 #### User Endpoint
-- Get user by userId
+- Get user data
 Request
 ```
 GET api/v1/auth/users/get [Auth: Bearer token]
@@ -215,7 +219,8 @@ Response (Status 200)
   "userId": "<USER ID>",
   "email": "<USER EMAIL>",
   "username": "<USERNAME>",
-  "age": "<AGE>"
+  "age": "<AGE>",
+  "period": "<PERIOD>"
 }
 ```
 
@@ -237,13 +242,14 @@ Response (Status 200)
   "userId": "<USER ID>",
   "email": "<USER EMAIL>",
   "username": "<NEW USERNAME>",
-  "age": "<NEW AGE>"
+  "age": "<NEW AGE>",
+  "period": "<NEW PERIOD>"
 }
 ```
 Response (Status 400)
 ```json
 {
-  "message": "Provide atleast a param to update: username or age"
+  "message": "Provide atleast a param to update: username, period or age"
 }
 ```
 

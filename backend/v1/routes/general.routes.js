@@ -11,7 +11,7 @@ const router /** @type {ExpressRouter} */ = Router();
 /**
  * @swagger
  * tags:
- *   name: Non-Authenticated Routes
+ *   name: General Routes | No Authentication
  *   description: Endpoints accessible without authentication
  */
 
@@ -21,7 +21,7 @@ const router /** @type {ExpressRouter} */ = Router();
  * /signup:
  *   post:
  *     summary: Register a user
- *     tags: [Non-Authenticated Routes]
+ *     tags: [General Routes | No Authentication]
  *     requestBody:
  *       required: true
  *       content:
@@ -37,6 +37,8 @@ const router /** @type {ExpressRouter} */ = Router();
  *                 type: string
  *               age:
  *                 type: number
+ *               period:
+ *                 type: number
  *     responses:
  *       '200':
  *         description: Successful registration
@@ -44,10 +46,11 @@ const router /** @type {ExpressRouter} */ = Router();
  *         description: Bad request
  */
 router.post('/signup', [
-    body("email").isString().notEmpty(),
+    body("email").isEmail(),
     body("password").isString().notEmpty(),
-    body("username").isString().notEmpty(),
-    body("age").isNumeric().notEmpty()
+    body("username").isAlpha().notEmpty(),
+    body("age").isInt({ min: 8, max: 55 }).notEmpty(),
+    body("period").isInt({ min: 2, max: 8 }).notEmpty()
     ],
     signup
 );
@@ -58,7 +61,7 @@ router.post('/signup', [
  * /login:
  *   post:
  *     summary: Log in a user
- *     tags: [Non-Authenticated Routes]
+ *     tags: [General Routes | No Authentication]
  *     requestBody:
  *       required: true
  *       content:
@@ -77,7 +80,7 @@ router.post('/signup', [
  *         description: Bad request
  */
 router.post('/login', [
-    body("email").isString().notEmpty(),
+    body("email").isEmail(),
     body("password").isString().notEmpty()
     ],
     login
@@ -89,7 +92,7 @@ router.post('/login', [
  * /forgot-password:
  *   post:
  *     summary: Send reset link to user's email
- *     tags: [Non-Authenticated Routes]
+ *     tags: [General Routes | No Authentication]
  *     requestBody:
  *       required: true
  *       content:
@@ -108,7 +111,7 @@ router.post('/login', [
  *         description: Bad request
  */
 router.post('/forgot-password', [
-    body("email").isString().notEmpty(),
+    body("email").isEmail(),
     body("url").isString().notEmpty()
     ],
     forgotPass
@@ -120,7 +123,7 @@ router.post('/forgot-password', [
  * /reset-password/{token}:
  *   get:
  *     summary: Validate reset token
- *     tags: [Non-Authenticated Routes]
+ *     tags: [General Routes | No Authentication]
  *     parameters:
  *       - in: path
  *         name: token
@@ -143,7 +146,7 @@ router.get('/reset-password/:token',
  * /reset-password/{token}:
  *   post:
  *     summary: Reset password
- *     tags: [Non-Authenticated Routes]
+ *     tags: [General Routes | No Authentication]
  *     parameters:
  *       - in: path
  *         name: token

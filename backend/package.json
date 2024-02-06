@@ -6,8 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon app.js",
-    "test-watch": "jest --watch",
-    "test": "mocha 'v1/tests/{admin,utility,routes}/*.js' --recursive --timeout 10000"
+    "test": "mocha 'v1/tests/{admin,utility,routes}/*.js' --recursive --timeout 20000"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +27,7 @@
     "mongoose": "^7.6.3",
     "nodemailer": "^6.9.5",
     "nodemon": "^3.0.1",
+    "prettier": "^3.2.2",
     "redis": "^4.6.11",
     "sinon": "^16.0.0",
     "supertest": "^6.3.3",

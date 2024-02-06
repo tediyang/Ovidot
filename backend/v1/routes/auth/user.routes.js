@@ -11,7 +11,7 @@ const router /** @type {ExpressRouter} */ = Router();
 /**
  * @swagger
  * tags:
- *   name: User Routes
+ *   name: User Routes | Authentication Needed
  *   description: Endpoints related to user operations
  */
 
@@ -21,7 +21,9 @@ const router /** @type {ExpressRouter} */ = Router();
  * /users/get:
  *   get:
  *     summary: Get user data
- *     tags: [User Routes]
+ *     tags: [User Routes | Authentication Needed]
+ *     security:
+ *       - userToken: []
  *     responses:
  *       '200':
  *         description: Successfully retrieved user data
@@ -36,7 +38,9 @@ router.get('/get', user.fetchUser);
  * /users/update:
  *   put:
  *     summary: Update user data
- *     tags: [User Routes]
+ *     tags: [User Routes | Authentication Needed]
+ *     security:
+ *       - userToken: []
  *     responses:
  *       '200':
  *         description: User data updated successfully
@@ -45,7 +49,12 @@ router.get('/get', user.fetchUser);
  *       '400':
  *         description: Bad request
  */
-router.put('/update', user.updateUser);
+router.put('/update',[
+    body("username").optional({ checkFalsy: true }).isAlpha(),
+    body("age").optional({ checkFalsy: true }).isInt({ min: 8, max: 55 }),
+    body("period").optional({ checkFalsy: true }).isInt({ min: 2, max: 8 })
+    ],
+    user.updateUser);
 
 // Route to delete user by UserId
 /**
@@ -53,7 +62,9 @@ router.put('/update', user.updateUser);
  * /users/delete:
  *   delete:
  *     summary: Delete user by UserId
- *     tags: [User Routes]
+ *     tags: [User Routes | Authentication Needed]
+ *     security:
+ *       - userToken: []
  *     responses:
  *       '204':
  *         description: User deleted successfully
@@ -70,7 +81,9 @@ router.delete('/delete', user.deleteUser);
  * /users/change-password:
  *   put:
  *     summary: Change logged-in user password
- *     tags: [User Routes]
+ *     tags: [User Routes | Authentication Needed]
+ *     security:
+ *       - userToken: []
  *     requestBody:
  *       required: true
  *       content:

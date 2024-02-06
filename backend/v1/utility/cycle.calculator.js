@@ -1,162 +1,97 @@
+// CYCLE CALCULATOR
 
-/**
- * The number of milliseconds in a day.
- * @constant {number}
- */
 const MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
 
 /**
- * The default duration of the menstrual cycle in days.
- * @constant {number}
- */
-const DEFAULT_CYCLE_DURATION = 28;
-
-/**
- * The date format used for formatting dates as strings.
- * @constant {string}
- */
-const DATE_FORMAT = 'YYYY-MM-DD';
-
-/**
- * The number of days used in calculations for unsafe days.
- * @constant {number}
- */
-const DAYS_FOR_UNSAFE_CALCULATIONS = 5;
-
-/**
- * Calculate the estimated menstrual cycle for an individual.
+ * Calculate the estimated cycle for the individual.
+ * Note: this calculator is based on the average 28 days cycle.
+ * Proper estimation will be made in later versions from data provided
+ * by users to get an accurate prediction.
  *
- * @param {number} period - The number of days of menstruation.
- * @param {Date} startDate - The beginning of the user's cycle (YYYY-MM-DD).
- * @param {Date|null} ovulation - The day the user experienced ovulation in the cycle (YYYY-MM-DD), or null for default.
- * @returns {Promise} - A promise that resolves to an object with variables for cycle information.
+ * @param {Number} period - the number of days of menstruation
+ * @param {Date} startDate - the beginning of the user cycle YYYY-MM-DD
+ * @param {Date} ovulation - the day the user experienced ovulation in the cycle. YYYY-MM-DD
+ * @returns {Promise} - a promise that resolves to an object with variables of days (cycle duration), periodRange,
+ * ovulationRange, unsafeDays, and nextDate.
  */
-export async function calculate(period, startDate, ovulation = null) {
-    try {
-        const dayOne = new Date(startDate);
-        let dayLast;
+export function calculate(period, startDate, ovulation = null) {
+    return new Promise((resolve, reject) => {
+        try {
+            const dayOne = new Date(startDate);
+            let dayLast;
 
-        // Generate the period range
-        const periodRange = generateDateRange(dayOne, period);
+            const periodRange = [];
 
-        // Initialize the ovulation date
-        ovulation = initializeOvulationDate(ovulation, dayOne, period);
+            if (ovulation === null) {
+                ovulation = new Date(dayOne);
+                ovulation.setDate(dayOne.getDate() + 9 + period);
+            } else {
+                ovulation = new Date(ovulation);
+                // check if ovulation occurs before or during period range.
+                // if it does, throw an error
+                dayLast = new Date(dayOne);
+                dayLast.setDate(dayLast.getDate() + period - 1); // The last day of menstraution
 
-        // Determine the last day of menstruation
-        dayLast = getLastDayOfMenstruation(dayOne, period);
+                if (ovulation <= dayLast) {
+                    const err = new Error("Invalid ovulation date: Can't occur before or during menstraution");
+                    err.statusCode = 400;
+                    reject(err);
+                }
+            }
 
-        // Validate ovulation date
-        validateOvulationDate(ovulation, dayLast);
+            // Get the total cycle days
+            const totalCycleDays = getTotalCycleDays(dayOne, ovulation);
 
-        // Calculate total cycle days
-        const totalCycleDays = getTotalCycleDays(dayOne, ovulation, DEFAULT_CYCLE_DURATION);
+            // Get the period range by adding each day.
+            for (let i = 0; i < period; i++) {
+                const currDate = new Date(dayOne);
+                currDate.setDate(dayOne.getDate() + i);
+                periodRange.push(formatDate(currDate));
+            }
 
-        // Get the range of ovulation
-        const ovulationRange = getOvulationRange(ovulation, dayLast);
+            // Calculate the predicted start date and end date for ovulation.
+            const ovulationRange = getOvulationRange(ovulation, dayLast);
 
-        // Get the range of unsafe days
-        const unsafeRange = getUnsafeRange(ovulation, periodRange[periodRange.length - 1]);
+            // Calculate the unsafeRange
+            const unsafeRange = getUnsafeRange(ovulation, new Date(periodRange[periodRange.length - 1]));
 
-        // Calculate the next date
-        const nextDate = calculateNextDate(dayOne, totalCycleDays);
+            let nextDate = new Date(dayOne);
+            nextDate.setDate(dayOne.getDate() + totalCycleDays);
+            nextDate = formatDate(nextDate);
 
-        // Resolve the promise with the calculated information
-        return {
-            days: totalCycleDays,
-            periodRange,
-            ovulation: formatDate(ovulation),
-            ovulationRange,
-            unsafeDays: unsafeRange,
-            nextDate
-        };
-    } catch (err) {
-        // Reject the promise with an error if any exception occurs
-        throw err;
-    }
-}
-
-/**
- * Generate an array of dates representing the period range.
- *
- * @param {Date} startDate - The beginning of the user's cycle.
- * @param {number} period - The number of days of menstruation.
- * @returns {string[]} - An array of formatted date strings.
- */
-const generateDateRange = (startDate, period) => {
-    const periodRange = [];
-    for (let i = 0; i < period; i++) {
-        const currDate = new Date(startDate);
-        currDate.setDate(startDate.getDate() + i);
-        periodRange.push(formatDate(currDate));
-    }
-    return periodRange;
-};
-
-/**
- * Initialize the ovulation date, either using the provided date or a default value.
- *
- * @param {Date|null} ovulation - The day the user experienced ovulation in the cycle, or null for default.
- * @param {Date} dayOne - The beginning of the user's cycle.
- * @param {number} period - The number of days of menstruation.
- * @returns {Date} - The initialized ovulation date.
- */
-const initializeOvulationDate = (ovulation, dayOne, period) => {
-    if (ovulation === null) {
-        ovulation = new Date(dayOne);
-        ovulation.setDate(dayOne.getDate() + 9 + period);
-    } else {
-        ovulation = new Date(ovulation);
-    }
-    return ovulation;
-};
-
-/**
- * Get the last day of menstruation.
- *
- * @param {Date} dayOne - The beginning of the user's cycle.
- * @param {number} period - The number of days of menstruation.
- * @returns {Date} - The last day of menstruation.
- */
-const getLastDayOfMenstruation = (dayOne, period) => {
-    const dayLast = new Date(dayOne);
-    dayLast.setDate(dayLast.getDate() + period - 1);
-    return dayLast;
-};
-
-/**
- * Validate the ovulation date to ensure it doesn't occur before or during menstruation.
- *
- * @param {Date} ovulation - The day the user experienced ovulation in the cycle.
- * @param {Date} dayLast - The last day of menstruation.
- */
-const validateOvulationDate = (ovulation, dayLast) => {
-    if (ovulation <= dayLast) {
-        const err = new Error("Invalid ovulation date: Can't occur before or during menstruation");
-        err.statusCode = 400;
-        throw err;
-    }
+            resolve({
+                days: totalCycleDays,
+                periodRange,
+                ovulation: formatDate(ovulation),
+                ovulationRange,
+                unsafeDays: unsafeRange,
+                nextDate
+            });
+        } catch (err) {
+            reject(err);
+        }
+    });
 };
 
 /**
  * Get the total number of days in the menstrual cycle.
  *
- * @param {Date} startDate - The beginning of the user's cycle.
- * @param {Date} ovulation - The day the user experienced ovulation.
- * @param {number} cycleDuration - The duration of the cycle in days.
- * @returns {number} - The total number of days in the cycle.
+ * @param {Date} startDate - the beginning of the user cycle
+ * @param {Date} ovulation - the day the user experienced ovulation
+ * @returns {Number} - the total number of days in the cycle
  */
-const getTotalCycleDays = (startDate, ovulation, cycleDuration) => {
+const getTotalCycleDays = (startDate, ovulation) => {
     const days = new Date(ovulation);
-    days.setDate(ovulation.getDate() + cycleDuration - 1);
+    days.setDate(ovulation.getDate() + 15);
     return (days - startDate) / MILLISECONDS_IN_A_DAY;
 };
 
 /**
  * Get the range of ovulation dates.
  *
- * @param {Date} ovulation - The day the user experienced ovulation.
- * @param {Date} dayLast - The last day of menstruation.
- * @returns {string[]} - An array containing the start, current, and end dates of ovulation.
+ * @param {Date} ovulation - the day the user experienced ovulation
+ * @param {Date} dayLast - the last day of menstraution
+ * @returns {String[]} - an array containing the start, current, and end dates of ovulation
  */
 const getOvulationRange = (ovulation, dayLast = null) => {
     const ovulationRangeStart = new Date(ovulation);
@@ -172,7 +107,7 @@ const getOvulationRange = (ovulation, dayLast = null) => {
     ];
 
     if (dayLast && ovulationRangeStart.getTime() === dayLast.getTime()) {
-        result.shift();
+        result.shift(); // Remove the first element from the list.
     }
 
     return result;
@@ -181,13 +116,15 @@ const getOvulationRange = (ovulation, dayLast = null) => {
 /**
  * Get the range of unsafe days for conception.
  *
- * @param {Date} ovulation - The day the user experienced ovulation.
- * @param {Date} lastPeriodDay - The last day of the user's menstruation.
- * @returns {string[]} - An array containing unsafe days for conception.
+ * @param {Date} ovulation - the day the user experienced ovulation
+ * @param {Date} lastPeriodDay - the last day of the user's menstruation
+ * @returns {String[]} - an array containing unsafe days for conception
  */
 const getUnsafeRange = (ovulation, lastPeriodDay) => {
+    // Get unsafeRangeStart, and if the difference between unsafeRangeStart and lastPeriodDay is less than 0.
+    // increase the unsafeRangeStart date
     let unsafeRangeStart;
-    let i = DAYS_FOR_UNSAFE_CALCULATIONS;
+    let i = 5;
     do {
         unsafeRangeStart = new Date(ovulation);
         unsafeRangeStart.setDate(unsafeRangeStart.getDate() - i);
@@ -195,9 +132,10 @@ const getUnsafeRange = (ovulation, lastPeriodDay) => {
     } while (differenceInDays(unsafeRangeStart, lastPeriodDay) <= 0 && i >= 0);
 
     const unsafeRangeEnd = new Date(ovulation);
-    unsafeRangeEnd.setDate(ovulation.getDate() + DAYS_FOR_UNSAFE_CALCULATIONS);
+    unsafeRangeEnd.setDate(ovulation.getDate() + 5);
 
     const unsafeDays = [];
+    // Append all the unsafeDays
     while (unsafeRangeStart <= unsafeRangeEnd) {
         unsafeDays.push(formatDate(unsafeRangeStart));
         unsafeRangeStart.setDate(unsafeRangeStart.getDate() + 1);
@@ -209,27 +147,29 @@ const getUnsafeRange = (ovulation, lastPeriodDay) => {
 /**
  * Calculate the difference in days between two dates.
  *
- * @param {Date} date1 - The first date.
- * @param {Date} date2 - The second date.
- * @returns {number} - The difference in days.
+ * @param {Date} date1 - the first date
+ * @param {Date} date2 - the second date
+ * @returns {Number} - the difference in days
  */
 const differenceInDays = (date1, date2) => (date1 - date2) / MILLISECONDS_IN_A_DAY;
 
 /**
  * Format a date as a string in "YYYY-MM-DD" format.
  *
- * @param {Date} date - The date to format.
- * @returns {string} - The formatted date string.
+ * @param {Date} date - the date to format
+ * @returns {String} - the formatted date string
  */
 const formatDate = (date) => date.toISOString().split('T')[0];
 
 /**
  * Extract the month from the datetime.
  *
- * @param {string} startdate - The starting date.
- * @returns {string} - The month.
+ * @param {String} startdate
+ * @returns {String} - the month
  */
 export function month(startdate) {
     const dateObject = new Date(startdate);
-    return dateObject.toLocaleString('en-US', { month: 'long' });
-}
+    const month = dateObject.toLocaleString('en-US', { month: 'long' });
+
+    return month;
+};

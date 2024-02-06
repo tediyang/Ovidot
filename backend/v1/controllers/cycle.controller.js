@@ -23,7 +23,7 @@ export async function createCycle(req, res) {
 	try {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
-			return handleResponse(res, 400, 'Fill required properties');
+			return handleResponse(res, 400, errors.array()[0].msg);
 		}
 
 		const id = req.user.id;
@@ -183,9 +183,20 @@ export async function fetchMonth(req, res) {
  */
 export async function updateCycle(req, res) {
 	try {
+		// Validate the data
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return handleResponse(res, 400, errors.array()[0].msg);
+		}
+
 		const { cycleId } = req.params;
 		const userId = req.user.id;
 		let { period, ovulation } = req.body;
+
+		// validate period data less than 1
+		if (period <= 0) {
+			return handleResponse(res, 400, "Invalid value");
+		}
 
 		const user = await User.findById(userId);
 		if (!user) {
