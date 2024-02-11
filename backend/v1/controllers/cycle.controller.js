@@ -20,51 +20,51 @@ import { logger } from '../middleware/logger.js';
  * @returns Payload on Success
  */
 export async function createCycle(req, res) {
-	try {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return handleResponse(res, 400, errors.array()[0].msg);
-		}
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return handleResponse(res, 400, errors.array()[0].msg);
+    }
 
-		const id = req.user.id;
-		const { period, ovulation, startdate } = req.body;
+    const id = req.user.id;
+    const { period, ovulation, startdate } = req.body;
 
-		if (!validateCreateDate(startdate)) {
-			return handleResponse(res, 400, 'Specify a proper date: Date should not be less than 21 days or greater than present day');
-		}
+    if (!validateCreateDate(startdate)) {
+        return handleResponse(res, 400, 'Specify a proper date: Date should not be less than 21 days or greater than present day');
+    }
 
-		// Get the month for the date
-		const month = _month(startdate);
+    // Get the month for the date
+    const month = _month(startdate);
 
-		const user = await populateWithCycles(id);
-		if (user === null) {
-			return handleResponse(res, 404, 'User not found');
-		}
+    const user = await populateWithCycles(id);
+    if (user === null) {
+        return handleResponse(res, 404, 'User not found');
+    }
 
-		if (checkExistingCycle(user, startdate)) {
-			return handleResponse(res, 400, "Cycle already exist for this month: Delete to create another");
-		};
+    if (checkExistingCycle(user, startdate)) {
+        return handleResponse(res, 400, "Cycle already exist for this month: Delete to create another");
+    };
 
-		// if user._cycles is false (no data), create a new one.
-		const cycleData = await calculate(period, startdate, ovulation);
+    // if user._cycles is false (no data), create a new one.
+    const cycleData = await calculate(period, startdate, ovulation);
 
-		const data = cycleParser(month, period, startdate, cycleData);
-		const newCycle = await Cycle.create({...data});
+    const data = cycleParser(month, period, startdate, cycleData);
+    const newCycle = await Cycle.create({...data});
 
-		// Create the cycle and notification for the user
-		await createCycleAndNotifyUser(newCycle, user, startdate);
+    // Create the cycle and notification for the user
+    await createCycleAndNotifyUser(newCycle, user, startdate);
 
-		// Handle cache
-		await Promise.resolve(redisManager.cacheDel(id, newCycle.year.toString()));
+    // Handle cache
+    await Promise.resolve(redisManager.cacheDel(id, newCycle.year.toString()));
 
-		return res.status(201).json({
-			message: 'Cycle created',
-			cycleId: newCycle.id
-		});
+    return res.status(201).json({
+        message: 'Cycle created',
+        cycleId: newCycle.id
+    });
 
-	} catch (error) {
-			handleResponse(res, 500, "internal server error", error);
-	}
+  } catch (error) {
+    handleResponse(res, 500, "internal server error", error);
+  }
 }
 
 /**
