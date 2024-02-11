@@ -1,0 +1,92 @@
+2023-12-08T19:27:22.511Z ERROR: MongoDB connection error: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://" 
+2023-12-08T19:27:22.715Z INFO: Server is now running on port 5000 
+2023-12-08T19:34:04.378Z ERROR: MongoDB connection error: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://" 
+2023-12-08T19:34:04.400Z INFO: Server is now running on port 5000 
+2023-12-09T12:18:26.748Z ERROR: MongoDB connection error: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://" 
+2023-12-09T12:18:26.780Z INFO: Server is now running on port 5000 
+2023-12-09T12:20:12.283Z INFO: Server is now running on port 5000 
+2023-12-09T12:20:12.296Z INFO: MongoDB connected! 
+2023-12-09T13:38:02.526Z INFO: MongoDB connected! 
+2023-12-09T13:38:02.541Z INFO: Server is now running on port 5000 
+2023-12-09T13:38:48.659Z INFO: Server is now running on port 5000 
+2023-12-09T13:38:48.668Z INFO: MongoDB connected! 
+2023-12-10T19:53:14.955Z INFO: Server is now running on port 5000 
+2023-12-10T19:55:40.041Z INFO: Server is now running on port 5000 
+2023-12-10T19:58:15.060Z INFO: Server is now running on port 5000 
+2023-12-10T20:00:48.823Z INFO: Server is now running on port 5000 
+2023-12-10T20:00:48.851Z INFO: MongoDB connected! 
+2023-12-10T20:04:04.302Z INFO: Server is now running on port 5000 
+2023-12-10T20:04:04.339Z INFO: MongoDB connected! 
+2023-12-10T20:05:08.030Z INFO: MongoDB connected! 
+2023-12-10T20:05:08.056Z INFO: Server is now running on port 5000 
+2023-12-10T20:36:08.953Z INFO: MongoDB connected! 
+2023-12-10T20:36:08.981Z INFO: Server is now running on port 5000 
+2023-12-10T20:45:06.974Z INFO: MongoDB connected! 
+2023-12-10T20:45:06.994Z INFO: Server is now running on port 5000 
+2023-12-10T20:46:41.172Z INFO: MongoDB connected! 
+2023-12-10T20:46:41.197Z INFO: Server is now running on port 5000 
+2023-12-10T20:46:54.887Z WARN: GET /api-docs/ 404 12ms 404
+2023-12-10T20:47:38.465Z WARN: GET /api/v1/api-docs/ 404 2ms 404
+2023-12-10T20:47:47.618Z INFO: GET /api/v1/swagger 301 2ms 301
+2023-12-10T20:47:47.633Z INFO: GET /api/v1/swagger/ 200 4ms 200
+2023-12-10T20:47:47.698Z INFO: GET /api/v1/swagger/swagger-ui-init.js 200 0ms 200
+2023-12-10T20:47:47.724Z INFO: GET /api/v1/swagger/swagger-ui-standalone-preset.js 200 32ms 200
+2023-12-10T20:47:47.741Z INFO: GET /api/v1/swagger/swagger-ui-bundle.js 200 55ms 200
+2023-12-10T20:47:47.759Z INFO: GET /api/v1/swagger/swagger-ui.css 200 81ms 200
+2023-12-10T20:47:48.344Z INFO: GET /api/v1/swagger/favicon-32x32.png 200 49ms 200
+2023-12-10T20:51:18.257Z INFO: Server is now running on port 5000 
+2023-12-10T20:51:18.273Z INFO: MongoDB connected! 
+2023-12-10T20:51:25.680Z INFO: GET /api/v1/swagger/ 304 9ms 304
+2023-12-10T20:51:25.723Z INFO: GET /api/v1/swagger/swagger-ui.css 304 3ms 304
+2023-12-10T20:51:25.737Z INFO: GET /api/v1/swagger/swagger-ui-bundle.js 304 4ms 304
+2023-12-10T20:51:25.739Z INFO: GET /api/v1/swagger/swagger-ui-standalone-preset.js 304 2ms 304
+2023-12-10T20:51:25.753Z INFO: GET /api/v1/swagger/swagger-ui-init.js 200 1ms 200
+2023-12-10T20:51:26.303Z INFO: GET /api/v1/swagger/favicon-32x32.png 304 1ms 304
+2023-12-10T20:51:27.927Z INFO: GET /api/v1/swagger/ 304 1ms 304
+2023-12-10T20:51:27.972Z INFO: GET /api/v1/swagger/swagger-ui.css 304 2ms 304
+2023-12-10T20:51:27.990Z INFO: GET /api/v1/swagger/swagger-ui-bundle.js 304 12ms 304
+2023-12-10T20:51:27.993Z INFO: GET /api/v1/swagger/swagger-ui-standalone-preset.js 304 5ms 304
+2023-12-10T20:51:27.998Z INFO: GET /api/v1/swagger/swagger-ui-init.js 304 1ms 304
+2023-12-10T20:51:28.604Z INFO: GET /api/v1/swagger/favicon-32x32.png 304 1ms 304
+2023-12-10T20:51:31.356Z INFO: GET /api/v1/swagger/ 304 1ms 304
+2023-12-10T20:51:31.395Z INFO: GET /api/v1/swagger/swagger-ui-init.js 304 1ms 304
+2023-12-10T20:51:31.397Z INFO: GET /api/v1/swagger/swagger-ui.css 304 5ms 304
+2023-12-10T20:51:31.399Z INFO: GET /api/v1/swagger/swagger-ui-bundle.js 304 5ms 304
+2023-12-10T20:51:31.400Z INFO: GET /api/v1/swagger/swagger-ui-standalone-preset.js 304 5ms 304
+2023-12-10T20:51:31.771Z INFO: GET /api/v1/swagger/favicon-32x32.png 304 0ms 304
+2023-12-10T20:51:32.573Z INFO: GET /api/v1/swagger/ 304 1ms 304
+2023-12-10T20:51:32.613Z INFO: GET /api/v1/swagger/swagger-ui.css 304 3ms 304
+2023-12-10T20:51:32.614Z INFO: GET /api/v1/swagger/swagger-ui-bundle.js 304 3ms 304
+2023-12-10T20:51:32.616Z INFO: GET /api/v1/swagger/swagger-ui-standalone-preset.js 304 3ms 304
+2023-12-10T20:51:32.628Z INFO: GET /api/v1/swagger/swagger-ui-init.js 304 1ms 304
+2023-12-10T20:51:33.125Z INFO: GET /api/v1/swagger/favicon-32x32.png 304 1ms 304
+2023-12-10T20:51:46.849Z INFO: GET /api/v1/swagger/ 304 1ms 304
+2023-12-10T20:51:46.952Z INFO: GET /api/v1/swagger/swagger-ui.css 304 1ms 304
+2023-12-10T20:51:46.975Z INFO: GET /api/v1/swagger/swagger-ui-init.js 304 3ms 304
+2023-12-10T20:51:46.996Z INFO: GET /api/v1/swagger/swagger-ui-bundle.js 304 0ms 304
+2023-12-10T20:51:47.027Z INFO: GET /api/v1/swagger/swagger-ui-standalone-preset.js 304 10ms 304
+2023-12-10T20:51:48.230Z INFO: GET /api/v1/swagger/favicon-32x32.png 304 1ms 304
+2023-12-11T10:09:17.085Z INFO: MongoDB connected! 
+2023-12-11T10:09:17.154Z INFO: Server is now running on port 5000 
+2023-12-11T10:22:28.842Z INFO: MongoDB connected! 
+2023-12-11T10:22:28.860Z INFO: Server is now running on port 5000 
+2023-12-11T10:27:12.394Z INFO: MongoDB connected! 
+2023-12-11T10:27:12.416Z INFO: Server is now running on port 5000 
+2023-12-11T10:27:37.968Z INFO: GET /api/v1/swagger/ 304 46ms 304
+2023-12-11T10:27:38.089Z INFO: GET /api/v1/swagger/swagger-ui.css 304 19ms 304
+2023-12-11T10:27:38.145Z INFO: GET /api/v1/swagger/swagger-ui-bundle.js 304 7ms 304
+2023-12-11T10:27:38.163Z INFO: GET /api/v1/swagger/swagger-ui-standalone-preset.js 304 2ms 304
+2023-12-11T10:27:38.168Z INFO: GET /api/v1/swagger/swagger-ui-init.js 304 1ms 304
+2023-12-11T10:27:39.339Z INFO: GET /api/v1/swagger/favicon-32x32.png 304 1ms 304
+2023-12-11T10:43:45.692Z INFO: Server is now running on port 5000 
+2023-12-11T10:43:45.706Z INFO: MongoDB connected! 
+2023-12-11T10:48:26.465Z INFO: Server is now running on port 5000 
+2023-12-11T10:48:26.477Z INFO: MongoDB connected! 
+2023-12-11T10:59:09.283Z INFO: MongoDB connected! 
+2023-12-11T10:59:09.308Z INFO: Server is now running on port 5000 
+2023-12-11T11:11:39.249Z INFO: MongoDB connected! 
+2023-12-11T11:11:39.275Z INFO: Server is now running on port 5000 
+2023-12-13T13:14:14.522Z INFO: Server is now running on port 5000 
+2023-12-13T13:14:14.551Z INFO: MongoDB connected! 
+2023-12-13T13:29:36.141Z INFO: MongoDB connected! 
+2023-12-13T13:29:36.157Z INFO: Server is now running on port 5000 

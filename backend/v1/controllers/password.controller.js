@@ -1,4 +1,4 @@
-
+// PASSWORD CONTROLLER
 import dotenv from 'dotenv';
 import User from '../models/user.model.js';
 import { v4 } from 'uuid';
