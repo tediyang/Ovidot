@@ -8,4 +8,4 @@ Ovidot is a web application that aims to revolutionize women's health tracking b
 - [Azubuike Ngozi](https://github.com/Ngee1010)
 - Olalekan Alao
 
-## Note: This branch is the Production branch and codes push here have been tested properly and ready for deployment. Check development branch for codes.
+## Note: This branch is the Development branch and codes present here are currently being tested. Check Main branch for Production codes.
