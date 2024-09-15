@@ -1,8 +1,7 @@
 
 // Import necessary modules
-import { Router } from 'express';
-import { body } from 'express-validator';
-import * as cycle from '../../controllers/cycle.controller.js';
+const { Router } = require('express');
+const cycleController = require('../../controllers/cycle.controller.js');
 
 // Create an Express router
 const router /** @type {ExpressRouter} */ = Router();
@@ -40,12 +39,7 @@ const router /** @type {ExpressRouter} */ = Router();
  *       '400':
  *         description: Bad request
  */
-router.post('/create', [
-    body("period").isNumeric().notEmpty(),
-    body("startdate").isISO8601().notEmpty()
-    ],
-    cycle.createCycle
-);
+router.post('/create', cycleController.createCycle);
 
 // Route to get all cycles
 /**
@@ -62,7 +56,7 @@ router.post('/create', [
  *       '400':
  *         description: Bad request
  */
-router.get('/getall', cycle.fetchAllCycles);
+router.get('/getall', cycleController.fetchAllCycles);
 
 // Route to get a cycle using cycleId
 /**
@@ -85,30 +79,7 @@ router.get('/getall', cycle.fetchAllCycles);
  *       '404':
  *         description: Cycle not found
  */
-router.get('/:cycleId', cycle.fetchOneCycle);
-
-// Route to get cycles by month
-/**
- * @swagger
- * /cycles/getcycles/{month}:
- *   get:
- *     summary: Get cycles by month
- *     tags: [Cycle Routes | Authentication Needed]
- *     security:
- *       - userToken: []
- *     parameters:
- *       - in: path
- *         name: month
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       '200':
- *         description: Successfully retrieved cycles for the specified month
- *       '400':
- *         description: Bad request
- */
-router.get('/getcycles/:month', cycle.fetchMonth);
+router.get('/:cycleId', cycleController.fetchOneCycle);
 
 // Route to update a cycle
 /**
@@ -133,11 +104,7 @@ router.get('/getcycles/:month', cycle.fetchMonth);
  *       '400':
  *         description: Bad request
  */
-router.put('/:cycleId', [
-    body("period").optional({ checkFalsy: true }).isInt({ min: 2, max: 8 }),
-    body("ovulation").optional({ checkFalsy: true }).isISO8601()
-    ],
-    cycle.updateCycle);
+router.put('/:cycleId', cycleController.updateCycle);
 
 // Route to delete a cycle by cycleId
 /**
@@ -160,7 +127,7 @@ router.put('/:cycleId', [
  *       '404':
  *         description: Cycle not found
  */
-router.delete('/:cycleId', cycle.deleteCycle);
+router.delete('/:cycleId', cycleController.deleteCycle);
 
 // Export the router
-export default router;
+module.exports = router;
