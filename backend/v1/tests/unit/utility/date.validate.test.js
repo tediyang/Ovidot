@@ -1,6 +1,7 @@
-import { validateCreateDate, validateUpdateDate } from "../../utility/date.validate.js";
-import sinon from 'sinon';
-import { expect } from 'chai';
+const dateValidator = require("../../../utility/validators/date.validator.js");
+const sinon = require('sinon');
+const { expect } = require('chai');
+
 
 describe('Test validateCreateDate function', () => {
   let clock;
@@ -14,29 +15,29 @@ describe('Test validateCreateDate function', () => {
     // Restore the original Date object
     clock.restore();
   });
-
+   
   it('returns false for an invalid date', () => {
     const invalidDate = 'invalid-date';
-    expect(validateCreateDate(invalidDate)).to.be.false;
+    expect(dateValidator.validateCreateDate(invalidDate)).to.be.false;
   });
 
   it('returns true for a valid date within the 21-day range', () => {
     const validDate = '2023-11-22';
-    expect(validateCreateDate(validDate)).to.be.true;
+    expect(dateValidator.validateCreateDate(validDate)).to.be.true;
   });
 
   it('returns false for a valid date outside the 21-day range', () => {
     const invalidDate = '2023-11-01';
-    expect(validateCreateDate(invalidDate)).to.be.false;
+    expect(dateValidator.validateCreateDate(invalidDate)).to.be.false;
   });
 });
 
 
 describe('Test validateUpdateDate function', () => {
   it('returns false for invalid inputs', () => {
-    expect(validateUpdateDate(null, '2023-11-23', 7)).to.be.false;
-    expect(validateUpdateDate('2023-11-23', null, 7)).to.be.false;
-    expect(validateUpdateDate('2023-11-23', '2023-11-24', null)).to.be.false;
+    expect(dateValidator.validateUpdateDate(null, '2023-11-23', 7)).to.be.false;
+    expect(dateValidator.validateUpdateDate('2023-11-23', null, 7)).to.be.false;
+    expect(dateValidator.validateUpdateDate('2023-11-23', '2023-11-24', null)).to.be.false;
   });
 
   it('returns false for new date within period days', () => {
@@ -44,7 +45,7 @@ describe('Test validateUpdateDate function', () => {
     const newDate = '2023-11-23';
     const period = 5;
 
-    expect(validateUpdateDate(prevDate, newDate, period)).to.be.false;
+    expect(dateValidator.validateUpdateDate(prevDate, newDate, period)).to.be.false;
   });
 
   it('returns true for valid new date outside period days but within 18 days', () => {
@@ -52,7 +53,7 @@ describe('Test validateUpdateDate function', () => {
     const newDate = '2023-11-20';
     const period = 7;
 
-    expect(validateUpdateDate(prevDate, newDate, period)).to.be.true;
+    expect(dateValidator.validateUpdateDate(prevDate, newDate, period)).to.be.true;
   });
 
   it('returns false for new date exceeding 18 days from the previous start date', () => {
@@ -60,6 +61,6 @@ describe('Test validateUpdateDate function', () => {
     const newDate = '2023-12-01';
     const period = 7;
 
-    expect(validateUpdateDate(prevDate, newDate, period)).to.be.false;
+    expect(dateValidator.validateUpdateDate(prevDate, newDate, period)).to.be.false;
   });
 });

@@ -1,235 +1,199 @@
 // PASSWORD CONTROLLER
-import dotenv from 'dotenv';
-import User from '../models/user.model.js';
-import { v4 } from 'uuid';
-import bcrypt from 'bcryptjs';
-import { handleResponse } from '../utility/handle.response.js';
-import { isTokenBlacklisted, updateBlacklist } from '../middleware/tokenBlacklist.js';
-import { validationResult } from 'express-validator';
-import { sender } from '../services/notifications.js';
-import notifications from '../services/notifications.js';
-import { renderForgetTemplate } from '../services/views/handle.template.js';
-import { logger } from '../middleware/logger.js';
-dotenv.config();
+require('dotenv').config();
+const { User, Email, MongooseError, Connection } = require('../models/engine/database');
+const { v4 } = require('uuid');
+const handleResponse = require('../utility/helpers/handle.response');
+const blacklist = require('../middleware/tokenBlacklist');
+const { emailType, userStatus, userAction } = require('../enums');
+const requestValidator = require('../utility/validators/requests.validator');
+const notifications = require('../services/notifications');
+const util = require('../utility/encryption/cryptography');
+const Joi = require('joi');
+const { JsonWebTokenError } = require('jsonwebtoken');
 
-const { genSalt, hash, compare } = bcrypt;
 
-/**
- * Default URL host for generating reset links.
- * @constant {string}
- */
-const HOST = process.env.HOST || 'localhost';
+class PasswordController {
 
-/**
- * Default port for generating reset links.
- * @constant {string}
- */
-const PORT = process.env.PORT || '3000';
+  /**
+   * Default reset token expiration time (30 minutes).
+   * @constant {number}
+   */
+  RESET_TOKEN_EXPIRATION = 30 * 60 * 1000;
 
-/**
- * Default reset token expiration time (30 minutes).
- * @constant {number}
- */
-const RESET_TOKEN_EXPIRATION = 30 * 60 * 1000;
+  /**
+   * Generate a reset token using uuid.v4.
+   * @returns {string} A unique uuid.
+   */
+  resetToken() {
+    return v4();
+  }
 
-/**
- * Default number of allowed notifications (15).
- * @constant {number}
- */
-const MAX_NOTIFICATIONS = 15;
-
-/**
- * Generate a reset token using uuid.v4.
- * @returns {string} A unique uuid.
- */
-function resetToken() {
-  return v4();
-}
-
-/**
- * Send reset link password to users.
- * @param {Object} req - Express Request
- * @param {Object} res - Express Response
- * @return {void}
- */
-export async function forgotPass(req, res) {
-  try {
-    // validate request
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return handleResponse(res, 400, errors.array()[0].msg);
-    }
-
-    const { email, url } = req.body;
-    const user = await User.findOne({ email: email });
-
-    if (!user) {
-      return handleResponse(res, 404, `${email} not registered`);
-    }
-
-    const token = resetToken();
-    const resetExp = new Date(Date.now() + RESET_TOKEN_EXPIRATION);
-    user.reset = token;
-    user.resetExp = resetExp;
-    await user.save();
-
-    const resetLink = `${url}/${token}`;
-
-    const forgetPass = await renderForgetTemplate(req, user, resetLink);
-
-    const receiver = {
-      to: email,
-      subject: 'Password Reset',
-      html: forgetPass
-    };
-
-    sender.sendMail(receiver, (error, info) => {
+  /**
+   * Send reset link password to users.
+   * @param {Object} req - Express Request
+   * @param {Object} res - Express Response
+   * @return {void}
+   */
+  async forgotPass(req, res) {
+    try {
+      // validate user input
+      const { value, error } = requestValidator.ForgetPass.validate(req.body);
+      
       if (error) {
-        logger.error('Failed to send email');
-        return handleResponse(res, 500, 'Failed to send email', error);
+        throw error;
       }
-      return handleResponse(res, 201, 'Password reset link sent to email');
-    });
-  } catch (error) {
-    return handleResponse(res, 500, 'Internal Server Error', error);
+  
+      const { email, front_url } = value;
+  
+      const user = await User.findOne({ email: email });
+      if (!user) {
+        return handleResponse(res, 404, `${email} not found`);
+      }
+  
+      const token = this.resetToken();
+      const resetExp = new Date(Date.now() + this.RESET_TOKEN_EXPIRATION);
+      const resetLink = `${front_url}/${token}`;
+      // await user.save();
+      
+      await Connection.transaction(async () => {
+        user.reset = token;
+        user.resetExp = resetExp;
+  
+        try {
+          // Send email
+          const email = await Email.create({
+            email: user.email,
+            username: user.username,
+            email_type: emailType.forget,
+            content: {
+              resetLink: resetLink,
+              userAgents: {
+                os: req.headers.os,
+                browser: req.headers.browser
+              }
+            }
+          });
+  
+          await Promise.all([email, user.save()]);
+        } catch (error) {
+          throw error
+        }
+      });
+  
+      return handleResponse(res, 201, `Password reset link succesfully sent to ${value.email}`);
+  
+    } catch (error) {
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+				return handleResponse(res, 500, error.message, error);
+			}
+      return handleResponse(res, 500, error.message, error)
+    }
+  }
+  
+  /**
+   * Validate reset token.
+   * @param {Object} req - Express Request
+   * @param {Object} res - Express Response
+   * @return {void}
+   */
+  async VerifyResetPass(req, res) {
+    try {
+      const { token } = req.params;
+  
+      if (!token) return handleResponse(res, 401, 'Requires a token');
+  
+      if (blacklist.isTokenBlacklisted(token)) {
+        return handleResponse(res, 401, 'Invalid or expired token');
+      }
+  
+      const user = await User.findOne({
+        reset: token,
+        resetExp: { $gt: Date.now() },
+      });
+  
+      if (!user) {
+        return handleResponse(res, 401, 'Invalid or expired token');
+      }
+  
+      return res.status(200).json({
+        message: "success",
+        token
+      });
+    } catch (error) {
+      return handleResponse(res, 500, 'Internal server error', error);
+    }
+  }
+  
+  /**
+   * Reset user's password.
+   * @param {Object} req - Express Request
+   * @param {Object} res - Express Response
+   * @return {void}
+   */
+  async ResetPass(req, res) {
+    try {
+      // validate user input
+      const { value, error } = requestValidator.ResetPass.validate(req.body);
+  
+      if (error) {
+        throw error;
+      }
+  
+      const { token, new_password} = value;
+  
+      if (blacklist.isTokenBlacklisted(token)) {
+        return handleResponse(res, 401, 'Invalid request, expired token');
+      }
+  
+      const user = await User.findOne({
+        reset: token,
+        resetExp: { $gt: Date.now() },
+      });
+  
+      if (!user) {
+        return handleResponse(res, 401, 'Invalid request, expired token');
+      }
+  
+      user.password = await util.encrypt(new_password);
+      if (user.status == userStatus.deactivated) user.status = userStatus.active;
+  
+      await Connection.transaction(async () => {
+        // blacklists the token
+        const tasks = []
+
+			// Generate notification
+        const message = 'Your password has been successfully reset';
+        const notify = await notifications.generateNotification(userAction.resetPassword, message);
+
+        // Add the notification
+        user.notificationsList.push(notify);
+        await notifications.manageNotification(user.notificationsList);
+
+        await Promise.all([blacklist.updateBlacklist(token), user.save()]);
+      });
+  
+      return handleResponse(res, 200, "Password successfully updated");
+    } catch (error) {
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+				return handleResponse(res, 500, error.message, error);
+			}
+      return handleResponse(res, 500, error.message, error)
+    }
   }
 }
 
-/**
- * Validate reset token.
- * @param {Object} req - Express Request
- * @param {Object} res - Express Response
- * @return {void}
- */
-export async function VerifyResetPass(req, res) {
-  try {
-    const { token } = req.params;
 
-    if (!token) return handleResponse(res, 401, 'Requires a token');
-
-    if (isTokenBlacklisted(token)) {
-      return handleResponse(res, 401, 'Invalid or expired token');
-    }
-
-    const user = await User.findOne({
-      reset: token,
-      resetExp: { $gt: Date.now() },
-    });
-
-    if (!user) {
-      return handleResponse(res, 401, 'Invalid or expired token');
-    }
-
-    return res.status(200).json({
-      message: "success",
-      token
-    });
-  } catch (error) {
-    return handleResponse(res, 500, 'Internal server error', error);
-  }
-}
-
-/**
- * Reset user's password.
- * @param {Object} req - Express Request
- * @param {Object} res - Express Response
- * @return {void}
- */
-export async function ResetPass(req, res) {
-  try {
-    // validate request
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return handleResponse(res, 400, errors.array()[0].msg);
-    }
-
-    const { token } = req.params;
-    const { password } = req.body;
-
-    if (!token || !password) {
-      return handleResponse(res, 401, 'Invalid password or token');
-    }
-
-    if (isTokenBlacklisted(token)) {
-      return handleResponse(res, 401, 'Invalid or expired token');
-    }
-
-    const user = await User.findOne({
-      reset: token,
-      resetExp: { $gt: Date.now() },
-    });
-
-    if (!user) {
-      return handleResponse(res, 401, 'Invalid or expired token');
-    }
-
-    const saltRounds = 12;
-    const salt = await genSalt(saltRounds);
-    // Hash the password
-    const hashedNewPassword = await hash(password, salt);
-    user.password = hashedNewPassword;
-    await user.save();
-
-    updateBlacklist(token);
-
-    return handleResponse(res, 200, "Password changed");
-  } catch (error) {
-    return handleResponse(res, 500, 'Internal Server Error', error);
-  }
-}
-
-/**
- * Change logged-in user password.
- * @param {Object} req - Express Request
- * @param {Object} res - Express Response
- * @return {void}
- */
-export async function changePass(req, res) {
-  try {
-    // validate the request
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return handleResponse(res, 400, errors.array()[0].msg);
-    }
-
-    const { currentPassword, newPassword } = req.body;
-
-    if (currentPassword === newPassword) {
-      return handleResponse(res, 400, "Please provide a new password");
-    }
-
-    const userId = req.user.id;
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const isPasswordValid = await compare(currentPassword, user.password);
-
-    if (!isPasswordValid) {
-      return handleResponse(res, 400, 'Current password is incorrect');
-    }
-
-    const saltRounds = 12;
-    const salt = await genSalt(saltRounds);
-    const hashedNewPassword = await hash(newPassword, salt);
-
-    user.password = hashedNewPassword;
-
-    // create notification
-    const notify = notifications.generateNotification(user, 'updatedUser', 'Password changed');
-
-    // Add new notification
-    user.notificationsList.push(notify);
-
-    // manage notifications
-    notifications.manageNotification(user.notificationsList);
-
-    await user.save();
-
-    return res.status(204).send('Password changed');
-  } catch (error) {
-    return handleResponse(res, 500, 'Internal Server Error', error);
-  }
-}
+const passwordController = new PasswordController()
+module.exports = passwordController;

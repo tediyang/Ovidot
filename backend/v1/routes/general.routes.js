@@ -1,9 +1,9 @@
 
 // Import necessary modules
-import { Router } from 'express';
-import { signup, login } from '../controllers/register.controller.js';
-import { forgotPass, VerifyResetPass, ResetPass } from '../controllers/password.controller.js';
-import { body } from 'express-validator';
+const { Router } = require('express');
+const appController = require('../controllers/register.controller.js');
+const passwordController = require('../controllers/password.controller.js');
+
 
 // Create an Express router
 const router /** @type {ExpressRouter} */ = Router();
@@ -45,15 +45,109 @@ const router /** @type {ExpressRouter} */ = Router();
  *       '400':
  *         description: Bad request
  */
-router.post('/signup', [
-    body("email").isEmail(),
-    body("password").isString().notEmpty(),
-    body("username").isAlpha().notEmpty(),
-    body("age").isInt({ min: 8, max: 55 }).notEmpty(),
-    body("period").isInt({ min: 2, max: 8 }).notEmpty()
-    ],
-    signup
-);
+
+/**
+ * Route to register user
+ * @swagger
+ * paths:
+ *  /register:
+ *    post:
+ *      summary: Register a new user
+ *      tags:
+ *        - Account Routes
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                fname:
+ *                  type: string
+ *                  required: true
+ *                  description: First Name
+ *                lname:
+ *                  type: string
+ *                  required: true
+ *                  description: Last Name
+ *                aka:
+ *                  type: string
+ *                  description: (Optional) Alias or Nickname
+ *                email:
+ *                  type: string
+ *                  required: true
+ *                  description: User's email address
+ *                  format: email  # Ensures valid email format
+ *                password:
+ *                  type: string
+ *                  required: true
+ *                  description: Capital, small, number and special character
+ *                  pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()])[a-zA-Z0-9!@#$%^&*()]{8,}$/
+ *                gender:
+ *                  type: string
+ *                  enum:
+ *                    - MALE
+ *                    - FEMALE
+ *                  required: true
+ *                  description: User's gender
+ *                phone:
+ *                  type: string
+ *                  required: true
+ *                  description: User's phone number (pattern for validation can be added)
+ *                  pattern: "/^[8792][01](esp)d{8}$/"  # For 10-digit phone numbers
+ *                dob:
+ *                  type: string
+ *                  required: true
+ *                  format: YYYY-MM-DD
+ *                q_and_a:
+ *                  type: object
+ *                  required: true
+ *                  description: Security question and answer
+ *                  properties:
+ *                    question:
+ *                      type: string
+ *                      required: true
+ *                    answer:
+ *                      type: string
+ *                      required: true
+
+ *      responses:
+ *        '201':
+ *          description: User registration successful
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  email:
+ *                    type: string
+ *                    description: Registered user's email
+ *                  phone:
+ *                    type: string
+ *                    description: Registered user's phone number
+ *                  status:
+ *                    type: string
+ *                    description: Registration status (e.g., "success")
+ *        '400':
+ *          description: Bad request (invalid data)
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                oneOf:
+ *                  - properties:
+ *                      msg:
+ *                        type: string
+ *                        description: You are underage, go and play
+ *                  - properties:
+ *                      errors:
+ *                        type: array
+ *                        items:
+ *                          type: string
+ *        '500':
+ *          description: Internal server error
+ */
+router.post('/signup', appController.signup);
 
 // Route to log in a user
 /**
@@ -79,12 +173,7 @@ router.post('/signup', [
  *       '400':
  *         description: Bad request
  */
-router.post('/login', [
-    body("email").isEmail(),
-    body("password").isString().notEmpty()
-    ],
-    login
-);
+router.post('/login', appController.login.bind(appController));
 
 // Route to send a reset link to the user's email
 /**
@@ -110,12 +199,7 @@ router.post('/login', [
  *       '400':
  *         description: Bad request
  */
-router.post('/forgot-password', [
-    body("email").isEmail(),
-    body("url").isString().notEmpty()
-    ],
-    forgotPass
-);
+router.post('/forgot-password', passwordController.forgotPass.bind(passwordController));
 
 // Route to validate the reset token
 /**
@@ -136,9 +220,7 @@ router.post('/forgot-password', [
  *       '400':
  *         description: Bad request
  */
-router.get('/reset-password/:token',
-    VerifyResetPass
-);
+router.get('/reset-password/:token', passwordController.VerifyResetPass);
 
 // Route to reset the password
 /**
@@ -168,11 +250,7 @@ router.get('/reset-password/:token',
  *       '400':
  *         description: Bad request
  */
-router.post('/reset-password/:token', [
-    body("password").isString().notEmpty(),
-    ],
-    ResetPass
-);
+router.put('/reset-password', passwordController.ResetPass);
 
-// Export the router
-export default router;
+
+module.exports = router;

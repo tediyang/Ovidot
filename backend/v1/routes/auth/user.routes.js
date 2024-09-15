@@ -1,9 +1,7 @@
 
 // Import necessary modules
-import { Router } from 'express';
-import * as user from '../../controllers/user.controller.js';
-import { changePass } from '../../controllers/password.controller.js';
-import { body } from 'express-validator';
+const { Router } = require('express');
+const userController = require('../../controllers/user.controller.js');
 
 // Create an Express router
 const router /** @type {ExpressRouter} */ = Router();
@@ -30,7 +28,7 @@ const router /** @type {ExpressRouter} */ = Router();
  *       '401':
  *         description: Unauthorized request
  */
-router.get('/get', user.fetchUser);
+router.get('/fetch', userController.fetchUser.bind(userController));
 
 // Route to update user data
 /**
@@ -49,13 +47,9 @@ router.get('/get', user.fetchUser);
  *       '400':
  *         description: Bad request
  */
-router.put('/update',[
-    body("username").optional({ checkFalsy: true }).isAlpha(),
-    body("age").optional({ checkFalsy: true }).isInt({ min: 8, max: 55 }),
-    body("period").optional({ checkFalsy: true }).isInt({ min: 2, max: 8 })
-    ],
-    user.updateUser);
+router.put('/update', userController.updateUser.bind(userController));
 
+router.get('/deactivate', userController.deactivateUser);
 // Route to delete user by UserId
 /**
  * @swagger
@@ -73,42 +67,30 @@ router.put('/update',[
  *       '400':
  *         description: Bad request
  */
-router.delete('/delete', user.deleteUser);
+router.delete('/delete', userController.deleteUser);
 
-// Route to change the logged-in user's password
+// Route to get notifications by UserId
 /**
  * @swagger
- * /users/change-password:
- *   put:
- *     summary: Change logged-in user password
+ * /users/notifications:
+ *   get:
+ *     summary: Get notifications by UserId
  *     tags: [User Routes | Authentication Needed]
  *     security:
  *       - userToken: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               currentPassword:
- *                 type: string
- *               newPassword:
- *                 type: string
  *     responses:
  *       '200':
- *         description: Password changed successfully
+ *         description: Successfully retrieved notifications
  *       '401':
  *         description: Unauthorized request
  *       '400':
  *         description: Bad request
  */
-router.put('/change-password', [
-    body("currentPassword").isString().notEmpty(),
-    body("newPassword").isString().notEmpty(),
-    ],
-    changePass
-);
+router.get('/notifications/:id', userController.getNotification);
 
-// Export the router
-export default router;
+router.delete('/notifications/:id', userController.deleteNotification);
+
+router.get('/notifications', userController.getNotifications);
+
+
+module.exports = router;

@@ -1,4 +1,4 @@
-import { logger } from "../middleware/logger.js";
+const { logger } = require("../../middleware/logger.js");
 
 /**
  * Handle response sent to user.
@@ -8,7 +8,9 @@ import { logger } from "../middleware/logger.js";
  * @param {Object} error - error object
  * @returns 
  */
-export function handleResponse(res, code, mes, error=null) {
+function handleResponse(res, code, mes=null, error=null) {
     if (code == 500) logger.error(error);
-    return res.status(code).json({ message: mes });
+    return res.status(code).json(error ? { message: mes, error: error.message } : { message: mes });
 }
+
+module.exports = handleResponse;

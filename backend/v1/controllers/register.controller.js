@@ -1,99 +1,145 @@
 // REGISTER CONTROLLER
-import User from '../models/user.model.js';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
-import dotenv from 'dotenv';
-import { createUser } from './user.controller.js';
-import { validationResult } from 'express-validator';
-import { handleResponse } from '../utility/handle.response.js';
-import { updateBlacklist } from '../middleware/tokenBlacklist.js';
-dotenv.config();
-
-const { sign } = jwt;
-const { compare } = bcrypt;
+const { User, MongooseError } = require('../models/engine/database.js');
+const { sign, JsonWebTokenError } = require('jsonwebtoken');
+const { compare } = require('bcrypt');
+const { PATH_PREFIX } = require('../swagger-docs')
+const userController = require('./user.controller.js');
+const handleResponse = require('../utility/helpers/handle.response.js');
+const blacklist = require('../middleware/tokenBlacklist.js');
+const requestValidator = require('../utility/validators/requests.validator.js');
+const { userStatus } = require('../enums.js');
+const Joi = require('joi');
+require('dotenv').config();
 
 // Secret key for jwt signing and verification
 const secretKey = process.env.SECRETKEY;
 
-/**
- * Generate token for user. Expiration 5hrs
- * @param {User} user - User object to generate token for
- */
-function createToken(user) {
-  return sign({ id: user._id, email: user.email }, secretKey, { expiresIn: '5h' });
-}
 
-/**
- * Register user
- * @param {Object} req - Express Request
- * @param {Object} res - Express Response
- * @return Payload on Success
- */
-export async function signup(req, res) {
-  // Validate the data
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return handleResponse(res, 400, errors.array()[0].msg);
-  }
-
-  const { email, password, username, age, period } = req.body;
-
-  return await createUser({ email, password, username, age, period }, res);
-}
-
-/**
- * Login user
- * @param {Object} req - Express Request
- * @param {Object} res - Express Response
- * @return Payload on Success
- */
-export async function login(req, res) {
-  // Validate the data
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return handleResponse(res, 400, errors.array()[0].msg);
+class AppController {
+  /**
+   * Generate token for user. Expiration 5hrs
+   * @param {User} user - User object to generate token for
+   */
+  createToken(user) {
+    return sign({ id: user._id, email: user.email, status: user.status }, secretKey, { expiresIn: '5h' });
   };
 
-  const { email, password } = req.body;
-  const user = await User.findOne({ email: email });
+  /**
+   * Register user
+   * @param {Object} req - Express Request
+   * @param {Object} res - Express Response
+   * @return Payload on Success
+   */
+  async signup(req, res) {
+    // Validate the user input
+    try {
+      // validate body
+      const { value, error } = requestValidator.Signup.validate(req.body);
 
-  if (!user) {
-    return handleResponse(res, 404, "email doesn't exist");
-  }
+      if (error) {
+        throw error;
+      }
 
-  const matched = await compare(password, user.password);
-  try {
-    if (matched) {
-        const token = createToken(user);
-        res.status(200).json({
+      return await userController.createUser(res, {...value});
+
+    } catch (error) {
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      return handleResponse(res, 500, error.message, error)
+    }
+  };
+
+  /**
+   * Login user
+   * @param {Object} req - Express Request
+   * @param {Object} res - Express Response
+   * @return Payload on Success
+   */
+  async login(req, res) {
+    try {
+      const { value, error } = requestValidator.Login.validate(req.body);
+
+      if (error) {
+        throw error;
+      }
+
+      // validate email/username
+      const [ phone, email ] = await Promise.all(
+        [
+          User.findOne({ phone: value.email_or_phone }),
+          User.findOne({ email: value.email_or_phone })
+        ]
+      );
+      const user = phone || email;
+      if (!user) {
+        return handleResponse(res, 400, "email, phone or password incorrect");
+      }
+    
+      if (userStatus.deactivated == user.status) {
+        const resolve = `Account deactivated - resolve with: ${PATH_PREFIX}/general/forget-password`;
+        return handleResponse(res, 400, resolve);
+      }
+
+      // validate password
+      const matched = await compare(value.password, user.password);
+
+      if (!matched) {
+        return handleResponse(res, 400, "email, phone or password incorrect");
+      }
+
+      // console.log(this.createToken)
+      // console.log('yes')
+      const token = this.createToken(user);
+      return res
+        .status(200)
+        .json({
           message: 'Authentication successful',
-          token});
-    } else {
-      return handleResponse(res, 401, 'Incorrect Password');
+          token
+        });
+  
+    } catch (error) {
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+				return handleResponse(res, 500, error.message, error);
+			}
+      return handleResponse(res, 500, error.message, error)
     }
-  } catch (error) {
-    return handleResponse(res, 500, 'Internal Server Error', error);
-  }
+  };
+  
+  /**
+   * Logout user
+   * @param {Object} req - Express Request
+   * @param {Object} res - Express Response
+   * @return Payload on Success
+   */
+  logout(req, res) {
+    try {
+      let token = req.header('Authorization');
+  
+      // if token is present then update to the blacklist
+      if (token) {
+        token = token.substring(7); // remove Bearer
+        blacklist.updateBlacklist(token);
+      }
+  
+      return handleResponse(res, 200, "Logout Successful");
+    } catch (error) {
+      return handleResponse(res, 500, error.message, error);
+    }
+  };
 }
 
-/**
- * Logout user
- * @param {Object} req - Express Request
- * @param {Object} res - Express Response
- * @return Payload on Success
- */
-export async function logout(req, res) {
-  try {
-    let token = req.header('Authorization');
-
-    // if token is present then update to the blacklist
-    if (token) {
-      token = token.substring(7); // remove Bearer
-      updateBlacklist(token);
-    }
-
-    return res.status(200).send();
-  } catch (error) {
-    return handleResponse(res, 500, 'Internal Server Error', error);
-  }
-}
+const appController = new AppController()
+module.exports = appController;
