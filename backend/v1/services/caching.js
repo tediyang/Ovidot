@@ -1,11 +1,12 @@
-
-import { redisClient } from '../../app.js';
-import { logger } from '../middleware/logger.js';
-
+const { redisClient } = require('../libs/boot.js');
+const { logger } = require('../middleware/logger.js');
 // Default constant for cache expiration time in seconds (20 days).
-const CACHE_EXPIRATION_TIME = 20 * 86400;
 
-const redisManager = {
+class RedisManager {
+  constructor() {
+    this.CACHE_EXPIRATION_TIME = 20 * 86400;
+  }
+
   /**
    * Deletes the cache data for a specific key in a hash.
    *
@@ -13,17 +14,16 @@ const redisManager = {
    * @param {string} key - The key to delete.
    * @return {undefined} Returns nothing.
    */
-  cacheDel: async (hash, key) => {
+  async cacheDel(hash, key) {
     try {
-      await redisClient.hDel(hash, key);
+      (await redisClient).hDel(hash, key);
 
-      logger.info(`${key} cache data deleted`);
       return;
     } catch (err) {
       logger.error(err);
       return;
     }
-  },
+  };
 
   /**
    * Sets a value in the cache with the given hash, key, and value.
@@ -33,19 +33,18 @@ const redisManager = {
    * @param {any} value - The value to set in the cache.
    * @return {undefined} Returns undefined.
    */
-  cacheSet: async (hash, key, value) => {
+  async cacheSet(hash, key, value) {
     try {
       await Promise.all([
-        redisClient.hSet(hash, key, value),
-        redisClient.expire(hash, CACHE_EXPIRATION_TIME)
+        (await redisClient).hSet(hash, key, value),
+        (await redisClient).expire(hash, this.CACHE_EXPIRATION_TIME)
       ]);
-      logger.info(`${key} cache data created`);
       return;
     } catch (err) {
       logger.error(err);
       return;
     }
-  },
+  };
 
   /**
    * Retrieves the value associated with a given key in a hash stored in the cache.
@@ -54,9 +53,9 @@ const redisManager = {
    * @param {string} key - The key to retrieve the value for.
    * @returns {Promise<string>} A Promise that resolves with the value associated with the key.
    */
-  cacheGet: async (hash, key) => {
+  async cacheGet (hash, key) {
     try {
-      const data = await redisClient.hGet(hash, key);
+      const data = await (await redisClient).hGet(hash, key);
       return data;
     } catch(err) {
       logger.error(err);
@@ -65,4 +64,6 @@ const redisManager = {
   }
 };
 
-export default redisManager;
+
+const redisManager = new RedisManager();
+module.exports = redisManager;
