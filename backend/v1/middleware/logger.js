@@ -1,6 +1,6 @@
-import { createLogger } from 'winston';
-import { transports, format } from 'winston';
-import expressWinston from 'express-winston'
+const { createLogger } = require('winston');
+const { transports, format } = require('winston');
+const expressWinston = require('express-winston');
 
 // Setup format of logging
 const myFormat = format.printf(({ level, meta, message, timestamp }) => {
@@ -8,7 +8,7 @@ const myFormat = format.printf(({ level, meta, message, timestamp }) => {
 });
 
 // Setup a logger
-export const logger = createLogger({
+const logger = createLogger({
   level: 'info',
   format: format.combine(
     format.json(),
@@ -28,17 +28,23 @@ export const logger = createLogger({
   ]
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.ENVIR !== 'production') {
   logger.add(new transports.Console({
     handleExceptions: true
   }));
 };
 
 // Setup a logger for express app
-export const appLogger = expressWinston.logger({
+const appLogger = expressWinston.logger({
   winstonInstance: logger,
   meta: true,
   statusLevels: true,
   colorize: false, // To prevent ANSI codes in log message
   expressFormat: true,
 });
+
+
+module.exports = {
+  logger,
+  appLogger
+};
