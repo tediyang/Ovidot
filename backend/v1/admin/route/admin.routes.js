@@ -1,12 +1,9 @@
-
 // Import necessary modules
-import { Router } from 'express';
-import adminController from '../controller/admin.controller.js';
-import { forgotPass } from '../../controllers/password.controller.js';
-import verifyAdmin from '../middleware/token.admin.verify.js';
-import paginationMiddleware from "../middleware/paginationMiddleware.js";
-import { body } from 'express-validator';
-import { logout } from '../../controllers/register.controller.js';
+const { Router } = require('express');
+const adminController = require('../controller/admin.controller.js');
+const tokenVerification = require('../../middleware/tokenVerification.js');
+const appController = require('../../controllers/register.controller.js');
+const passwordController = require('../../controllers/password.controller.js');
 
 // Create an Express router
 const router /** @type {ExpressRouter} */ = Router();
@@ -42,12 +39,7 @@ const router /** @type {ExpressRouter} */ = Router();
  *       '400':
  *         description: Bad request
  */
-router.post('/login', [
-    body('username').isString().notEmpty(),
-    body('password').isString().notEmpty()
-    ],
-    adminController.login
-);
+router.post('/login', adminController.login.bind(adminController));
 
 // Route to log out an admin
 /**
@@ -64,7 +56,7 @@ router.post('/login', [
  *       '401':
  *         description: Unauthorized request
  */
-router.get('/logout', verifyAdmin, logout);
+router.get('/logout', tokenVerification.adminTokenVerification, appController.logout);
 
 // Route for retrieving all users
 /**
@@ -99,7 +91,7 @@ router.get('/logout', verifyAdmin, logout);
  *       '400':
  *         description: Bad request
  */
-router.get('/users', verifyAdmin, paginationMiddleware, adminController.viewAllusers);
+router.get('/users', tokenVerification.adminTokenVerification, adminController.getUsers.bind(adminController));
 
 // Route for retrieving a user by email
 /**
@@ -127,11 +119,7 @@ router.get('/users', verifyAdmin, paginationMiddleware, adminController.viewAllu
  *       '400':
  *         description: Bad request
  */
-router.post('/users/email', [
-    body("email").isEmail(),
-    ],
-    verifyAdmin, adminController.viewUser
-);
+router.post('/users/email', tokenVerification.adminTokenVerification, adminController.getUser.bind(adminController));
 
 // Route for retrieving all cycles for a user by email
 /**
@@ -175,11 +163,7 @@ router.post('/users/email', [
  *       '400':
  *         description: Bad request
  */
-router.post('/users/email/cycles', [
-    body("email").isEmail(),
-    ],
-    verifyAdmin, paginationMiddleware, adminController.getAllCyclesByEmail
-);
+router.post('/users/email/cycles', tokenVerification.adminTokenVerification, adminController.getUserCycles.bind(adminController));
 
 // Route for updating a user by email
 /**
@@ -209,12 +193,7 @@ router.post('/users/email/cycles', [
  *       '400':
  *         description: Bad request
  */
-router.put('/users/email', [
-    body('oldEmail').isEmail(),
-    body('newEmail').isEmail()
-    ],
-    verifyAdmin, adminController.updateUser
-);
+router.put('/users/email', tokenVerification.adminTokenVerification, adminController.updateUser.bind(adminController));
 
 // Route for deleting a user by email
 /**
@@ -242,11 +221,7 @@ router.put('/users/email', [
  *       '400':
  *         description: Bad request
  */
-router.delete('/users/email', [
-    body("email").isEmail(),
-    ],
-    verifyAdmin, adminController.deleteUser
-);
+router.delete('/users/email', tokenVerification.adminTokenVerification, adminController.deleteUser);
 
 // Route for sending a forgot password link to a user
 /**
@@ -274,11 +249,7 @@ router.delete('/users/email', [
  *       '400':
  *         description: Bad request
  */
-router.post('/users/forgot-password', [
-    body("email").isEmail(),
-    ],
-    verifyAdmin, forgotPass
-);
+router.post('/users/forgot-password', tokenVerification.adminTokenVerification, passwordController.forgotPass.bind(passwordController));
 
 // Route for retrieving all cycles
 /**
@@ -313,7 +284,7 @@ router.post('/users/forgot-password', [
  *       '400':
  *         description: Bad request
  */
-router.get('/cycles', verifyAdmin, paginationMiddleware, adminController.viewAllCycles);
+router.get('/cycles', tokenVerification.adminTokenVerification, adminController.getCycles);
 
 // Route for retrieving a cycle by cycleId
 /**
@@ -338,7 +309,7 @@ router.get('/cycles', verifyAdmin, paginationMiddleware, adminController.viewAll
  *       '404':
  *         description: Cycle not found
  */
-router.get('/cycles/:cycleId', verifyAdmin, adminController.viewCycle);
+router.get('/cycles/:cycleId', tokenVerification.adminTokenVerification, adminController.getCycle);
 
 // Route for deleting a cycle by cycleId
 /**
@@ -363,7 +334,11 @@ router.get('/cycles/:cycleId', verifyAdmin, adminController.viewCycle);
  *       '404':
  *         description: Cycle not found
  */
-router.delete('/cycles/:cycleId', verifyAdmin, adminController.deleteCycle);
+router.delete('/cycles/:cycleId', tokenVerification.adminTokenVerification, adminController.deleteCycle);
+
+router.put('/switch', tokenVerification.adminTokenVerification, adminController.switchAdmin);
+
+router.put('/deactivate', tokenVerification.adminTokenVerification, adminController.deactivateAdmin);
 
 // Export the router
-export default router;
+module.exports = router;
