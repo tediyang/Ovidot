@@ -1,9 +1,9 @@
 
 // Import necessary modules
-import { Router } from 'express';
-import userRoutes from './auth/user.routes.js';
-import cycleRoutes from './auth/cycle.routes.js';
-import { logout } from '../controllers/register.controller.js';
+const { Router } = require('express');
+const userRoutes = require('./auth/user.routes.js');
+const cycleRoutes = require('./auth/cycle.routes.js');
+const appController = require('../controllers/register.controller.js');
 
 // Create an Express router
 const router = Router();
@@ -33,7 +33,7 @@ router.use('/cycles', cycleRoutes);
  *       '401':
  *         description: Unauthorized request
  */
-router.get('/logout', logout);
+router.get('/logout', appController.logout);
 
-// Export the router
-export default router;
+
+module.exports = router;
