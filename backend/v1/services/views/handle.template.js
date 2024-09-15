@@ -1,79 +1,133 @@
-import ejs from 'ejs';
-import util from 'util';
-import { logger } from '../../middleware/logger.js';
+const ejs = require('ejs');
+const util = require('util');
+const { logger } = require('../../middleware/logger.js');
 
-// Get current year
-const year = new Date().getFullYear();
 
-// Convert ejs.renderFile into a function that returns a Promise
-const renderFile = util.promisify(ejs.renderFile);
-
-/**
- * Renders the welcome template with the given data.
- *
- * @param {object} data - The data object containing the necessary information for rendering the template.
- * @return {Promise} A Promise that resolves to the rendered template as a string.
- */
-export async function renderWelcomeTemplate(data) {
-  // Define the data
-  const welcome = {
-    username: data.username, companyName: 'ImadeCorp Ltd',
-    productName: 'OVIDOT', productUrl: 'https://ovidot.com',
-    forgetPasswordUrl: 'https://ovidot.com/forget-password',
-    supportEmail: "support@ovidot.com", helpUrl: 'https://ovidot.com/help',
-    year: year, loginUrl: 'https://ovidot.com/login',
+class Templates {
+  /**
+   * Initializes a new instance of the class.
+  *
+  * This constructor promisifies the `ejs.renderFile` function using the `util.promisify` method.
+  * The promisified function is then assigned to the `renderFile` property of the instance.
+  *
+  * @return {void}
+  */
+  constructor () {
+    this.renderFile = util.promisify(ejs.renderFile);
+    this.year = new Date().getFullYear();
   };
 
-  try {
-    const result = await renderFile('./v1/services/views/welcome.ejs', welcome);
-    return result;
-  } catch(err) {
-    logger.error(err);
-  }
-};
+  /**
+   * Renders a welcome template with the given username.
+   *
+   * @param {string} username - The username to be included in the template.
+   * @return {Promise<string>} A Promise that resolves to the rendered template.
+   */
+  async renderWelcomeTemplate(username) {
+    // Define the data
+    const welcome = {
+      username: username,
+      companyName: 'ImadeCorp Ltd',
+      productName: 'OVIDOT',
+      productUrl: process.env.APP_DOMAIN,
+      forgetPasswordUrl: `${process.env.APP_DOMAIN}/forget-password`,
+      supportEmail: "support@ovidot.com",
+      year: this.year,
+      loginUrl: `${process.env.APP_DOMAIN}/login`
+    }
 
-/**
- * Renders the goodbye template.
- *
- * @return {Promise} The result of rendering the template.
- */
-export async function renderGoodbyeTemplate(data) {
-  // Define the data
-  const goodbye = {
-    username: data.username, companyName: 'ImadeCorp Ltd',
-    productName: 'OVIDOT', productUrl: 'https://ovidot.com',
-    supportEmail: "support@ovidot.com", year: year
+    try {
+      const result = await this.renderFile('./v1/services/views/welcome.ejs', welcome);
+      return result;
+    } catch(err) {
+      logger.error(err);
+    }
   };
 
-  try {
-    const result = await renderFile('./v1/services/views/goodbye.ejs', goodbye);
-    return result;
-  } catch(err) {
-    logger.error(err);
-  }
-};
+  /**
+   * Renders a deactivation template with the given username.
+   *
+   * @param {string} username - The username to be included in the template.
+   * @return {Promise<string>} A Promise that resolves to the rendered template.
+   */
+  async renderDeactivationTemplate(username) {
+    // Define the data
+    const deactivate = {
+      username: username,
+      companyName: 'ImadeCorp Ltd',
+      productName: 'OVIDOT',
+      productUrl: process.env.APP_DOMAIN,
+      supportEmail: `support@${process.env.APP_DOMAIN.slice(8)}`,
+      year: this.year,
+    }
 
-/**
- * Renders the forget template.
- *
- * @param {Object} req - The request object.
- * @param {Object} data - The data object.
- * @param {string} resetLink - The reset link.
- * @return {Promise<string>} The rendered result.
- */
-export async function renderForgetTemplate(req, data, resetLink) {
-  // Define the data
-  const forgetPass = { username: data.username, companyName: 'ImadeCorp Ltd',
-    productUrl: 'https://ovidot.com',
-    productName: 'OVIDOT', productUrl: 'https://ovidot.com',
-    resetLink: resetLink, year: year, osName: req.useragent.os,
-    browserName: req.useragent.browser, supportEmail: "support@ovidot.com"
+    try {
+      const result = await this.renderFile('./v1/services/views/deactivate.ejs', deactivate);
+      return result;
+    } catch(err) {
+      logger.error(err);
+    }
   };
 
-  try {
-    const result = await renderFile('./v1/services/views/forgetPass.ejs', forgetPass);
-    return result;
-  } catch(err) {
-    logger.error(err);
-  }
+  /**
+   * Renders a goodbye template with the given username.
+   *
+   * @param {string} username - The username to be included in the template.
+   * @return {Promise<string>} A Promise that resolves to the rendered template.
+   */
+  async renderGoodbyeTemplate(username) {
+    // Define the data
+    const goodbye = {
+      username: username,
+      companyName: 'ImadeCorp Ltd',
+      productName: 'OVIDOT',
+      productUrl: `${process.env.APP_DOMAIN}`,
+      supportEmail: `support@${process.env.APP_DOMAIN.slice(8)}`,
+      year: this.year
+    };
+  
+    try {
+      const result = await this.renderFile('./v1/services/views/goodbye.ejs', goodbye);
+      return result;
+    } catch(err) {
+      logger.error(err);
+    }
+  };
+  
+  /**
+   * Renders a forget password template with the given username and content.
+   *
+   * @param {string} username - The username to be included in the template.
+   * @param {Object} content - The content object containing resetLink and userAgents.
+   * @param {string} content.resetLink - The reset link for the password.
+   * @param {Object} content.userAgents - The user agents object containing os and browser.
+   * @param {string} content.userAgents.os - The operating system of the user.
+   * @param {string} content.userAgents.browser - The browser used by the user.
+   * @return {Promise<string>} A Promise that resolves to the rendered template.
+   */
+  async renderForgetTemplate(username, content) {
+    // Define the data
+    const forgetPass = {
+      username: username,
+      companyName: 'ImadeCorp Ltd',
+      productUrl: process.env.APP_DOMAIN,
+      productName: 'OVIDOT',
+      resetLink: content.resetLink,
+      year: this.year,
+      osName: content.userAgents.os,
+      browserName: content.userAgents.browser,
+      supportEmail: `support@${process.env.APP_DOMAIN.slice(8)}`
+    };
+  
+    try {
+      const result = await this.renderFile('./v1/services/views/forgetPass.ejs', forgetPass);
+      return result;
+    } catch(err) {
+      logger.error(err);
+    }
+  };
 };
+
+
+const templates = new Templates();
+module.exports = templates;
