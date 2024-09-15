@@ -1,32 +1,47 @@
-import { Schema, model } from 'mongoose';
+const { Schema } = require('mongoose');
+const { Role, userStatus } = require('../../enums.js');
+
 
 // Define the schema for the Admin model
-const AdminSchema = Schema({
-    created_at: {
-        type: Date,
-        default: Date.now
-    },
-    updated_at: {
-        type: Date,
-        default: Date.now
-    },
-    username: {
+const adminSchema = new Schema({
+    email: {
         type: String,
         required: true,
         unique: true
+    },
+    username: {
+        type: String,
+        unique: true,
+        required: true,
+        validate: {
+            validator: function(v) {
+                return /^[a-zA-Z]+$/.test(v); // Regex to ensure username contains only alphabets
+            },
+            message: props => `${props.value} is not a valid username! It should contain only alphabets.`
+        }
     },
     password: {
         type: String,
         required: true
     },
-    is_admin: {
-        type: Boolean,
-        default: false
+    status: {
+        type: String,
+        enum: Object.values(userStatus),
+        default: userStatus.active
+    },
+    role: {
+        type: String,
+        enum: Object.values(Role),
+        default: Role.admin
     }
+}, {timestamps: true});
+
+adminSchema.pre('save', function(next) {
+    if (this.isModified('username')) {
+        this.username = this.username.toLowerCase();
+    }
+    next();
 });
 
-// Create the Admin model using the schema
-const Admin = model('Admin', AdminSchema);
 
-// Export the Admin model
-export default Admin;
+module.exports = adminSchema;
