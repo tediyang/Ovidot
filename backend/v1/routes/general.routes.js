@@ -324,7 +324,7 @@ router.post('/forgot-password', passwordController.forgotPass.bind(passwordContr
  *                    - properties:
  *                        message:
  *                          type: string
- *                          description: Requires a required
+ *                          description: Requires a token
  *                    - properties:
  *                        message:
  *                          type: string
