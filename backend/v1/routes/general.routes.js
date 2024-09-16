@@ -1,4 +1,3 @@
-
 // Import necessary modules
 const { Router } = require('express');
 const appController = require('../controllers/register.controller.js');
@@ -9,52 +8,14 @@ const passwordController = require('../controllers/password.controller.js');
 const router /** @type {ExpressRouter} */ = Router();
 
 /**
- * @swagger
- * tags:
- *   name: General Routes | No Authentication
- *   description: Endpoints accessible without authentication
- */
-
-// Route to register a user
-/**
- * @swagger
- * /signup:
- *   post:
- *     summary: Register a user
- *     tags: [General Routes | No Authentication]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               username:
- *                 type: string
- *               age:
- *                 type: number
- *               period:
- *                 type: number
- *     responses:
- *       '200':
- *         description: Successful registration
- *       '400':
- *         description: Bad request
- */
-
-/**
  * Route to register user
  * @swagger
  * paths:
- *  /register:
+ *  /signup:
  *    post:
  *      summary: Register a new user
  *      tags:
- *        - Account Routes
+ *        - General Routes
  *      requestBody:
  *        required: true
  *        content:
@@ -64,191 +25,416 @@ const router /** @type {ExpressRouter} */ = Router();
  *              properties:
  *                fname:
  *                  type: string
- *                  required: true
  *                  description: First Name
  *                lname:
  *                  type: string
- *                  required: true
  *                  description: Last Name
- *                aka:
+ *                username:
  *                  type: string
- *                  description: (Optional) Alias or Nickname
+ *                  description: (Optional) username
+ *                phone:
+ *                  type: string
+ *                  minLength: 10
+ *                  maxLength: 16
+ *                  description: starts with country code
+ *                  pattern: ^\+\d+$
+ *                dob:
+ *                  type: string
+ *                  example: 1996-05-30
+ *                  format: YYYY-MM-DD
  *                email:
  *                  type: string
  *                  required: true
+ *                  example: user@example.com
  *                  description: User's email address
  *                  format: email  # Ensures valid email format
+ *                period:
+ *                  type: number
+ *                  minLength: 2
+ *                  maxLength: 8
+ *                  example: 3
  *                password:
  *                  type: string
- *                  required: true
  *                  description: Capital, small, number and special character
- *                  pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()])[a-zA-Z0-9!@#$%^&*()]{8,}$/
- *                gender:
- *                  type: string
- *                  enum:
- *                    - MALE
- *                    - FEMALE
- *                  required: true
- *                  description: User's gender
- *                phone:
- *                  type: string
- *                  required: true
- *                  description: User's phone number (pattern for validation can be added)
- *                  pattern: "/^[8792][01](esp)d{8}$/"  # For 10-digit phone numbers
- *                dob:
- *                  type: string
- *                  required: true
- *                  format: YYYY-MM-DD
- *                q_and_a:
- *                  type: object
- *                  required: true
- *                  description: Security question and answer
- *                  properties:
- *                    question:
- *                      type: string
- *                      required: true
- *                    answer:
- *                      type: string
- *                      required: true
+ *                  pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()])[a-zA-Z0-9!@#$%^&*()]{8,}$
+ * 
+ *              required:
+ *                  - fname
+ *                  - lname
+ *                  - phone
+ *                  - dob
+ *                  - email
+ *                  - period
+ *                  - password
 
  *      responses:
  *        '201':
- *          description: User registration successful
+ *          description: Successful
  *          content:
  *            application/json:
  *              schema:
  *                type: object
  *                properties:
- *                  email:
+ *                  message:
  *                    type: string
- *                    description: Registered user's email
- *                  phone:
- *                    type: string
- *                    description: Registered user's phone number
- *                  status:
- *                    type: string
- *                    description: Registration status (e.g., "success")
+ *                    description: Registration Successful
  *        '400':
- *          description: Bad request (invalid data)
+ *          description: Validation Error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: string
+ *                properties:
+ *                   message:
+ *                     type: string
+ *                     example: lname is required
+ *        '500':
+ *          description: MongooseError or JsonWebTokenError
  *          content:
  *            application/json:
  *              schema:
  *                type: object
  *                oneOf:
  *                  - properties:
- *                      msg:
+ *                      message:
  *                        type: string
- *                        description: You are underage, go and play
+ *                        description: MongooseError occured
+ *                      error:
+ *                        type: object
  *                  - properties:
- *                      errors:
- *                        type: array
- *                        items:
- *                          type: string
- *        '500':
- *          description: Internal server error
+ *                      message:
+ *                        type: string
+ *                        description: JsonWebTokenError occured
+ *                      error:
+ *                        type: object
  */
 router.post('/signup', appController.signup);
 
-// Route to log in a user
 /**
+ * Route to log in a user
  * @swagger
- * /login:
- *   post:
- *     summary: Log in a user
- *     tags: [General Routes | No Authentication]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       '200':
- *         description: Successful login
- *       '400':
- *         description: Bad request
+ * paths:
+ *  /login:
+ *    post:
+ *      summary: Log in a user
+ *      tags:
+ *        - General Routes
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                email_or_phone:
+ *                  type: string
+ *                  example: user@example.com
+ *                password:
+ *                  type: string
+ *                  example: Ovidotlogin123#
+ *              required:
+ *                - email_or_phone
+ *                - password
+ * 
+ *      responses:
+ *         '200':
+ *           description: Successful
+ *           content:
+ *             application/json:
+ *                schema:
+ *                  type: object
+ *                  properties:
+ *                    message:
+ *                      type: string
+ *                      description: Authentication successful
+ *                    token:
+ *                      type: string
+ *
+ *         '400':
+ *           description: Validation Error or Bad request
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 oneOf:
+ *                   - properties:
+ *                       message:
+ *                         type: string
+ *                         description: email, phone or password incorrect
+ *                   - properties:
+ *                       message:
+ *                         type: string
+ *                         description: Account deactivated
+ *                   - properties:
+ *                       message:
+ *                         type: string
+ *                         description: email_or_phone is required
+ *                   - properties:
+ *                       message:
+ *                         type: string
+ *                         description: password is required
+ *
+ *         '500':
+ *           description: MongooseError or JsonWebTokenError
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 oneOf:
+ *                   - properties:
+ *                       message:
+ *                         type: string
+ *                         description: MongooseError occured
+ *                       error:
+ *                         type: object
+ *                   - properties:
+ *                       message:
+ *                         type: string
+ *                         description: JsonWebTokenError occured
+ *                       error:
+ *                         type: object
  */
+
 router.post('/login', appController.login.bind(appController));
 
-// Route to send a reset link to the user's email
 /**
+ * Forget password route
  * @swagger
- * /forgot-password:
- *   post:
- *     summary: Send reset link to user's email
- *     tags: [General Routes | No Authentication]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               url:
- *                 type: string
- *     responses:
- *       '200':
- *         description: Reset link sent successfully
- *       '400':
- *         description: Bad request
+ * paths:
+ *   /forget-password:
+ *     post:
+ *       summary: allow user to setup a new password
+ *       tags:
+ *         - General Routes
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 email:
+ *                   type: string
+ *                   description: user email linked to profile
+ *                 front_url:
+ *                   type: string
+ *                   description: frontend url to forget password page
+ *               required:
+ *                 - email
+ *                 - front_url
+ *
+ *       responses:
+ *          '201':
+ *            description: Successfully
+ *            content:
+ *              application/json:
+ *                 schema:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       description: Password reset link succesfully sent to ${email}
+ *
+ *          '400':
+ *            description: Validation Error or Bad request
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  oneOf:
+ *                   - properties:
+ *                       message:
+ *                         type: string
+ *                         description: email is required
+ *                   - properties:
+ *                       message:
+ *                         type: string
+ *                         description: front_url is required
+ *
+ *          '404':
+ *            description: Not Found Error
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  properties:
+ *                    message:
+ *                      type: string
+ *                      description: ${email} not found
+ *
+ *          '500':
+ *            description: MongooseError or JsonWebTokenError
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: MongooseError occured
+ *                        error:
+ *                          type: object
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: JsonWebTokenError occured
+ *                        error:
+ *                          type: object
  */
 router.post('/forgot-password', passwordController.forgotPass.bind(passwordController));
 
-// Route to validate the reset token
 /**
+ * Validate reset password token
  * @swagger
- * /reset-password/{token}:
- *   get:
- *     summary: Validate reset token
- *     tags: [General Routes | No Authentication]
- *     parameters:
- *       - in: path
- *         name: token
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       '200':
- *         description: Reset token validated successfully
- *       '400':
- *         description: Bad request
+ * paths:
+ *   /reset-password/{token}:
+ *     get:
+ *       summary: valid reset then send from url param
+ *       tags:
+ *         - General Routes
+ *       parameters:
+ *         - in: path
+ *           name: token
+ *           required: true
+ *           schema:
+ *             type: string
+ * 
+ *       responses:
+ *          '200':
+ *            description: Successful
+ *            content:
+ *              application/json:
+ *                 schema:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       description: success
+ *                     token:
+ *                        type: string
+ *
+ *          '401':
+ *            description: Bad request
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Requires a required
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Invalid or expired token
+ *
+ *          '500':
+ *            description: MongooseError or JsonWebTokenError
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: MongooseError occured
+ *                        error:
+ *                          type: object
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: JsonWebTokenError occured
+ *                        error:
+ *                          type: object
  */
 router.get('/reset-password/:token', passwordController.VerifyResetPass);
 
-// Route to reset the password
 /**
+ * Reset password route
  * @swagger
- * /reset-password/{token}:
- *   post:
- *     summary: Reset password
- *     tags: [General Routes | No Authentication]
- *     parameters:
- *       - in: path
- *         name: token
+ * paths:
+ *   /reset-password:
+ *     put:
+ *       summary: allow user to setup a new password
+ *       tags:
+ *         - General Routes
+ *       requestBody:
  *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               password:
- *                 type: string
- *     responses:
- *       '200':
- *         description: Password reset successfully
- *       '400':
- *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   required: true
+ *                   description: valid token
+ *                 new_password:
+ *                   type: string
+ *                   required: true
+ *                   description: user new password
+ * 
+ *       responses:
+ *          '200':
+ *            description: Successful
+ *            content:
+ *              application/json:
+ *                 schema:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       description: Password successfully updated
+ *
+ *          '400':
+ *            description: Validation Error
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: token is required
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: new_password is required
+ *
+ *          '401':
+ *            description: Bad request
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  properties:
+ *                    message:
+ *                      type: string
+ *                      description: Invalid request, expired token
+ *
+ *          '500':
+ *            description: MongooseError or JsonWebTokenError
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: MongooseError occured
+ *                        error:
+ *                          type: object
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: JsonWebTokenError occured
+ *                        error:
+ *                          type: object
  */
 router.put('/reset-password', passwordController.ResetPass);
 
