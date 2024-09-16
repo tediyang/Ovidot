@@ -126,7 +126,13 @@ class PasswordController {
         token
       });
     } catch (error) {
-      return handleResponse(res, 500, 'Internal server error', error);
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof JsonWebTokenError) {
+				return handleResponse(res, 500, error.message, error);
+			}
+      return handleResponse(res, 500, error.message, error)
     }
   }
   
