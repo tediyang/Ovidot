@@ -17,13 +17,12 @@ class Validator {
     username: Joi.string()
       .pattern(/^[a-zA-Z]+$/) // Pattern to ensure username contains only alphabets
       .messages({
-        'string.pattern.base': 'Username must contain only alphabetic characters.',
-        'string.empty': 'Username is required.',
-        'any.required': 'Username is required.'
+        'string.pattern.base': 'Username must contain only alphabetic characters.'
       }),
     phone: Joi
       .string()
       .pattern(/^\+\d+$/) // Pattern starts with country code
+      .min(10)
       .max(14)
       .required()
       .messages({
