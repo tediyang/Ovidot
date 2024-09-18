@@ -122,7 +122,7 @@ const router /** @type {ExpressRouter} */ = Router();
  *                schema:
  *                  type: object
  *                  properties:
- *                    msg:
+ *                    message:
  *                      type: string
  *                      description: User does not exist
  *
@@ -297,7 +297,7 @@ router.get('/fetch', userController.fetchUser.bind(userController));
  *                          type: string
  *                          description: You are too young or above the age to menstrate
  *                    - properties:
- *                        msg:
+ *                        message:
  *                          type: string
  *                          description: Invalid password
  *
@@ -328,7 +328,7 @@ router.get('/fetch', userController.fetchUser.bind(userController));
  *                schema:
  *                  type: object
  *                  properties:
- *                    msg:
+ *                    message:
  *                      type: string
  *                      description: User not found
  *
