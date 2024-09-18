@@ -90,9 +90,7 @@ class AppController {
       // validate password
       const matched = await compare(value.password, user.password);
 
-      if (!matched) {
-        user.loginAttempts += 1;
-        
+      if (!matched) {        
         if (user.loginAttempts >= 5) {
           user.status = userStatus.deactivated;
           await user.save();
@@ -100,6 +98,7 @@ class AppController {
           return handleResponse(res, 400, resolve);
         }
 
+        user.loginAttempts += 1;
         await user.save();
         return res.status(400).json({
           message: "email, phone or password incorrect",
