@@ -71,12 +71,27 @@ class AdminController {
       const matched = await compare(value.password, admin.password);
       if (matched) {
         const token = this.createToken(admin);
+
+        // reset trials
+        admin.loginAttempts = 0;
+        await admin.save();
+
         logger.info(`${admin.role} ${admin._id} logged in successfully at ${new Date()}`);
         return res.status(200).json({
           message: 'Authentication successful',
           token
         });
       } else {
+        if (admin.loginAttempts >= 3) {
+          admin.status = userStatus.deactivated;
+          await admin.save();
+
+          const resolve = `Account deactivated - Contact your super administrator`;
+          return handleResponse(res, 400, resolve);
+        }
+
+        admin.loginAttempts += 1;
+        await admin.save();
         return handleResponse(res, 400, "email, username or password incorrect");
       }
     } catch (error) {
