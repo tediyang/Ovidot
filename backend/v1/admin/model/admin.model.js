@@ -33,6 +33,10 @@ const adminSchema = new Schema({
         type: String,
         enum: Object.values(Role),
         default: Role.admin
+    },
+    loginAttempts: {
+        type: Number,
+        default: 0
     }
 }, {timestamps: true});
 
