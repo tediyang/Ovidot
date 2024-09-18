@@ -102,7 +102,7 @@ class AppController {
         await user.save();
         return res.status(400).json({
           message: "email, phone or password incorrect",
-          remainingAttempts: 5 - user.loginAttempts
+          remainingAttempts: 6 - user.loginAttempts
         })
       }
 
