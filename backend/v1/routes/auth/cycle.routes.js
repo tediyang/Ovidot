@@ -77,22 +77,22 @@ const router /** @type {ExpressRouter} */ = Router();
  *            '401':
  *               description: Unauthorized request
  *               content:
- *               application/json:
- *                 schema:
- *                   type: object
- *                   oneOf:
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Unauthorized
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Invalid token
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Account Deactivated
+ *                 application/json:
+ *                   schema:
+ *                     type: object
+ *                     oneOf:
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Unauthorized
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Invalid token
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Account Deactivated
  *
  *            '404':
  *              description: User Not Found
@@ -141,7 +141,6 @@ router.post('/create', cycleController.createCycle);
  *       parameters:
  *         - in: query
  *           name: month
- *           required: false
  *           schema:
  *             type: string
  *             description: 
@@ -159,7 +158,6 @@ router.post('/create', cycleController.createCycle);
  *             example: 2023
  *         - in: query
  *           name: period
- *           required: false
  *           schema:
  *             type: integer
  *             minimum: 2
@@ -237,22 +235,22 @@ router.post('/create', cycleController.createCycle);
  *            '401':
  *               description: Unauthorized request
  *               content:
- *               application/json:
- *                 schema:
- *                   type: object
- *                   oneOf:
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Unauthorized
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Invalid token
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Account Deactivated
+ *                 application/json:
+ *                   schema:
+ *                     type: object
+ *                     oneOf:
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Unauthorized
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Invalid token
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Account Deactivated
  *
  *            '404':
  *              description: User Not Found
@@ -353,22 +351,22 @@ router.get('/getall', cycleController.fetchAllCycles);
  *            '401':
  *               description: Unauthorized request
  *               content:
- *               application/json:
- *                 schema:
- *                   type: object
- *                   oneOf:
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Unauthorized
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Invalid token
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Account Deactivated
+ *                 application/json:
+ *                   schema:
+ *                     type: object
+ *                     oneOf:
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Unauthorized
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Invalid token
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Account Deactivated
  *
  *            '404':
  *              description: User Not Found
@@ -523,22 +521,22 @@ router.get('/:cycleId', cycleController.fetchOneCycle);
  *            '401':
  *               description: Unauthorized request
  *               content:
- *               application/json:
- *                 schema:
- *                   type: object
- *                   oneOf:
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Unauthorized
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Invalid token
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Account Deactivated
+ *                 application/json:
+ *                   schema:
+ *                     type: object
+ *                     oneOf:
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Unauthorized
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Invalid token
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Account Deactivated
  *
  *            '404':
  *              description: User Not Found
@@ -598,22 +596,22 @@ router.put('/:cycleId', cycleController.updateCycle);
  *            '401':
  *               description: Unauthorized request
  *               content:
- *               application/json:
- *                 schema:
- *                   type: object
- *                   oneOf:
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Unauthorized
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Invalid token
- *                    - properties:
- *                        message:
- *                          type: string
- *                          description: Account Deactivated
+ *                 application/json:
+ *                   schema:
+ *                     type: object
+ *                     oneOf:
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Unauthorized
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Invalid token
+ *                      - properties:
+ *                          message:
+ *                            type: string
+ *                            description: Account Deactivated
  *
  *            '404':
  *              description: User Not Found
