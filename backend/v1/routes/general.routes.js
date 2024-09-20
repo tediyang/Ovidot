@@ -194,7 +194,6 @@ router.post('/signup', appController.signup);
  *                       error:
  *                         type: object
  */
-
 router.post('/login', appController.login.bind(appController));
 
 /**

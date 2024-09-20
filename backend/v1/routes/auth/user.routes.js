@@ -98,22 +98,22 @@ const router /** @type {ExpressRouter} */ = Router();
  *          '401':
  *             description: Unauthorized request
  *             content:
- *             application/json:
- *               schema:
- *                 type: object
- *                 oneOf:
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Unauthorized
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Invalid token
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Account Deactivated
+ *               application/json:
+ *                 schema:
+ *                   type: object
+ *                   oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Unauthorized
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Invalid token
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Account Deactivated
  *
  *          '404':
  *            description: User Not Found
@@ -304,22 +304,22 @@ router.get('/fetch', userController.fetchUser.bind(userController));
  *          '401':
  *             description: Unauthorized request
  *             content:
- *             application/json:
- *               schema:
- *                 type: object
- *                 oneOf:
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Unauthorized
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Invalid token
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Account Deactivated
+ *               application/json:
+ *                 schema:
+ *                   type: object
+ *                   oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Unauthorized
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Invalid token
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Account Deactivated
  *
  *          '404':
  *            description: User Not Found
@@ -373,22 +373,22 @@ router.put('/update', userController.updateUser.bind(userController));
  *          '401':
  *             description: Unauthorized request
  *             content:
- *             application/json:
- *               schema:
- *                 type: object
- *                 oneOf:
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Unauthorized
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Invalid token
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Account Deactivated
+ *               application/json:
+ *                 schema:
+ *                   type: object
+ *                   oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Unauthorized
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Invalid token
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Account Deactivated
  *
  *          '404':
  *            description: User Not Found
@@ -442,22 +442,22 @@ router.get('/deactivate', userController.deactivateUser);
  *          '401':
  *             description: Unauthorized request
  *             content:
- *             application/json:
- *               schema:
- *                 type: object
- *                 oneOf:
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Unauthorized
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Invalid token
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Account Deactivated
+ *               application/json:
+ *                 schema:
+ *                   type: object
+ *                   oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Unauthorized
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Invalid token
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Account Deactivated
  *
  *          '404':
  *            description: User Not Found
@@ -545,22 +545,22 @@ router.delete('/delete', userController.deleteUser);
  *          '401':
  *             description: Unauthorized request
  *             content:
- *             application/json:
- *               schema:
- *                 type: object
- *                 oneOf:
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Unauthorized
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Invalid token
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Account Deactivated
+ *               application/json:
+ *                 schema:
+ *                   type: object
+ *                   oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Unauthorized
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Invalid token
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Account Deactivated
  * 
  *          '404':
  *            description: File Not Found
@@ -629,22 +629,22 @@ router.get('/notifications/:id', userController.getNotification);
  *          '401':
  *             description: Unauthorized request
  *             content:
- *             application/json:
- *               schema:
- *                 type: object
- *                 oneOf:
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Unauthorized
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Invalid token
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Account Deactivated
+ *               application/json:
+ *                 schema:
+ *                   type: object
+ *                   oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Unauthorized
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Invalid token
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Account Deactivated
  * 
  *          '404':
  *            description: File Not Found
@@ -725,22 +725,22 @@ router.delete('/notifications/:id', userController.deleteNotification);
  *          '401':
  *             description: Unauthorized request
  *             content:
- *             application/json:
- *               schema:
- *                 type: object
- *                 oneOf:
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Unauthorized
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Invalid token
- *                  - properties:
- *                      message:
- *                        type: string
- *                        description: Account Deactivated
+ *               application/json:
+ *                 schema:
+ *                   type: object
+ *                   oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Unauthorized
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Invalid token
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Account Deactivated
  * 
  *          '404':
  *            description: File Not Found
