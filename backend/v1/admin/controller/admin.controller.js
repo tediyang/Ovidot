@@ -576,7 +576,7 @@ class AdminController {
       };
 
       logger.info(`${req.user.id} fetched cycle data successfully`);
-      return res.status(200).json({ specificCycleData });
+      return res.status(200).json({ cycle: specificCycleData });
     } catch (error) {
 			if (error instanceof MongooseError) {
 				return handleResponse(res, 500, "We have a mongoose problem", error);
@@ -718,6 +718,10 @@ class AdminController {
         return handleResponse(res, 404, "Admin not found");
       }
 
+
+      if (admin.role === Role.super_admin) {
+        return handleResponse(res, 400, "Can't deactivate a Super Admin");
+      }
 
       admin.status = userStatus.deactivated;
       await admin.save();
