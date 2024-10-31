@@ -172,6 +172,9 @@ class PasswordController {
       // reset login attempts
       user.loginAttempts = 0;
 
+      // reset refresh token
+      user.jwtRefreshToken = '';
+
       await Connection.transaction(async () => {
 			// Generate notification
         const message = 'Your password has been successfully reset';
