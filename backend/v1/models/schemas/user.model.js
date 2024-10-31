@@ -93,21 +93,11 @@ const userSchema = new Schema({
     ],
     reset: String,
     resetExp: Date,
+    jwtRefreshToken: {
+        type: String,
+        default: ''
+    },
 }, { timestamps: true });
-
-// userSchema.path('period').validate(function(value) {
-//     if (this.role === Role.super_admin) {
-//         return value === undefined || value === null;
-//     }
-//     return value !== undefined && value !== null;
-// }, 'Period is required.');
-
-// userSchema.path('dob').validate(function(value) {
-//     if (this.role === Role.super_admin) {
-//         return value === undefined || value === null;
-//     }
-//     return value !== undefined && value !== null;
-// }, 'Date of Birth is required.');
 
 userSchema.pre('save', function(next) {
     if (this.isModified('username')) {
