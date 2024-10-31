@@ -318,7 +318,8 @@ describe('GENERAL ROUTES', () => {
 
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('message', 'Authentication successful');
-      expect(res.body).to.have.property('token');
+      expect(res.body.tokens).to.have.property('accessToken');
+      expect(res.body.tokens).to.have.property('refreshToken');
     });
   });
 
