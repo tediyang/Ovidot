@@ -1,0 +1,705 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "Ovidot",
+    "collectionId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+    "dateExported": "2024-09-20T14:27:05.264Z",
+    "version": "1.2",
+    "folders": [
+        {
+            "_id": "4e2fc2ce-d785-45c8-b6a0-4761023a0fcb",
+            "name": "cycle",
+            "containerId": "",
+            "created": "2024-08-29T13:59:01.793Z",
+            "sortNum": 10000
+        },
+        {
+            "_id": "4935050b-671e-42cb-b18b-7a3941ae1bc3",
+            "name": "user",
+            "containerId": "",
+            "created": "2024-08-29T13:59:55.997Z",
+            "sortNum": 20000
+        },
+        {
+            "_id": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "admin",
+            "containerId": "",
+            "created": "2024-08-29T14:00:57.521Z",
+            "sortNum": 30000
+        },
+        {
+            "_id": "df9d6a32-c78f-4ba3-ab90-f6590dc27dcf",
+            "name": "general",
+            "containerId": "",
+            "created": "2024-09-02T17:55:37.141Z",
+            "sortNum": 40000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "95cb4cd5-96a1-4f6b-bbe8-6c6c7e9c909e",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "4e2fc2ce-d785-45c8-b6a0-4761023a0fcb",
+            "name": "Create cycle",
+            "url": "http://127.0.0.1:1245/api/v1/auth/cycles/create",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-08-29T13:59:08.226Z",
+            "modified": "2024-09-15T11:31:49.697Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"startdate\": \"2024-09-4\",\n  \"period\": 4\n}\n",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZTY5NzJjNzllNjc0ZTg0NTk4YjdkNiIsImVtYWlsIjoiZGFuaWVsLmV5YW5nLmVkQHRpbS5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJpYXQiOjE3MjYzOTk0MzMsImV4cCI6MTcyNjQxNzQzM30.Xo-b8yO03ZD0x4RxLQrPNpF-wBSuzJvz516ouAfQ6MQ"
+            }
+        },
+        {
+            "_id": "a4fab81c-8d59-47c4-a0d2-f82ab2fc0ca4",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "df9d6a32-c78f-4ba3-ab90-f6590dc27dcf",
+            "name": "Signup",
+            "url": "http://127.0.0.1:1245/api/v1/signup",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-08-29T14:00:14.731Z",
+            "modified": "2024-09-13T08:18:48.713Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"fname\": \"Taniel\",\n  \"lname\": \"Eyang\",\n  \"email\": \"daniel.eyang.ed@tim.com\",\n  \"phone\": \"+2348125402401\",\n  \"username\": \"kediyang\",\n  \"password\": \"Jessiemylu354#\",\n  \"dob\": \"1996-05-30\",\n  \"period\": 3\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "38f8fac2-ee29-4078-bbed-a4d3dc60b2b1",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "Admin login",
+            "url": "http://127.0.0.1:1245/api/v1/admin/login",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-08-29T14:01:00.145Z",
+            "modified": "2024-09-19T09:25:28.705Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email_or_username\": \"admin@ovidot.com\",\n  \"password\": \"OvidotApiV1@\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDE3OGFkMjViZmI1NzQwYTVmMGM5NyIsInJvbGUiOiJTVVBFUiBBRE1JTiIsImlhdCI6MTcyNjE3Mzg1OSwiZXhwIjoxNzI2MTc3NDU5fQ.AWvdn8K2ZCdBLQ4-XwHr0XdTKSEH1UeNb7dIN1m4GUw"
+            }
+        },
+        {
+            "_id": "b4a2de73-3652-4e66-a418-51157acb0eb4",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "4e2fc2ce-d785-45c8-b6a0-4761023a0fcb",
+            "name": "Fetch all cycles",
+            "url": "http://127.0.0.1:1245/api/v1/auth/cycles/getall?year=2024",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2024-08-29T13:59:26.467Z",
+            "modified": "2024-09-18T12:48:09.595Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "month",
+                    "value": "9",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "year",
+                    "value": "2024",
+                    "isPath": false
+                }
+            ],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZTY5NzJjNzllNjc0ZTg0NTk4YjdkNiIsImVtYWlsIjoiZGFuaWVsLmV5YW5nLmVkQHRpbS5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJpYXQiOjE3MjY2NjM2NjYsImV4cCI6MTcyNjY4MTY2Nn0.JvkO9F9kE_eMzUHg6Qtdxl_F8B_gQe5wlx0oQOSam1I"
+            }
+        },
+        {
+            "_id": "d2a01781-e7c1-4fd6-b32d-8f116eb96937",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "df9d6a32-c78f-4ba3-ab90-f6590dc27dcf",
+            "name": "Login",
+            "url": "http://127.0.0.1:1245/api/v1/login",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-08-29T14:00:16.549Z",
+            "modified": "2024-09-18T14:30:31.677Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email_or_phone\": \"daniel.eyang.ed@gmail.com\",\n  \"password\": \"Jessiemylu35#\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "fc6ffa97-9030-4e17-9544-f586779b04d6",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "Admin get users",
+            "url": "http://127.0.0.1:1245/api/v1/admin/users",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2024-08-29T14:01:01.352Z",
+            "modified": "2024-09-15T09:41:50.626Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "createdAt[range][time_share]",
+                    "value": "week",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "createdAt[range][times]",
+                    "value": "2",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "count",
+                    "value": "true",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "createdAt[exact_range]",
+                    "value": "2024-09-13",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "fname",
+                    "value": "taniel",
+                    "isDisabled": true,
+                    "isPath": false
+                }
+            ],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZTY4NTc1ODJiYjRiMjRiNTMxNDc3OSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyNjM5MjUxNywiZXhwIjoxNzI2Mzk2MTE3fQ.cJ8fMFyS_sb03cJTUxPpi5TIx5fMZh81Ea0ry6CBVsM"
+            }
+        },
+        {
+            "_id": "a8696426-3028-4182-b4a3-98b3cb10aa63",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "df9d6a32-c78f-4ba3-ab90-f6590dc27dcf",
+            "name": "Verify-reset-password",
+            "url": "http://127.0.0.1:1245/api/v1/reset-password/f7409ba5-9f52-4d97-9d6a-107fee36b1ea",
+            "method": "GET",
+            "sortNum": 25000,
+            "created": "2024-09-02T15:46:07.438Z",
+            "modified": "2024-09-18T14:34:17.181Z",
+            "headers": []
+        },
+        {
+            "_id": "8d007e04-53c5-4a50-b9db-ef9137642f59",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "4935050b-671e-42cb-b18b-7a3941ae1bc3",
+            "name": "Get user",
+            "url": "http://127.0.0.1:1245/api/v1/auth/users/fetch",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2024-08-29T14:00:17.881Z",
+            "modified": "2024-09-17T13:27:14.750Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZTY5NzJjNzllNjc0ZTg0NTk4YjdkNiIsImVtYWlsIjoiZGFuaWVsLmV5YW5nLmVkQHRpbS5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJpYXQiOjE3MjY1Nzk2MTQsImV4cCI6MTcyNjU5NzYxNH0.HhZsSEH2N9O0f8vdkWLT8bylQvbT3I8vhD0Rki_qzCU"
+            }
+        },
+        {
+            "_id": "e9693f84-4f24-408d-b536-c07fbc328aeb",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "Admin get user",
+            "url": "http://127.0.0.1:1245/api/v1/admin/users/email",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2024-08-29T14:01:02.449Z",
+            "modified": "2024-09-13T13:14:43.552Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\": \"daniel.eyang.ed@gmail.com\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDE3OGFkMjViZmI1NzQwYTVmMGM5NyIsInJvbGUiOiJTVVBFUiBBRE1JTiIsImlhdCI6MTcyNjIzMzIwMSwiZXhwIjoxNzI2MjM2ODAxfQ.WCd_jFnCaeBsQEPdKvNHs7K9lEJc8iT-OcNG_2jCUKY"
+            }
+        },
+        {
+            "_id": "27873858-0919-4b50-a408-34472de108cd",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "df9d6a32-c78f-4ba3-ab90-f6590dc27dcf",
+            "name": "Forget-password",
+            "url": "http://127.0.0.1:1245/api/v1/forgot-password",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2024-09-02T15:17:29.491Z",
+            "modified": "2024-09-05T08:30:45.183Z",
+            "headers": [
+                {
+                    "name": "userAgents",
+                    "value": ""
+                },
+                {
+                    "name": "os",
+                    "value": "Windows"
+                },
+                {
+                    "name": "browser",
+                    "value": "Crome"
+                },
+                {
+                    "name": "User-Agent",
+                    "value": "Thunder Client (https://www.thunderclient.com)",
+                    "isDisabled": true
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\": \"daniel.eyang.ed@gmail.com\",\n  \"front_url\": \"https://ovidot.com\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "ae359ef4-dbe7-40a3-ae55-deb751cb7483",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "4e2fc2ce-d785-45c8-b6a0-4761023a0fcb",
+            "name": "Fetch one cycle",
+            "url": "http://127.0.0.1:1245/api/v1/auth/cycles/66dcd446a0fe28cd6d78d605",
+            "method": "GET",
+            "sortNum": 40000,
+            "created": "2024-08-29T13:59:30.362Z",
+            "modified": "2024-09-09T09:14:18.055Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"period\": 4,\n  \"startdate\": \"2023-09-30\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDg3YWQzNTQxZGU2MzA1ZTRkNmRmMiIsImVtYWlsIjoiZGFuaWVsLmV5YW5nLmVkQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImlhdCI6MTcyNTg3MzE5NiwiZXhwIjoxNzI1ODkxMTk2fQ.aJXkAHwWxKazOI1vUGeF1m6hTH9c-viIyJ_Zzbs3NrU"
+            }
+        },
+        {
+            "_id": "669918f9-83ae-4998-8b24-9010639fc150",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "Admin update user",
+            "url": "http://127.0.0.1:1245/api/v1/admin/users/email",
+            "method": "PUT",
+            "sortNum": 40000,
+            "created": "2024-08-29T14:01:03.482Z",
+            "modified": "2024-09-15T07:17:47.493Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"oldEmail\": \"daniel.eyang@yahoo.com\",\n  \"newEmail\": \"daniel.eyang.ed@tim.com\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDE3OGFkMjViZmI1NzQwYTVmMGM5NyIsInJvbGUiOiJTVVBFUiBBRE1JTiIsImlhdCI6MTcyNjM4Mzk0OSwiZXhwIjoxNzI2Mzg3NTQ5fQ.dSW29c58BSDf4FNK73XmR5CdJp1LNNYWQNUrYJ71TxM"
+            }
+        },
+        {
+            "_id": "487aa6ba-4706-4097-bc65-6c342f234d5d",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "Admin switch",
+            "url": "http://127.0.0.1:1245/api/v1/admin/switch",
+            "method": "PUT",
+            "sortNum": 45000,
+            "created": "2024-09-15T08:24:40.400Z",
+            "modified": "2024-09-15T09:18:53.551Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email_username_id\": \"mini_admin@ovidot.com\",\n  \"role\": \"ADMIN\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDE3OGFkMjViZmI1NzQwYTVmMGM5NyIsInJvbGUiOiJTVVBFUiBBRE1JTiIsImlhdCI6MTcyNjM4OTM0OCwiZXhwIjoxNzI2MzkyOTQ4fQ.9QRoTTxTzwPOszhEwNCHZa_slH1qkLtwnT6i9-RwZeA"
+            }
+        },
+        {
+            "_id": "b990676d-0f32-4477-9c5a-f4f8bb6ef633",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "4e2fc2ce-d785-45c8-b6a0-4761023a0fcb",
+            "name": "Delete cycle",
+            "url": "http://127.0.0.1:1245/api/v1/auth/cycles/66e6974779e674e84598b7e6",
+            "method": "DELETE",
+            "sortNum": 50000,
+            "created": "2024-08-29T13:59:31.546Z",
+            "modified": "2024-09-15T08:14:39.758Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDg3YWQzNTQxZGU2MzA1ZTRkNmRmMiIsImVtYWlsIjoiZGFuaWVsLmV5YW5nLmVkQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImlhdCI6MTcyNjAwMTc4MywiZXhwIjoxNzI2MDE5NzgzfQ.4EAxqBlkueXajTbWPn2B99jnIZ1GJijLqAJLghC_9tk"
+            }
+        },
+        {
+            "_id": "90fc1423-f884-4b64-a035-45e7741e6835",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "4935050b-671e-42cb-b18b-7a3941ae1bc3",
+            "name": "Update user",
+            "url": "http://127.0.0.1:1245/api/v1/auth/users/update",
+            "method": "PUT",
+            "sortNum": 50000,
+            "created": "2024-08-29T14:00:20.314Z",
+            "modified": "2024-09-17T13:55:22.095Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"period\": 4\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZTY5NzJjNzllNjc0ZTg0NTk4YjdkNiIsImVtYWlsIjoiZGFuaWVsLmV5YW5nLmVkQHRpbS5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJpYXQiOjE3MjY1Nzk2MTQsImV4cCI6MTcyNjU5NzYxNH0.HhZsSEH2N9O0f8vdkWLT8bylQvbT3I8vhD0Rki_qzCU"
+            }
+        },
+        {
+            "_id": "845f37b6-32db-48c1-a247-1874db5fb849",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "Admin forgot password",
+            "url": "http://127.0.0.1:1245/api/v1/admin/users/forgot-password",
+            "method": "POST",
+            "sortNum": 50000,
+            "created": "2024-08-29T14:01:04.586Z",
+            "modified": "2024-09-15T07:43:56.698Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\": \"daniel.eyang.ed@gmail.com\",\n  \"front_url\": \"https://ovidot.com\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDE3OGFkMjViZmI1NzQwYTVmMGM5NyIsInJvbGUiOiJTVVBFUiBBRE1JTiIsImlhdCI6MTcyNjM4NTIzNCwiZXhwIjoxNzI2Mzg4ODM0fQ.QLJuSNu3r-IF8CfoKS9HwDWmeKG38kClQXFrbyz5HyU"
+            }
+        },
+        {
+            "_id": "72ba0ead-ba91-4a39-8621-cffa988ce463",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "4e2fc2ce-d785-45c8-b6a0-4761023a0fcb",
+            "name": "Update cycle",
+            "url": "http://127.0.0.1:1245/api/v1/auth/cycles/66dcd446a0fe28cd6d78d605",
+            "method": "PUT",
+            "sortNum": 60000,
+            "created": "2024-08-29T13:59:32.891Z",
+            "modified": "2024-09-10T19:58:11.771Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"period\": 4\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDg3YWQzNTQxZGU2MzA1ZTRkNmRmMiIsImVtYWlsIjoiZGFuaWVsLmV5YW5nLmVkQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImlhdCI6MTcyNTk5ODE0MiwiZXhwIjoxNzI2MDE2MTQyfQ.wn2FCDTz5wyb5VCVgABj86l_ggkXcDalBnudp6-ySrk"
+            }
+        },
+        {
+            "_id": "508b677c-8971-444a-b4b1-94e270d191e3",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "Admin delete user",
+            "url": "http://127.0.0.1:1245/api/v1/admin/users/email",
+            "method": "DELETE",
+            "sortNum": 60000,
+            "created": "2024-08-29T14:01:05.712Z",
+            "modified": "2024-09-15T07:30:55.533Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\": \"daniel.eyang.ed@tim.com\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDE3OGFkMjViZmI1NzQwYTVmMGM5NyIsInJvbGUiOiJTVVBFUiBBRE1JTiIsImlhdCI6MTcyNjM4NTIzNCwiZXhwIjoxNzI2Mzg4ODM0fQ.QLJuSNu3r-IF8CfoKS9HwDWmeKG38kClQXFrbyz5HyU"
+            }
+        },
+        {
+            "_id": "8507a6a0-2ed3-487a-8507-e05a50f28aec",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "Admin get user cycles",
+            "url": "http://127.0.0.1:1245/api/v1/admin/users/email/cycles?period=4&month=9",
+            "method": "POST",
+            "sortNum": 70000,
+            "created": "2024-08-29T14:01:06.688Z",
+            "modified": "2024-09-13T15:53:53.671Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "period",
+                    "value": "4",
+                    "isPath": false
+                },
+                {
+                    "name": "createdAt[exact_range]",
+                    "value": "2024-09-10",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "month",
+                    "value": "9",
+                    "isPath": false
+                },
+                {
+                    "name": "count",
+                    "value": "true",
+                    "isDisabled": true,
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\": \"daniel.eyang.ed@gmail.com\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDE3OGFkMjViZmI1NzQwYTVmMGM5NyIsInJvbGUiOiJTVVBFUiBBRE1JTiIsImlhdCI6MTcyNjI0MTgwMywiZXhwIjoxNzI2MjQ1NDAzfQ.k9C7qHC1jw6D3whMKL1k_5WqVcleRSZeqbQbAYZ1fXA"
+            }
+        },
+        {
+            "_id": "6bf26fd9-93e2-462d-92c9-7d782a6c8829",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "Admin get cycles",
+            "url": "http://127.0.0.1:1245/api/v1/admin/cycles?month=9&year=2024&period=4&start_date=2024-09-07&days=28&ovulation=2024-09-20",
+            "method": "GET",
+            "sortNum": 80000,
+            "created": "2024-08-29T14:01:07.680Z",
+            "modified": "2024-09-15T07:57:03.686Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "count",
+                    "value": "true",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "month",
+                    "value": "9",
+                    "isPath": false
+                },
+                {
+                    "name": "year",
+                    "value": "2024",
+                    "isPath": false
+                },
+                {
+                    "name": "period",
+                    "value": "4",
+                    "isPath": false
+                },
+                {
+                    "name": "start_date",
+                    "value": "2024-09-07",
+                    "isPath": false
+                },
+                {
+                    "name": "days",
+                    "value": "28",
+                    "isPath": false
+                },
+                {
+                    "name": "ovulation",
+                    "value": "2024-09-20",
+                    "isPath": false
+                }
+            ],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDE3OGFkMjViZmI1NzQwYTVmMGM5NyIsInJvbGUiOiJTVVBFUiBBRE1JTiIsImlhdCI6MTcyNjM4NTIzNCwiZXhwIjoxNzI2Mzg4ODM0fQ.QLJuSNu3r-IF8CfoKS9HwDWmeKG38kClQXFrbyz5HyU"
+            }
+        },
+        {
+            "_id": "d7f49613-6add-40db-9423-be54d4272cc5",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "Admin delete cycle",
+            "url": "http://127.0.0.1:1245/api/v1/admin/cycles/66e6974779e674e84598b7e6",
+            "method": "DELETE",
+            "sortNum": 90000,
+            "created": "2024-08-29T14:01:08.722Z",
+            "modified": "2024-09-15T08:17:01.112Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDE3OGFkMjViZmI1NzQwYTVmMGM5NyIsInJvbGUiOiJTVVBFUiBBRE1JTiIsImlhdCI6MTcyNjM4NzU2MSwiZXhwIjoxNzI2MzkxMTYxfQ.vFFs9lw_8eJ6I64gA0osd7X8cfGQM1umnoqt34dFVCg"
+            }
+        },
+        {
+            "_id": "625cb9af-3baf-4b7f-8a99-78fdb88d97a3",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "Admin get cycle",
+            "url": "http://127.0.0.1:1245/api/v1/admin/cycles/66e3e9bb149a410ec22eb6b2",
+            "method": "GET",
+            "sortNum": 90000,
+            "created": "2024-09-15T07:57:40.611Z",
+            "modified": "2024-09-15T07:59:08.585Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDE3OGFkMjViZmI1NzQwYTVmMGM5NyIsInJvbGUiOiJTVVBFUiBBRE1JTiIsImlhdCI6MTcyNjM4NTIzNCwiZXhwIjoxNzI2Mzg4ODM0fQ.QLJuSNu3r-IF8CfoKS9HwDWmeKG38kClQXFrbyz5HyU"
+            }
+        },
+        {
+            "_id": "29f44b6e-a7d1-43ea-8e22-6ce8b9fa0c52",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "Admin logout",
+            "url": "http://127.0.0.1:1245/api/v1/admin/logout",
+            "method": "GET",
+            "sortNum": 100000,
+            "created": "2024-08-29T14:01:11.140Z",
+            "modified": "2024-09-15T09:44:35.524Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDE3OGFkMjViZmI1NzQwYTVmMGM5NyIsInJvbGUiOiJTVVBFUiBBRE1JTiIsImlhdCI6MTcyNjM5MjYwNCwiZXhwIjoxNzI2Mzk2MjA0fQ.asZATWc5ffyrdfusNbX7oZTN-Y3u4oLYVF77QkQhGdI"
+            }
+        },
+        {
+            "_id": "fc4f6a58-1226-4e24-9060-bd1daf6393ff",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "1d4d2820-a3df-4497-9c03-c359a8108342",
+            "name": "Admin deactivate admin",
+            "url": "http://127.0.0.1:1245/api/v1/admin/deactivate",
+            "method": "PUT",
+            "sortNum": 100000,
+            "created": "2024-09-15T09:23:40.256Z",
+            "modified": "2024-09-15T09:41:25.073Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email_username_id\": \"mini_admin@ovidot.com\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDE3OGFkMjViZmI1NzQwYTVmMGM5NyIsInJvbGUiOiJTVVBFUiBBRE1JTiIsImlhdCI6MTcyNjM5MjYwNCwiZXhwIjoxNzI2Mzk2MjA0fQ.asZATWc5ffyrdfusNbX7oZTN-Y3u4oLYVF77QkQhGdI"
+            }
+        },
+        {
+            "_id": "e0192725-426d-445c-9212-60fa06806d9e",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "df9d6a32-c78f-4ba3-ab90-f6590dc27dcf",
+            "name": "Reset-password",
+            "url": "http://127.0.0.1:1245/api/v1/reset-password/",
+            "method": "PUT",
+            "sortNum": 150000,
+            "created": "2024-09-02T17:56:17.595Z",
+            "modified": "2024-09-18T14:35:07.377Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"new_password\": \"Jessiemyluv123#\",\n  \"token\": \"f7409ba5-9f52-4d97-9d6a-107fee36b1ea\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "16e3f44c-606b-4c6a-8f5f-d00984e9abb6",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "4935050b-671e-42cb-b18b-7a3941ae1bc3",
+            "name": "Deactivate user",
+            "url": "http://127.0.0.1:1245/api/v1/auth/users/deactivate",
+            "method": "GET",
+            "sortNum": 160000,
+            "created": "2024-09-04T12:44:56.709Z",
+            "modified": "2024-09-05T07:57:38.989Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDg3YWQzNTQxZGU2MzA1ZTRkNmRmMiIsImVtYWlsIjoiZGFuaWVsLmV5YW5nLmVkQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImlhdCI6MTcyNTUyMzAxOCwiZXhwIjoxNzI1NTQxMDE4fQ.j5qJRQf15xXVeH4J0cRwRQsoPSV5CubzeeSe5IxFkvk"
+            }
+        },
+        {
+            "_id": "37a51f5a-ae4d-4386-ab14-7d7c0037769b",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "4935050b-671e-42cb-b18b-7a3941ae1bc3",
+            "name": "Delete User",
+            "url": "http://127.0.0.1:1245/api/v1/auth/users/delete",
+            "method": "DELETE",
+            "sortNum": 170000,
+            "created": "2024-09-04T14:37:02.409Z",
+            "modified": "2024-09-04T14:41:14.671Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDg1ZWZlMTkwYTFlYjJkZTUzY2Y5ZSIsImVtYWlsIjoiZGFuaWVsLmV5YW5nLmVkQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImlhdCI6MTcyNTQ1NjIwMiwiZXhwIjoxNzI1NDc0MjAyfQ.kVPLjvXDZS9Vw6xPN8EAsnPpNG80C0vbX89jAj2obmA"
+            }
+        },
+        {
+            "_id": "bfa708e6-ba52-4d43-bed9-459fda82d5fb",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "4935050b-671e-42cb-b18b-7a3941ae1bc3",
+            "name": "Get notification",
+            "url": "http://127.0.0.1:1245/api/v1/auth/users/notifications/66e6972c79e674e84598b7db",
+            "method": "GET",
+            "sortNum": 180000,
+            "created": "2024-09-04T14:48:01.873Z",
+            "modified": "2024-09-17T14:25:16.676Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZTY5NzJjNzllNjc0ZTg0NTk4YjdkNiIsImVtYWlsIjoiZGFuaWVsLmV5YW5nLmVkQHRpbS5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJpYXQiOjE3MjY1ODI5NzksImV4cCI6MTcyNjYwMDk3OX0.slqokOqooQ0lfiUgvVnLs7x1cmRBi0Mt1YiqJUWLACw"
+            }
+        },
+        {
+            "_id": "02032c66-5f91-46d5-ac30-ff40373faf4d",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "4935050b-671e-42cb-b18b-7a3941ae1bc3",
+            "name": "Get notifications",
+            "url": "http://127.0.0.1:1245/api/v1/auth/users/notifications",
+            "method": "GET",
+            "sortNum": 190000,
+            "created": "2024-09-04T15:13:44.571Z",
+            "modified": "2024-09-05T11:19:03.575Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDg3YWQzNTQxZGU2MzA1ZTRkNmRmMiIsImVtYWlsIjoiZGFuaWVsLmV5YW5nLmVkQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImlhdCI6MTcyNTUzNTExOSwiZXhwIjoxNzI1NTUzMTE5fQ.zSJIRUgsDgt8SbNVGA5S-swMNOCtoZ457-CrmRUDzfk"
+            }
+        },
+        {
+            "_id": "c68da740-cbaf-4697-a326-b99367e02a07",
+            "colId": "80e528f4-d05a-49b4-87a5-81f0839e5146",
+            "containerId": "4935050b-671e-42cb-b18b-7a3941ae1bc3",
+            "name": "Delete notification",
+            "url": "http://127.0.0.1:1245/api/v1/auth/users/notifications/66d87ad3541de6305e4d6df7",
+            "method": "DELETE",
+            "sortNum": 200000,
+            "created": "2024-09-05T07:56:00.503Z",
+            "modified": "2024-09-05T11:20:09.351Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDg3YWQzNTQxZGU2MzA1ZTRkNmRmMiIsImVtYWlsIjoiZGFuaWVsLmV5YW5nLmVkQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImlhdCI6MTcyNTUzNTExOSwiZXhwIjoxNzI1NTUzMTE5fQ.zSJIRUgsDgt8SbNVGA5S-swMNOCtoZ457-CrmRUDzfk"
+            }
+        }
+    ],
+    "ref": "xDXTOBPtxhq6FGV9FCaDAapPnr4MH666RbmFCk4Wpgr_CNmUZkzCch98M1sUk11cMoMxnmSmAg5NcYhL33fNwQ"
+}

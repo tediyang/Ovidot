@@ -77,6 +77,10 @@ const userSchema = new Schema({
         enum: Object.values(userStatus),
         default: userStatus.active,
     },
+    loginAttempts: {
+        type: Number,
+        default: 0
+    },
     notificationsList: {
         type: [notificationSchema],
         default: [],

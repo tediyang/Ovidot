@@ -8,30 +8,44 @@ const appController = require('../controllers/register.controller.js');
 // Create an Express router
 const router = Router();
 
-/**
- * @swagger
- * tags:
- *   name: Logout Route | Authentication Needed
- *   description: Endpoints requiring authentication
- */
-
 router.use('/users', userRoutes);
 router.use('/cycles', cycleRoutes);
 
-// Route to log out a user
 /**
+ * Route to logout user
  * @swagger
- * /logout:
- *   get:
- *     summary: Log out a user
- *     tags: [Logout Route | Authentication Needed]
- *     security:
- *       - userToken: []
- *     responses:
- *       '200':
- *         description: User logged out successfully
- *       '401':
- *         description: Unauthorized request
+ * paths:
+ *   /logout:
+ *      get:
+ *        summary: Logout user
+ *        tags:
+ *          - User Routes
+ *        security:
+ *          - userToken: []
+ * 
+ *      responses:
+ *        '200':
+ *          description: Succesful
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    description: Logout Successful
+ * 
+ *        '500':
+ *          description: Server Error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                  error:
+ *                    type: object
  */
 router.get('/logout', appController.logout);
 

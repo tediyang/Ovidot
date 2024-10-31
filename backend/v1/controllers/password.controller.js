@@ -126,7 +126,13 @@ class PasswordController {
         token
       });
     } catch (error) {
-      return handleResponse(res, 500, 'Internal server error', error);
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof JsonWebTokenError) {
+				return handleResponse(res, 500, error.message, error);
+			}
+      return handleResponse(res, 500, error.message, error)
     }
   }
   
@@ -162,11 +168,11 @@ class PasswordController {
   
       user.password = await util.encrypt(new_password);
       if (user.status == userStatus.deactivated) user.status = userStatus.active;
-  
-      await Connection.transaction(async () => {
-        // blacklists the token
-        const tasks = []
 
+      // reset login attempts
+      user.loginAttempts = 0;
+
+      await Connection.transaction(async () => {
 			// Generate notification
         const message = 'Your password has been successfully reset';
         const notify = await notifications.generateNotification(userAction.resetPassword, message);

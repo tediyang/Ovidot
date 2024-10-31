@@ -90,13 +90,28 @@ class AppController {
       // validate password
       const matched = await compare(value.password, user.password);
 
-      if (!matched) {
-        return handleResponse(res, 400, "email, phone or password incorrect");
+      if (!matched) {        
+        if (user.loginAttempts >= 5) {
+          user.status = userStatus.deactivated;
+          await user.save();
+          const resolve = `Account deactivated - resolve with: ${PATH_PREFIX}/general/forget-password`;
+          return handleResponse(res, 400, resolve);
+        }
+
+        user.loginAttempts += 1;
+        await user.save();
+        return res.status(400).json({
+          message: "email, phone or password incorrect",
+          remainingAttempts: 6 - user.loginAttempts
+        })
       }
 
-      // console.log(this.createToken)
-      // console.log('yes')
       const token = this.createToken(user);
+
+      // reset login attempts
+      user.loginAttempts = 0;
+      await user.save();
+
       return res
         .status(200)
         .json({
