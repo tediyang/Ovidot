@@ -1238,7 +1238,7 @@ router.get('/cycles', tokenVerification.adminTokenVerification, adminController.
  * Fetch cycle by id
  * @swagger
  * paths:
- *   /admin/cycles/{cycleId}:
+ *   /admin/cycles/:cycleId:
  *     get:
  *       summary: Retrieve a cycle by cycleId
  *       tags:
@@ -1354,7 +1354,7 @@ router.get('/cycles/:cycleId', tokenVerification.adminTokenVerification, adminCo
  * Delete cycle
  * @swagger
  * paths:
- *   /admin/cycles/{cycleId}:
+ *   /admin/cycles/:cycleId:
  *     delete:
  *       summary: Delete a cycle by cycleId
  *       tags:
