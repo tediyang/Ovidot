@@ -12,7 +12,7 @@ require('dotenv').config();
 
 const db_name = process.env.ENVIR === "test" ? process.env.DB_TEST : process.env.DB;
 const db_user = process.env.ENVIR === "test" ? process.env.DB_TEST_USER : process.env.DB_USER;
-const db_pwd = process.env.ENVIR === "test" ? process.env.DB_TEST_PWD : process.env.DB_PWD;
+const db_pwd = process.env.ENVIR === "test" ? process.env.DB_TEST_URI_PWD : process.env.DB_URI_PWD;
 const db_host = process.env.ENVIR === "test" ? process.env.DB_TEST_HOST : process.env.DB_HOST;
 const db_port = process.env.ENVIR === "test" ? process.env.DB_TEST_PORT : process.env.DB_PORT;
 
