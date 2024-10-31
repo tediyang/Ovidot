@@ -23,7 +23,7 @@ const {
 const redisSetup = async () => {
   let client;
   // Setup and connect to Redis Server
-  if (ENVIR !== 'dev') {
+  if (ENVIR !== 'test' && ENVIR !== 'dev') {
     client = await createClient({
       username: `${USERNAME}`,
       password: `${PASSWORD}`,
@@ -77,7 +77,7 @@ const startServer = async (app) => {
     logger.info(`Server listening on PORT ${port}`);
 
     // Setup cron job
-    if (process.env.MAIL_USER) {
+    if (process.env.EMAIL) {
       try {
         // Schedule the cron job
         schedule("*/20 * * * * *", async () => { await email_service.handleEmailCron() });
