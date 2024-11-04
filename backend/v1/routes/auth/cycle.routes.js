@@ -289,7 +289,7 @@ router.get('/getall', cycleController.fetchAllCycles);
  * Get a cycle by cycleId
  * @swagger
  * paths:
- *   /cycles/{cycleId}:
+ *   /cycles/:cycleId:
  *     get:
  *       summary: Get a cycle by cycleId
  *       tags: 
@@ -410,7 +410,7 @@ router.get('/:cycleId', cycleController.fetchOneCycle);
  * Update a cycle
  * @swagger
  * paths:
- *   /cycles/{cycleId}:
+ *   /cycles/:cycleId:
  *     put:
  *       summary: Update a cycle
  *       tags:
@@ -575,7 +575,7 @@ router.put('/:cycleId', cycleController.updateCycle);
  * Delete a cycle by cycleId
  * @swagger
  * paths:
- *   /cycles/{cycleId}:
+ *   /cycles/:cycleId:
  *     delete:
  *       summary: Delete a cycle by cycleId
  *       tags:

@@ -287,7 +287,7 @@ router.post('/forgot-password', passwordController.forgotPass.bind(passwordContr
  * Validate reset password token
  * @swagger
  * paths:
- *   /reset-password/{token}:
+ *   /reset-password/:token:
  *     get:
  *       summary: valid reset then send from url param
  *       tags:
@@ -437,5 +437,97 @@ router.get('/reset-password/:token', passwordController.VerifyResetPass);
  */
 router.put('/reset-password', passwordController.ResetPass);
 
+/**
+ * Refresh Token route
+ * @swagger
+ * paths:
+ *   /refresh-token/:token:
+ *     get:
+ *       summary: allows a user to get a new access token
+ *       tags:
+ *         - General Routes
+ *       parameters:
+ *         - in: path
+ *           name: token
+ *           required: true
+ *           schema:
+ *             type: string
+ *
+ *       responses:
+ *          '200':
+ *            description: Successfully
+ *            content:
+ *              application/json:
+ *                 schema:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       description: Token refresh successful
+ *                     token:
+ *                       type: string
+ *
+ *          '400':
+ *            description: Validation Error or Bad request
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  properties:
+ *                     message:
+ *                       type: string
+ *                       description: Invalid Credential, Refresh token invalid
+ *
+ *          '401':
+ *            description: Bad request
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Invalid Credential, Refresh token invalid
+ *                    - properties:
+ *                        message:
+ *                         type: string
+ *                         description: Account Deactivated
+ *                        resolve:
+ *                         type: string
+ *                         description: route to activate account
+ * 
+ *          '404':
+ *            description: User Not Found Error
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  properties:
+ *                    message:
+ *                      type: string
+ *                      description: User not found
+ *
+ *          '500':
+ *            description: MongooseError or JsonWebTokenError
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: MongooseError occured
+ *                        error:
+ *                          type: object
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: JsonWebTokenError occured
+ *                        error:
+ *                          type: object
+ */
+router.get('/refresh-token/:token', appController.refreshToken.bind(appController));
 
 module.exports = router;

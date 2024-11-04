@@ -22,7 +22,6 @@ class Validator {
     phone: Joi
       .string()
       .pattern(/^\+\d+$/) // Pattern starts with country code
-      .min(10)
       .max(14)
       .required()
       .messages({
@@ -125,22 +124,27 @@ class Validator {
     username: Joi.string()
       .pattern(/^[a-zA-Z]+$/)
       .messages({
-        'string.pattern.base': 'Username must contain only alphabetic characters.'
+        'string.pattern.base': 'Username must contain only alphabetic characters.',
+        'string.empty': 'Username is required.',
+        'any.required': 'Username is required.'
       }),
     sensitive: Joi.object({
         phone: Joi
           .string()
           .pattern(/^\+\d+$/)
-          .min(10)
           .max(14)
           .messages({
-            'string.pattern.base': 'Phone number must start with a country code and contain only numbers.'
+            'string.pattern.base': 'Phone number must start with a country code and contain only numbers.',
+            'string.empty': 'Phone number is required.',
+            'any.required': 'Phone number is required.'
           }),
         new_password: Joi
           .string()
           .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()])[a-zA-Z0-9!@#$%^&*()]{8,}$/)
           .messages({
-            'string.pattern.base': 'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters.'
+            'string.pattern.base': 'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters.',
+            'string.empty': 'Password is required.',
+            'any.required': 'Password is required.'
           }),
       }),
     password: Joi

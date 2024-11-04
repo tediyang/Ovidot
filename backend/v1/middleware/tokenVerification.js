@@ -28,12 +28,18 @@ class TokenVerification {
 
     // Check if the token is blacklisted
     if (blacklist.isTokenBlacklisted(token)) {
-      return handleResponse(res, 401, 'Invalid token');
+      return res.status(401).json({
+        msg: 'Token logged out, get a new access token at /api/v1/refresh-token or login again',
+        second_chance: true
+      });
     }
-    
+
     verify(token, secretKey, async (err, user) => {
       if (err) {
-        return handleResponse(res, 401, 'Invalid token');
+        return res.status(401).json({
+          msg: 'Token expired, get a new access token at /api/v1/refresh-token or login again',
+          second_chance: true
+        });
       }
 
       const found = await User.findById(user.id);

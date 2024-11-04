@@ -9,7 +9,7 @@ const { swaggerSpec, PATH_PREFIX } = require('./v1/swagger-docs.js');
 const { Admin } = require('./v1/models/engine/database.js');
 const { Role, userStatus } = require('./v1/enums.js');
 const util = require('./v1/utility/encryption/cryptography.js');
-const allowedOrigin = require('./setupcors.js');
+const allowedOrigin = require('./setupCors.js');
 require('dotenv').config();
 
 // Import routes
@@ -28,7 +28,7 @@ const ultimate = (async () => {
     const admin = await Admin.exists({ email: process.env.APP_EMAIL });
 
     if(admin) {
-      logger.info(`${process.env.APP_EMAIL}: We are open for business`);
+      logger.info(`${process.env.APP_NAME}: We are open for business`);
       return;
     }
 
@@ -42,7 +42,7 @@ const ultimate = (async () => {
       })
     };
 
-    logger.info(`${process.env.APP_EMAIL}: We are open for business`);
+    logger.info(`${process.env.APP_NAME}: We are open for business`);
   } catch (error) {
     logger.error('Error creating or checking for ultimate user', error);
     throw error
@@ -67,7 +67,7 @@ app.use(PATH_PREFIX, generalRoutes);
 // handles ultimate admin.
 ultimate
   .then((resolved) => {
-    logger.info(`${process.env.APP_EMAIL}: ultimate admin is set`);
+    logger.info(`${process.env.APP_NAME}: ultimate admin is set`);
   })
   .catch((err) => {
     logger.error('Something is wrong....', err);

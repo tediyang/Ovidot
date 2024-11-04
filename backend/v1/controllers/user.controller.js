@@ -140,6 +140,7 @@ class UserController {
 				}
 				if (new_password) {
 					user.password = await util.encrypt(new_password);
+					user.jwtRefreshToken = ""; // reset refresh token
 				}
 			}
 	
@@ -242,7 +243,8 @@ class UserController {
 
 				// blacklist token
 				blacklist.updateBlacklist(req.token);
-		
+				user.jwtRefreshToken = '';
+
 				// manage noifications
 				await notifications.manageNotification(user.notificationsList);
 				await user.save();

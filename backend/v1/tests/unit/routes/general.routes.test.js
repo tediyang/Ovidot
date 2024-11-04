@@ -286,7 +286,8 @@ describe('GENERAL ROUTES', () => {
 
       sandbox.stub(User, 'findOne').returns({
         status: "ACTIVE",
-        password: "telegramthis123#"
+        password: "telegramthis123#",
+        save: sinon.stub().resolvesThis(true), // stub the save method
       });
 
       const res = await request(app)
@@ -307,7 +308,8 @@ describe('GENERAL ROUTES', () => {
         status: "ACTIVE",
         password: await util.encrypt(loginData.password),
         _id: '12345',
-        email: "daniel.ovidot@gmail.com"
+        email: "daniel.ovidot@gmail.com",
+        save: sinon.stub().resolvesThis(true), // stub the save method
       });
 
       const res = await request(app)
@@ -316,7 +318,8 @@ describe('GENERAL ROUTES', () => {
 
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('message', 'Authentication successful');
-      expect(res.body).to.have.property('token');
+      expect(res.body.tokens).to.have.property('accessToken');
+      expect(res.body.tokens).to.have.property('refreshToken');
     });
   });
 
