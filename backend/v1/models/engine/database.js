@@ -10,11 +10,11 @@ const { logger } = require('../../middleware/logger.js');
 const fs = require('fs').promises;
 require('dotenv').config();
 
-const db_name = process.env.ENVIR === "test" ? process.env.DB_TEST : process.env.DB;
-const db_user = process.env.ENVIR === "test" ? process.env.DB_TEST_USER : process.env.DB_USER;
-const db_pwd = process.env.ENVIR === "test" ? process.env.DB_TEST_URI_PWD : process.env.DB_URI_PWD;
-const db_host = process.env.ENVIR === "test" ? process.env.DB_TEST_HOST : process.env.DB_HOST;
-const db_port = process.env.ENVIR === "test" ? process.env.DB_TEST_PORT : process.env.DB_PORT;
+const db_name = process.env.DB_TEST;
+const db_user = process.env.DB_TEST_USER;
+const db_pwd = process.env.DB_TEST_URI_PWD;
+const db_host = process.env.DB_TEST_HOST;
+const db_port = process.env.DB_TEST_PORT;
 
 
 class DbStorage {
@@ -31,16 +31,18 @@ class DbStorage {
       this._page_size = 20;
 
       // initializes a new DbStorage instance
-      this._conn = mongoose.createConnection(`mongodb://${db_user}:${db_pwd}@${db_host}:${db_port}/${db_name}`, {minPoolSize: 2});
+      if (process.env.ENVIR === "test" || process.env.ENVIR === "dev") {
+        this._conn = mongoose.createConnection(`mongodb://${db_user}:${db_pwd}@${db_host}:${db_port}/${db_name}`, {minPoolSize: 2});
+      }
+      else {
+        this._conn = mongoose.createConnection(process.env.MONGO_URL, {minPoolSize: 2});
+      }
       this._conn.once('open', () => {
         logger.info('Database connection successfully');
       });
 
       this._mongo_db = mongoose;
       this.mongo_repos = {};
-      // const __filename = fileURLToPath(import.meta.url);
-      // const __dirname = dirname(__filename);
-      // this._blacklist_file = join(__dirname, 'blacklist.json');
       this._blacklist_file = join(__dirname, 'blacklist.json');
 
     } catch (error) {
