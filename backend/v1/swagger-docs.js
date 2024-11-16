@@ -9,7 +9,7 @@ require('dotenv').config();
  * @author Eyang, Daniel Eyoh <https://github.com/Tediyang>
  */
 
-const PATH_PREFIX = '/api/v1';
+const PATH_PREFIX = 'https://ovidotcycle.onrender.com/api/v1';
 
 const swaggerOptions = {
   definition: {
