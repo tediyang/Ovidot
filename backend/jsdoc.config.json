@@ -1,9 +1,0 @@
-{
-  "source": {
-    "include": ["./admin", "./routes"],
-    "exclude": ["./node_modules"]
-  },
-  "opts": {
-    "recurse": true
-  }
-}
