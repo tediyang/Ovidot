@@ -38,6 +38,16 @@ class AppController {
     }
 
   /**
+   * Root route of the API.
+   * @param {Object} req - Express Request
+   * @param {Object} res - Express Response
+   * @returns {void}
+   */
+  async home(req, res) {
+    return handleResponse(res, 200, "Welcome to Ovidot API - For help visit '/api/vi/documentation");
+  }
+
+  /**
    * Register user
    * @param {Object} req - Express Request
    * @param {Object} res - Express Response
