@@ -3,67 +3,61 @@ const { logger } = require('../middleware/logger.js');
 const { schedule } = require('node-cron');
 const email_service = require('../services/emailService.js');
 const { createClient } = require('redis');
-const { readFileSync } = require('fs');
 require('dotenv').config();
 
 // Get environment variables
 const {
-  HOST,
+  REDIS_URL,
   ENVIR,
-  APP_PORT,
-  USERNAME,
-  PASSWORD,
-  REDISPORT,
-  PRIKEY,
-  CRT,
-  PEMFILE
+  APP_PORT
 } = process.env;
 
 
 const redisSetup = async () => {
   let client;
-  // Setup and connect to Redis Server
-  if (ENVIR !== 'test' && ENVIR !== 'dev') {
-    client = await createClient({
-      username: `${USERNAME}`,
-      password: `${PASSWORD}`,
-      socket: {
-        host: HOST,
-        port: REDISPORT,
-        tls: true,
-        key: readFileSync(`./${PRIKEY}`),
-        cert: readFileSync(`./${CRT}`),
-        ca: [readFileSync(`./${PEMFILE}`)],
-        reconnectStrategy: retries => {
-          if (retries > 10) return new Error('Max reconnection attempts exceeded');
-          return Math.min(retries * 50, 2000);
-        },
-      },
-    })
-      .on('success', () => logger.info(`Redis Client connected on port ${REDISPORT}`))
-      .on('error', err => logger.error('Redis Client Error', err))
-      .connect();
-  
-  } else {
-    client = await createClient({
-      socket: {
-        reconnectStrategy: retries => {
-          if (retries > 10) {
-            logger.error('Max reconnection attempts exceeded');
-            return new Error('Max reconnection attempts exceeded');
-          }
-  
-          return Math.min(retries * 50, 2000);
-        },
-      },
-    })
-      .on('connect', () => logger.info('Redis Client connected on PORT 6379'))
-      .on('error', err => logger.error('Redis Client Error', err))
-      .connect();
-  }
 
-  return client;
-}
+  try {
+    if (ENVIR === 'test' || ENVIR === 'dev') {
+      // Local or test environment
+      client = createClient({
+        socket: {
+          reconnectStrategy: retries => {
+            if (retries > 3) {
+              logger.error('Max reconnection attempts exceeded');
+              return new Error('Max reconnection attempts exceeded');
+            }
+            return Math.min(retries * 50, 2000);
+          },
+        },
+      });
+
+      client.on('connect', () => logger.info('Redis Client connected on PORT 6379'));
+    } else {
+      // Production environment using Render's internal Redis
+      client = createClient({
+        url: REDIS_URL,
+        socket: {
+          reconnectStrategy: retries => {
+            if (retries > 3) {
+              logger.error('Max reconnection attempts exceeded');
+              return new Error('Max reconnection attempts exceeded');
+            }
+            return Math.min(retries * 50, 2000);
+          },
+        },
+      });
+
+      client.on('connect', () => logger.info(`Redis Client connected to ${REDIS_URL}`));
+    }
+    client.on('error', err => logger.error('Redis Client Error', err));
+
+    await client.connect(); // Connect the client
+    return client;
+
+  } catch (error) {
+    logger.error('Redis setup failed', error);
+  }
+};
 
 /**
  * Starts server
