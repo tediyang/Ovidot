@@ -9,7 +9,7 @@ require('dotenv').config();
 const {
   REDIS_URL,
   ENVIR,
-  APP_PORT
+  PORT
 } = process.env;
 
 
@@ -64,7 +64,7 @@ const redisSetup = async () => {
  * @param {Express} app
  */
 const startServer = async (app) => {
-  const port = APP_PORT || 5000;
+  const port = PORT || 5000;
 
 
   app.listen(port, () => {
