@@ -1,0 +1,53 @@
+{
+  "name": "backend",
+  "type": "commonjs",
+  "version": "1.0.0",
+  "description": "* NodeJs\r * Express\r * MongoDB",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "pm2 start app.js",
+    "stop": "pm2 stop app.js",
+    "monitor": "pm2 monitor",
+    "save": "pm2 save",
+    "start": "nodemon app.js",
+    "test": "mocha --timeout 540000"
+  },
+  "keywords": [],
+  "author": "Eyang, Daniel Eyoh",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "chai": "^4.3.10",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "dotenv-safe": "^8.2.0",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-graceful-shutdown": "^1.1.3",
+    "express-jwt": "^8.4.1",
+    "express-useragent": "^1.0.15",
+    "express-winston": "^4.2.0",
+    "joi": "^17.13.3",
+    "mocha": "^10.2.0",
+    "mongoose": "^7.6.3",
+    "morgan": "^1.10.0",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.5",
+    "pm2": "^5.4.2",
+    "redis": "^4.6.11",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-jsdoc-express": "^4.1.0",
+    "swagger-ui-express": "^5.0.0",
+    "uuid": "^9.0.1",
+    "winston": "^3.11.0",
+    "yaml": "^2.3.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.3",
+    "@babel/preset-env": "^7.23.3",
+    "nodemon": "^3.1.4",
+    "prettier": "^3.3.3",
+    "sinon": "^19.0.2",
+    "supertest": "^7.0.0"
+  }
+}
