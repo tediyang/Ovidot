@@ -63,7 +63,7 @@ const redisSetup = async () => {
  * Starts server
  * @param {Express} app
  */
-const startServer = async (app) => {
+const startServer = app => {
   const port = PORT || 5000;
 
 
