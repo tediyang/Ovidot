@@ -9,7 +9,7 @@
     "stop": "pm2 stop app.js",
     "monitor": "pm2 monitor",
     "save": "pm2 save",
-    "start": "nodemon app.js",
+    "start": "node app.js",
     "test": "mocha --timeout 540000"
   },
   "keywords": [],

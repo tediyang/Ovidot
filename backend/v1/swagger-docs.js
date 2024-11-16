@@ -35,15 +35,15 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://${process.env.HOST}:${process.env.APP_PORT}${PATH_PREFIX}/admin`,
+        url: `http://${process.env.HOST_URL}${PATH_PREFIX}/admin`,
         description: 'Admin Routes Server',
       },
       {
-        url: `http://${process.env.HOST}:${process.env.APP_PORT}${PATH_PREFIX}/auth`,
+        url: `http://${process.env.HOST_URL}${PATH_PREFIX}/auth`,
         description: 'Authenticated Routes server',
       },
       {
-        url: `http://${process.env.HOST}:${process.env.APP_PORT}${PATH_PREFIX}`,
+        url: `http://${process.env.HOST_URL}${PATH_PREFIX}`,
         description: 'General Routes server',
       },
     ],
