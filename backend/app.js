@@ -4,7 +4,8 @@ const gracefulShutdown = require('express-graceful-shutdown');
 const tokenVerification = require('./v1/middleware/tokenVerification.js');
 const { logger, appLogger } = require('./v1/middleware/logger.js');
 const { serve, setup } = require('swagger-ui-express');
-const { startServer } = require('./v1/libs/boot.js');
+const { schedule } = require('node-cron');
+const email_service = require('./v1/services/emailService.js');
 const { swaggerSpec, PATH_PREFIX } = require('./v1/swagger-docs.js');
 const { Admin } = require('./v1/models/engine/database.js');
 const { Role, userStatus } = require('./v1/enums.js');
@@ -74,7 +75,33 @@ ultimate
   });
 
 // start server
-startServer(app);
+// startServer(app);
+/**
+ * Starts server
+ * @param {Express} app
+ */
+const port = process.env.PORT || 5000;
+
+app.listen(port, () => {
+  logger.info(`Server listening on PORT ${port}`);
+
+  // Setup cron job
+  if (process.env.EMAIL) {
+    try {
+      // Schedule the cron job
+      schedule("*/20 * * * * *", async () => { await email_service.handleEmailCron() });
+
+      // Log success message for the cron job
+      logger.info('Mail job is active and scheduled to run every 30 seconds.');
+    } catch (error) {
+      // Log failure message if scheduling the cron job fails
+      logger.error('Mail job setup failed: ', error);
+    }
+  } else {
+    logger.info('No MAIL_USER specified, cron job not scheduled.');
+  }
+});
+
 
 // Graceful shutdown configuration
 const shutdown = gracefulShutdown(app, {
