@@ -67,7 +67,7 @@ const startServer = async (app) => {
   const port = PORT || 5000;
 
 
-  app.listen(port, '0.0.0.0', () => {
+  app.listen(port, () => {
     logger.info(`Server listening on PORT ${port}`);
 
     // Setup cron job
