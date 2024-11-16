@@ -7,6 +7,9 @@ const passwordController = require('../controllers/password.controller.js');
 // Create an Express router
 const router /** @type {ExpressRouter} */ = Router();
 
+/* welcome route */
+router.get('/', appController.home);
+
 /**
  * Route to register user
  * @swagger
