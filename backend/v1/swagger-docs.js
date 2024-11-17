@@ -22,12 +22,12 @@ const swaggerOptions = {
     components: {
       securitySchemes: {
         adminToken: { // This name must match the name used in the security section of your path
-          type: 'http', // The type of the security scheme
+          type: process.env.SECURITY, // The type of the security scheme (http or https)
           scheme: 'bearer', // The name of the HTTP Authorization scheme to be used
           bearerFormat: 'JWT', // Optional, only needed if using bearer tokens
         },
         userToken: { // This name must match the name used in the security section of your path
-          type: 'http', // The type of the security scheme
+          type: process.env.SECURITY, // The type of the security scheme (http or https)
           scheme: 'bearer', // The name of the HTTP Authorization scheme to be used
           bearerFormat: 'JWT', // Optional, only needed if using bearer tokens
         },
@@ -35,15 +35,15 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://${process.env.HOST_URL}${PATH_PREFIX}/admin`,
+        url: `${process.env.HOST_URL}${PATH_PREFIX}/admin`,
         description: 'Admin Routes Server',
       },
       {
-        url: `http://${process.env.HOST_URL}${PATH_PREFIX}/auth`,
+        url: `${process.env.HOST_URL}${PATH_PREFIX}/auth`,
         description: 'Authenticated Routes server',
       },
       {
-        url: `http://${process.env.HOST_URL}${PATH_PREFIX}`,
+        url: `${process.env.HOST_URL}${PATH_PREFIX}`,
         description: 'General Routes server',
       },
     ],
