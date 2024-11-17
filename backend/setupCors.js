@@ -12,7 +12,7 @@ const allowedOrigin = (app) => {
   // Enable cors
   app.use(cors({
     origin: origin,
-    methods: 'GET,POST',
+    methods: 'GET,POST,PUT,DELETE',
     credentials: true, // Include cookies in CORS requests
     optionsSuccessStatus: 204, // Respond with a 204 status for preflight requests
   }));
