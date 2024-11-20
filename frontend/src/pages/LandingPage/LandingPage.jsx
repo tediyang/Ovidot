@@ -1,12 +1,17 @@
 import React from "react";
+import './landing-page.css'
 
 function LandingPage() {
   return (
     <main>
+        <section className=" info p-2 my-5 w-[65%] mx-auto flex justify-between items-center rounded-[0.4rem]">
+                <p className=" text-[0.5rem]">We will soon have a mobile version, it’s still us though.</p>
+                <p className=" text-[0.6rem]">Learn More</p>
+        </section>
       <section>
-        <div className="w-[90%] mx-auto">
-          <h1>
-            Ovulation and Period Tracker Assistant for Young Girls and Women
+        <div className="w-[90%] mx-auto text-center">
+          <h1 className=" text-[1.2rem] text-black">
+            Ovulation and Period Tracker Assistant for <span className="text-primary">Young Girls and Women</span> 
           </h1>
         </div>
         <div>
