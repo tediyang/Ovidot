@@ -1,9 +1,9 @@
-import logo from './logo.svg';
-import './App.css';
+import Help from "./Pages/Help/Help";
 
 function App() {
   return (
-    <div className="App">
+    <div className="bg-[#ffffff]">
+      <Help />
     </div>
   );
 }
