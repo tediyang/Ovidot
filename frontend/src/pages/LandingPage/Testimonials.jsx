@@ -48,7 +48,7 @@ function Testimonials() {
           // testimonial card
             <div key={testimonial.id} className=" bg-white px-4 py-4 flex flex-col items-center gap-6 text-left rounded-md h-[18rem] shadow-testimonial-card ">
               {/* user info */}
-              <div className="flex justify-start items-center gap-6 w-full">
+              <div className="flex justify-stargt items-center gap-6 w-full">
                 <img
                 className="size-[4rem]"
                   src={profile}
