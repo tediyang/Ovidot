@@ -1,4 +1,5 @@
 import Help from "./Pages/Help/Help";
+import LandingPage from "./Pages/LandingPage/LandingPage";
 
 function App() {
   return (
@@ -7,6 +8,5 @@ function App() {
     </div>
   );
 }
-
 
 export default App;
