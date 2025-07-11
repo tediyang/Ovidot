@@ -1,6 +1,7 @@
 import Header from "../../Components/Header";
 import Intro from "./Intro";
 import Steps from "./Steps";
+import Footer from "../../Components/Footer";
 
 
 const Help = () => {
@@ -11,6 +12,7 @@ const Help = () => {
         <Intro />
         <Steps />
       </main>
+      <Footer />
     </div>
   )
 }

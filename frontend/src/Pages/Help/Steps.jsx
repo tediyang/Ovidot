@@ -2,7 +2,7 @@ import user from "../../assets/user.svg";
 import profile from "../../assets/profile.svg";
 import log from "../../assets/log.svg";
 import pad from "../../assets/pad.svg";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 /**
  * A custom React hook that returns the current width of the window.
@@ -33,6 +33,41 @@ function useWindowWidth() {
 const Steps = () => {
   const width = useWindowWidth();
   const isMobile = width < 640;
+  const [ level, setLevel ] = useState(1);
+  const stepRefs = useRef([]); // Create a ref array for step elements
+
+  // Set up Intersection Observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const stepId = entry.target.dataset.id;
+            setLevel(stepId)
+          }
+        });
+      },
+      {
+        root: null, // relative to viewport
+        threshold: 1, // trigger when 100% visible
+      }
+    );
+
+    // Copy the current refs to a local variable
+    const currentStepRefs = stepRefs.current;
+
+    // Observe all step elements
+    currentStepRefs.forEach(el => {
+      if (el) observer.observe(el);
+    });
+
+    // Cleanup observer on unmount
+    return () => {
+      currentStepRefs.forEach(el => {
+        if (el) observer.unobserve(el);
+      });
+    };
+  }, [level]);
 
   const steps = [
     {
@@ -68,8 +103,13 @@ const Steps = () => {
   return (
     <div className='flex flex-col justify-center items-center text-center gap-0 my-10'>
       {
-        steps.map((step) => (
-          <section key={step.id} className={`flex flex-col-reverse justify-center items-center gap-10 w-full border-solid border-0 border-l-4 border-l-[#7067674D] py-8 relative ${ step.id === 4 && "before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-[#7067674D] before:-bottom-5 before:-left-3" }`}>
+        steps.map((step, index) => (
+          <section
+            key={step.id}
+            ref={el => stepRefs.current[index] = el} // Assign ref to each element
+            data-id={step.id} // Optional: store ID for reference
+            className={`flex flex-col-reverse justify-center items-center gap-10 w-full border-solid border-0 border-l-4 transition-colors duration-300 ease-in ${ step.id <= level ? "border-l-[#4D0B5E]": "border-l-[#7067674D]" } py-8 relative ${ step.id === 4 && "before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:-bottom-5 before:-left-3 before:transition-colors before:duration-300 before:ease-in" } ${level >= 4 ? "before:bg-[#4D0B5E]": "before:bg-[#7067674D]"}`}
+          >
             <img className="w-3/12" src={step.image} alt={step.titleSpan}/>
             <div className="flex flex-col justify-center items-center gap-3">
               <div className="border-solid border-2 bg-[#4D0B5E] rounded-full w-14 h-14 flex justify-center items-center text-white text-2xl">{step.id}</div>
