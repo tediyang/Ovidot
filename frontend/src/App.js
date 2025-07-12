@@ -1,11 +1,15 @@
-import Help from "./Pages/Help/Help";
-import LandingPage from "./Pages/LandingPage/LandingPage";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Help from "./pages/Help/Help";
+import LandingPage from "./pages/LandingPage/LandingPage";
 
 function App() {
   return (
-    <div className="bg-[#ffffff]">
-      <Help />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/help" element={<Help />} />
+      </Routes>
+    </Router>
   );
 }
 
