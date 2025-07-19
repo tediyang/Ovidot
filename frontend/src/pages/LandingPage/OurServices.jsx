@@ -1,10 +1,9 @@
-import React from "react";
 import predictionsIcon from "../../assets/landing-page/predictions.png";
 import dataIcon from "../../assets/landing-page/data-science.png";
 import controlIcon from "../../assets/landing-page/control.png";
 import privacyIcon from "../../assets/landing-page/privacy.png";
 
-function OurServices() {
+const OurServices = () => {
   const services = [
     {
       id: 1,
@@ -41,19 +40,25 @@ function OurServices() {
   ];
 
   return (
-    <section className=" w-[80%] mx-auto my-16 flex flex-col gap-10">
+    <div className="flex flex-col md:flex-row md:flex-wrap md:justify-center w-[80%] lg:w-full mx-auto my-16 gap-10">
       {/* top row */}
       {services.map((service) => (
-        <div key={service.id} className="border rounded-[0.6rem] bg-primary bg-opacity-5 px-6 pt-8 pb-10 text-left ">
-          <div className={` bg-[${service.color}] rounded-[0.4rem] inline-flex items-center justify-center p-2 mb-4`}>
+        <div
+          key={service.id}
+          className="md:basis-2/5 lg:basis-1/5 lg:max-w-[17rem] border rounded-[0.6rem] bg-primary bg-opacity-5 px-6 pt-8 pb-10 text-left shadow-[2.52px_2.52px_12.6px_0px_#8BA9C6]"
+        >
+          <div
+            className={`bg-[${service.color}] rounded-[0.4rem] inline-flex items-center justify-center p-2 mb-4`}
+          >
             <img src={service.icon} alt="icon" className="size-[2.5rem]" />
           </div>
-          <h2 className=" mb-2">{service.title}</h2>
-          <p className=" text-xl text-[#3F404AB2] text-opacity-70">{service.content}</p>
+          <h3 className="mb-2">{service.title}</h3>
+          <p className=" text-sm lg:text-base text-[#3F404AB2] text-opacity-70">
+            {service.content}
+          </p>
         </div>
       ))}
-
-    </section>
+    </div>
   );
 }
 

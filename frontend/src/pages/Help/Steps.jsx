@@ -1,8 +1,8 @@
 import BlurEllipse from "../../components/BlurEllipse";
-import user from "../../assets/user.svg";
-import profile from "../../assets/profile.svg";
-import log from "../../assets/log.svg";
-import pad from "../../assets/pad.svg";
+import user from "../../assets/help-page/user.svg";
+import profile from "../../assets/help-page/profile.svg";
+import log from "../../assets/help-page/log.svg";
+import pad from "../../assets/help-page/pad.svg";
 import { useState, useEffect, useRef } from "react";
 
 /**
@@ -104,7 +104,7 @@ const Steps = () => {
   ];
 
   return (
-    <div className='flex flex-col justify-center items-center text-center gap-0 relative my-10 sm:mx-14'>
+    <section className='flex flex-col justify-center items-center text-center gap-0 relative my-10 sm:mx-14'>
       {
         steps.map((step, index) => (
           <section
@@ -124,8 +124,8 @@ const Steps = () => {
           </section>
         ))
       }
-      <BlurEllipse />
-    </div>
+      <BlurEllipse position="-left-32 -top-6" />
+    </section>
   )
 }
 
