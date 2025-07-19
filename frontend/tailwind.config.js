@@ -2,6 +2,12 @@
 
 module.exports = {
   content: ["./src/**/*.{js,jsx}"],
+  safelist: [
+    'bg-[#0013FF]',
+    'bg-[#FF9900]',
+    'bg-[#FF000F]',
+    'bg-[#00E752]',
+  ],
   theme: {
     extend: {
       colors: {
