@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
 import PropTypes from 'prop-types';
 
-const MobileMenu = (props) => {
+const DashboardMobileMenu = (props) => {
   const { isOpen, toggleMenu, path, handleNav } = props;
 
   return (
@@ -11,7 +11,7 @@ const MobileMenu = (props) => {
       <button
         onClick={toggleMenu}
         className={
-          "flex flex-col justify-center items-start w-10 h-10 bg-transparent rounded-md transition-all duration-300 ease-in-out z-30 sm:hidden border-0"
+          "flex flex-col justify-center items-start w-10 h-10 bg-transparent rounded-md transition-all duration-300 ease-in-out z-30 lg:hidden border-0"
         }
         aria-label="Toggle menu"
         aria-expanded={isOpen}
@@ -25,46 +25,36 @@ const MobileMenu = (props) => {
       {/* Overlay for when menu is open on mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-[#4D0B5E] bg-opacity-20 z-20 md:hidden"
+          className="fixed inset-0 bg-[#4D0B5E] bg-opacity-20 z-20 lg:hidden"
           onClick={toggleMenu} // Close menu when clicking outside
         ></div>
       )}
 
       {/* Mobile Menu (Off-canvas) */}
       <nav
-        className={`flex flex-col items-center gap-5 sm:hidden bg-white fixed inset-y-0 w-3/4 h-[100dvh] z-30 transform transition-[right] duration-300 ease-in-out ${ isOpen ? "-right-0" : "-right-[30rem]" }`}
+        className={`flex flex-col items-center gap-5 lg:hidden bg-white fixed inset-y-0 w-3/4 sm:w-2/4 h-[100dvh] z-30 transform transition-[right] duration-300 ease-in-out ${ isOpen ? "-right-0" : "-right-[30rem] sm:-right-[50rem]" }`}
       >
         <ul className="self-start flex flex-col gap-3 ml-5 p-6 space-y-4 mt-20 list-none">
           <li>
             <Link
-              to="/"
+              to="/dashboard"
               className={`text-[#3F404AB2] no-underline hover:text-[#4D0B5E] ${
-                path === "/" && "text-[#4D0B5E]"
+                path.includes("dashboard") && "text-[#4D0B5E]"
                 }`
               }
               onClick={toggleMenu}
             >
-              HOME
+              DASHBOARD
             </Link>
           </li>
           <li>
             <Link
-              to="/about"
-              className={`text-[#3F404AB2] no-underline hover:text-[#4D0B5E] ${path.includes("about"
+              to="/profile"
+              className={`text-[#3F404AB2] no-underline hover:text-[#4D0B5E] ${path.includes("profile"
               ) && "text-[#4D0B5E]"}`}
               onClick={toggleMenu}
             >
-              ABOUT
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/help"
-              className={`text-[#3F404AB2] no-underline hover:text-[#4D0B5E] ${path.includes("help"
-              ) && "text-[#4D0B5E]"}`}
-              onClick={toggleMenu}
-            >
-              HELP
+              PROFILE
             </Link>
           </li>
         </ul>
@@ -87,11 +77,10 @@ const MobileMenu = (props) => {
   );
 };
 
-MobileMenu.propTypes = {
+DashboardMobileMenu.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   toggleMenu: PropTypes.func.isRequired,
   path: PropTypes.string.isRequired,
-  handleNav: PropTypes.func.isRequired
 };
 
-export default MobileMenu;
+export default DashboardMobileMenu;

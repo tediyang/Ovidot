@@ -118,7 +118,7 @@ const Steps = () => {
             </div>
             <div className={`flex flex-col justify-center items-center gap-3 py-8 sm:border-solid sm:border-0 transition-colors duration-300 ease-in ${step.id % 2 !== 0 ? "sm:items-start sm:justify-start sm:text-left sm:pl-10 lg:pl-16 sm:border-l-2 sm:border-l-[#7067674D] sm:group-hover:border-l-[#4D0B5E]": "sm:items-end sm:justify-end sm:text-right sm:pr-10 lg:pr-16 sm:border-r-2 sm:border-r-[#7067674D] sm:group-hover:border-r-[#4D0B5E]"} sm:items-start sm:justify-start sm:text-left sm:basis-1/2`}>
               <div className="border-solid border-2 bg-[#4D0B5E] rounded-full w-14 h-14 flex justify-center items-center text-white text-2xl">{step.id}</div>
-              <h2 className="w-[80%]">{step.title} {isMobile && <br/>}<span className="text-[#4D0B5E]">{step.titleSpan}</span></h2>
+              <h2 className="w-[80%]">{step.title} {isMobile && <br/>}<span className="text-primary">{step.titleSpan}</span></h2>
               <p className="text-sm lg:text-base text-[#3F404AB2] w-[90%]">{step.description}</p>
             </div>
           </section>

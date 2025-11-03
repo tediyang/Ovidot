@@ -11,6 +11,10 @@ body {
   overflow-y: visible;
   font-family: 'Cabin', sans-serif;
 }
+a {
+  text-decoration: none;
+  color: inherit;
+}
 .blur-ellipse {
   background-color: #4D0B5E;
   filter: blur(112.6px) !important;

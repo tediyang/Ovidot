@@ -2,12 +2,7 @@
 
 module.exports = {
   content: ["./src/**/*.{js,jsx}"],
-  safelist: [
-    'bg-[#0013FF]',
-    'bg-[#FF9900]',
-    'bg-[#FF000F]',
-    'bg-[#00E752]',
-  ],
+  safelist: ["bg-[#0013FF]", "bg-[#FF9900]", "bg-[#FF000F]", "bg-[#00E752]"],
   theme: {
     extend: {
       colors: {
@@ -22,6 +17,15 @@ module.exports = {
         "footer-gradient":
           "linear-gradient(51.27deg, #0013FF 0%, rgba(77, 11, 94, 0.98) 97.85%)",
       },
+    },
+    screens: {
+      xxsm: "360px",
+      xsm: "412px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
     },
   },
   plugins: [],

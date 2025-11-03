@@ -16,7 +16,7 @@ const LandingPage = () => {
       <Header />
       <main className="flex flex-col items-center relative my-10">
         {/* announcement section */}
-        <section className="shadow-info p-2 mt-4 mb-8 max-w-[20rem] md:w-[22rem] md:max-w-[22rem] text-center rounded-[0.4rem]">
+        <section className="shadow-info p-2 mt-4 mb-8 max-w-[20rem] md:w-[22rem] md:max-w-[22rem] lg:w-[25rem] lg:max-w-full text-center rounded-[0.4rem]">
           <p className="text-sm text-wrap">
             We will soon have a mobile version, it&apos;s still us though.
           </p>

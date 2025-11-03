@@ -35,7 +35,7 @@ const Testimonials = () => {
           <h1 className="font-[700] lg:text-[32px]">
             Hear from Our <span className="text-primary">Satisfied Users</span>
           </h1>
-          <p className="text-sm lg:text-base text-[#3F404AB2] text-opacity-70">
+          <p className="lg:w-[60%] text-sm lg:text-base text-[#3F404AB2] text-opacity-70">
             Live in sync with your cycle, from period to pregnancy with Ovidot.
             Say goodbye to poor trackers and hello to a clear, and organized
             view of your fertility calendar.
