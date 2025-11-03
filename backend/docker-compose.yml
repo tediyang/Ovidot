@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  # Your Node.js application
+  app:
+    build: .
+    container_name: nodejs-app
+    restart: unless-stopped
+    ports:
+      - "1245:1245"
+    environment:
+      - ALLOWED_ORIGIN=*
+      # - MONGO_URL=${MONGO_URL}
+      - PORT=1245
+      # - REDIS_URL=${REDIS_URL}
+      - MONGO_URI=mongodb://mongo:27017/
+      - REDIS_URL=redis://redis:6379
+      - SECURITY=HTTP
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+      - redis
+
+  # MongoDB Service
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=your-db-name
+    restart: unless-stopped
+
+  # Redis Service
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
+  redis_data:

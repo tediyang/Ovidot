@@ -10,13 +10,14 @@
     "monitor": "pm2 monitor",
     "save": "pm2 save",
     "start": "node app.js",
-    "test": "mocha --timeout 540000"
+    "test": "mocha --timeout 540000",
+    "demon": "nodemon app.js"
   },
   "keywords": [],
   "author": "Eyang, Daniel Eyoh",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "chai": "^4.3.10",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",

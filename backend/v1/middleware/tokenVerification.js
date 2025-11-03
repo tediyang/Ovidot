@@ -29,7 +29,7 @@ class TokenVerification {
     // Check if the token is blacklisted
     if (blacklist.isTokenBlacklisted(token)) {
       return res.status(401).json({
-        msg: 'Token logged out, get a new access token at /api/v1/refresh-token or login again',
+        message: 'Token logged out, get a new access token at /api/v1/refresh-token or login again',
         second_chance: true
       });
     }
@@ -37,7 +37,7 @@ class TokenVerification {
     verify(token, secretKey, async (err, user) => {
       if (err) {
         return res.status(401).json({
-          msg: 'Token expired, get a new access token at /api/v1/refresh-token or login again',
+          message: 'Token expired, get a new access token at /api/v1/refresh-token or login again',
           second_chance: true
         });
       }

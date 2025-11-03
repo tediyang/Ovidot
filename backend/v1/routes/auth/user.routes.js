@@ -493,6 +493,80 @@ router.get('/deactivate', userController.deactivateUser);
 router.delete('/delete', userController.deleteUser);
 
 /**
+ * Get notifications
+ * @swagger
+ * paths:
+ *   /users/notifications:
+ *     put:
+ *       summary: Read all notifications
+ *       tags:
+ *         - User Routes
+ *       security:
+ *         - userToken: []
+ * 
+ *       responses:
+ *          '200':
+ *            description: Successful
+ *
+ *          '401':
+ *             description: Unauthorized request
+ *             content:
+ *               application/json:
+ *                 schema:
+ *                   type: object
+ *                   oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Unauthorized
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Invalid token
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Account Deactivated
+ * 
+ *          '404':
+ *            description: File Not Found
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: User not found
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: Notification not found
+ * 
+ *          '500':
+ *            description: MongooseError or JsonWebTokenError
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  oneOf:
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: MongooseError occured
+ *                        error:
+ *                          type: object
+ *                    - properties:
+ *                        message:
+ *                          type: string
+ *                          description: JsonWebTokenError occured
+ *                        error:
+ *                          type: object
+ */
+router.get('/notifications/readAll', userController.readAllNotifications);
+
+/**
  * get notification by id
  * @swagger
  * paths:
@@ -779,6 +853,5 @@ router.delete('/notifications/:id', userController.deleteNotification);
  *                          type: object
  */
 router.get('/notifications', userController.getNotifications);
-
 
 module.exports = router;
