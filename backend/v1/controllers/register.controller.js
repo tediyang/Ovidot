@@ -53,11 +53,7 @@ class AppController {
    * @returns {void}
    */
   async home(req, res) {
-    return handleResponse(
-      res,
-      200,
-      "Welcome to Ovidot API - For help visit '/api/v1/documentation",
-    );
+    return handleResponse(res, 200, "Welcome to Ovidot API - For help visit '/api/v1/documentation");
   }
 
   /**
