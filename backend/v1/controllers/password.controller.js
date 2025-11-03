@@ -63,7 +63,7 @@ class PasswordController {
           // Send email
           const email = await Email.create({
             email: user.email,
-            username: user.username,
+            username: user.name.fname,
             email_type: emailType.forget,
             content: {
               resetLink: resetLink,
@@ -139,7 +139,7 @@ class PasswordController {
   /**
    * Reset user's password.
    * @param {Object} req - Express Request
-   * @param {Object} res - Express Response
+   * @param {Object} res - Express Refront_urlsponse
    * @return {void}
    */
   async ResetPass(req, res) {

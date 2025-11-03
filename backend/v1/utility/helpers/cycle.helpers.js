@@ -51,7 +51,7 @@ class CycleHelper extends CycleCalculator {
         await newCycle.save();
 
 				// Generate notification
-        const message = `Cycle created for ${startdate}`;
+        const message = `Cycle created for ${this.formatDate(startdate)}`;
         const notify = await notifications.generateNotification(userAction.createdCycle, message, newCycle._id);
 
 				// // Add the notification

@@ -60,7 +60,8 @@ const userSchema = new Schema({
         required: true
     },
     dob: {
-        type: Date
+        type: Date,
+        required: true
     },
     period: {
         type: Number,
@@ -101,7 +102,7 @@ const userSchema = new Schema({
 
 userSchema.pre('save', function(next) {
     if (this.isModified('username')) {
-        this.username = this.username.toLowerCase();
+        this.username = this.username && this.username.toLowerCase();
     }
     if (this.isModified('name.fname')) {
         this.name.fname = this.name.fname.toLowerCase();
