@@ -11,8 +11,12 @@ import calendarWhite from "../../assets/dashboard/calendar_white.png";
 import unsafe from "../../assets/dashboard/unsafe.png";
 import unsafeWhite from "../../assets/dashboard/unsafe_white.png";
 
-
-const DashboardCalendar = ({ setError, setDayPop, setHasCycle }) => {
+const DashboardCalendar = ({
+  setError,
+  setDayPop,
+  setHasCycle,
+  setCurrentCycle,
+}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [cycles, setCycles] = useState([]);
   const [adjacentCycles, setAdjacentCycles] = useState({});
@@ -23,7 +27,7 @@ const DashboardCalendar = ({ setError, setDayPop, setHasCycle }) => {
   // Extract year and month for cleaner dependencies
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const fetchCycleData = useCallback(
     async (year) => {
@@ -82,13 +86,32 @@ const DashboardCalendar = ({ setError, setDayPop, setHasCycle }) => {
         (cycle &&
           new Date(cycle.start_date).getMonth() === currentMonth &&
           new Date(cycle.start_date).getFullYear() === currentYear) ||
-          new Date(currentDate.getTime() + 5 * 24 * 60 * 60 * 1000) <= new Date(cycle.next_date) // 5 days before next date
+        new Date(currentDate.getTime() + 5 * 24 * 60 * 60 * 1000) <=
+          new Date(cycle.next_date) // 5 days before next date
     );
   }, [cycles, currentMonth, currentYear, currentDate]);
 
   useEffect(() => {
     setHasCycle(hasCycle);
   }, [hasCycle, setHasCycle]);
+
+  // Get cycle to modify
+  const cycleForToday = useMemo(() => {
+    const today = new Date();
+    return cycles.find(
+      (cycle) =>
+        cycle.month === getFullMonth(today.getMonth()) ||
+        getFullMonth(new Date(cycle.start_date).getMonth()) ===
+          getFullMonth(today.getMonth() - 1)
+    );
+  }, [cycles]);
+
+  // Update currentCycle in parent
+  useEffect(() => {
+    if (cycleForToday) {
+      setCurrentCycle(cycleForToday);
+    }
+  }, [cycleForToday, setCurrentCycle]);
 
   /**
    * Get the number of days in a given month.
@@ -115,7 +138,7 @@ const DashboardCalendar = ({ setError, setDayPop, setHasCycle }) => {
     );
     // Use timeout to ensure transition state is reset after render
     setTimeout(() => setIsTransitioning(false), 0);
-  }
+  };
 
   const goToNextMonth = () => {
     setIsTransitioning(true);
@@ -132,12 +155,15 @@ const DashboardCalendar = ({ setError, setDayPop, setHasCycle }) => {
    * @param {number} day - Day of the month (1-indexed)
    * @returns {string} - ISO-formatted date string (YYYY-MM-DD)
    */
-  const formatDateForEventCheck = useCallback((day) => {
-    const month = currentMonth + 1;
-    return `${currentYear}-${month.toString().padStart(2, "0")}-${day
-      .toString()
-      .padStart(2, "0")}`;
-  }, [currentYear, currentMonth]);
+  const formatDateForEventCheck = useCallback(
+    (day) => {
+      const month = currentMonth + 1;
+      return `${currentYear}-${month.toString().padStart(2, "0")}-${day
+        .toString()
+        .padStart(2, "0")}`;
+    },
+    [currentYear, currentMonth]
+  );
 
   const memoizedCalendarData = useMemo(() => {
     /**
@@ -212,7 +238,8 @@ const DashboardCalendar = ({ setError, setDayPop, setHasCycle }) => {
          *  This is done to prevent the previous cycle next date data from appearing in the current
          *  Cycle
          */
-        if (index+1 === allCycles.length &&
+        if (
+          index + 1 === allCycles.length &&
           cycle.next_date &&
           new Date(cycle.next_date).getTime() === dateStringTime
         ) {
@@ -263,7 +290,10 @@ const DashboardCalendar = ({ setError, setDayPop, setHasCycle }) => {
         };
 
         const cycle = cycles.find(
-          (cycle) => cycle.month === getFullMonth(new Date().getMonth())
+          (cycle) =>
+            cycle.month === getFullMonth(new Date().getMonth()) ||
+            getFullMonth(new Date(cycle.start_date).getMonth()) ===
+              getFullMonth(new Date().getMonth() - 1) // check previous month to know if the start date begins then.
         );
 
         if (cycleDay.eventName === "PERIOD") {
@@ -318,7 +348,16 @@ const DashboardCalendar = ({ setError, setDayPop, setHasCycle }) => {
 
     setTodayEvent(todayEventData);
     return calendarDays;
-  }, [currentDate, cycles, adjacentCycles, currentYear, currentMonth, isTransitioning, getDaysInMonth, formatDateForEventCheck]);
+  }, [
+    currentDate,
+    cycles,
+    adjacentCycles,
+    currentYear,
+    currentMonth,
+    isTransitioning,
+    getDaysInMonth,
+    formatDateForEventCheck,
+  ]);
 
   // Handling Tablet and Desktop view
   const renderDays = () => {
@@ -326,7 +365,10 @@ const DashboardCalendar = ({ setError, setDayPop, setHasCycle }) => {
       return (
         <div className="grid grid-cols-7 gap-1 p-2">
           {Array.from({ length: 42 }).map((_, index) => (
-            <div key={index} className="p-5 flex justify-center items-center h-[5rem] w-[5.5rem] lg:h-[3rem] lg:w-[3.5rem] xl:h-[5rem] xl:w-[5.5rem] bg-white animate-pulse rounded-md">
+            <div
+              key={index}
+              className="p-5 flex justify-center items-center h-[5rem] w-[5.5rem] lg:h-[3rem] lg:w-[3.5rem] xl:h-[5rem] xl:w-[5.5rem] bg-white animate-pulse rounded-md"
+            >
               <div className="h-4 w-4 bg-gray-300 rounded"></div>
             </div>
           ))}
@@ -350,18 +392,20 @@ const DashboardCalendar = ({ setError, setDayPop, setHasCycle }) => {
         <div
           key={day}
           className={`relative p-5 flex justify-center items-center h-[5rem] w-[5.5rem] lg:h-[3rem] lg:w-[3.5rem] xl:h-[5rem] xl:w-[5.5rem] cursor-pointer transition-colors duration-200 rounded-md
-            ${dayData.isToday ? "bg-primary text-white font-bold"
-              : dayData.eventName === "PERIOD"
-              ? "bg-red-100"
-              : dayData.eventName === "OVULATION DATE"
-              ? "bg-[#0af52c] bg-opacity-25"
-              : dayData.eventName === "EXPECT OVULATION"
-              ? "bg-[#efff00] bg-opacity-25"
-              : dayData.eventName === "FERTILE WINDOW"
-              ? "bg-[#00ceff] bg-opacity-25"
-              : dayData.eventName === "NEXT PERIOD DATE"
-              ? "bg-[#d22e2e] bg-opacity-25"
-              : ""
+            ${
+              dayData.isToday
+                ? "bg-primary text-white font-bold"
+                : dayData.eventName === "PERIOD"
+                ? "bg-red-100"
+                : dayData.eventName === "OVULATION DATE"
+                ? "bg-[#0af52c] bg-opacity-25"
+                : dayData.eventName === "EXPECT OVULATION"
+                ? "bg-[#efff00] bg-opacity-25"
+                : dayData.eventName === "FERTILE WINDOW"
+                ? "bg-[#00ceff] bg-opacity-25"
+                : dayData.eventName === "NEXT PERIOD DATE"
+                ? "bg-[#d22e2e] bg-opacity-25"
+                : ""
             }`}
         >
           <p>{day}</p>

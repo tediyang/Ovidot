@@ -115,7 +115,7 @@ const ProfileBody = ({ user, setUser, error, redirect }) => {
           null,
           toSubmit
         );
-        if (response && response.message.includes("successful")) {
+        if (response && response.data.message.includes("successful")) {
           // Optionally redirect to another page or reset the form
           // For example, redirect to sign-in page after successful signup
           setMessage("Update Successful");

@@ -13,6 +13,7 @@ const DashboardBody = ({ user, error, setError, redirect }) => {
   const [hasCycle, setHasCycle] = useState(false);
   const [createCycle, setCreateCycle] = useState(false);
   const [modifyCycle, setModifyCycle] = useState(false);
+  const [currentCycle, setCurrentCycle] = useState(null);
 
   // Get current month short and day
   const month = new Date().toLocaleString("default", { month: "short" });
@@ -51,6 +52,7 @@ const DashboardBody = ({ user, error, setError, redirect }) => {
                 setError={setError}
                 setDayPop={setDayPop}
                 setHasCycle={setHasCycle}
+                setCurrentCycle={setCurrentCycle}
               />
               <div className="flex flex-col sm:flex-row sm:gap-5 lg:flex-col justify-center items-center lg:justify-around xl:justify-between">
                 <div className="self-center relative flex w-full max-w-xl sm:min-h-48 lg:min-h-40 xl:min-h-48 mt-8 gap-2 bg-[#4D0B5E33] rounded-[15px] p-4">
@@ -128,7 +130,7 @@ const DashboardBody = ({ user, error, setError, redirect }) => {
           {
             modifyCycle && (
               <ModifyCycle
-                user={user}
+                cycle={currentCycle}
                 setModifyCycle={handleModifyCycle}
               />
             )

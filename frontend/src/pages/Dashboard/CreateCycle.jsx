@@ -55,11 +55,15 @@ const CreateCycle = ({ user, setCreateCycle }) => {
           "/auth/cycles/create",
           toSubmit
         );
-        if (response && response.message.includes("created")) {
+        if (response && response.data.message.includes("created")) {
           // Optionally redirect to another page or reset the form
           // For example, redirect to sign-in page after successful signup
           setMessage("Cycle Created");
           setLoading(false);
+          // reload the page after a short delay to reflect new cycle
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         } else {
           setMessage(response.message || "An error occurred!");
           setLoading(false);
@@ -90,7 +94,6 @@ const CreateCycle = ({ user, setCreateCycle }) => {
         <h3 className="text-primary">Create Your Cycle</h3>
         <form
           className="flex flex-col gap-4 mt-4"
-          onSubmit={handleSubmit}
           noValidate
         >
           <div className="basis-[45%]">
@@ -130,7 +133,8 @@ const CreateCycle = ({ user, setCreateCycle }) => {
           </div>
           <div className="basis-full mt-4 text-center">
             <button
-              type="submit"
+              type="button"
+              onClick={handleSubmit}
               className={`${
                 loading && "opacity-50 cursor-not-allowed"
               } px-6 py-3 text-white bg-primary hover:bg-opacity-90 rounded border-0`}
