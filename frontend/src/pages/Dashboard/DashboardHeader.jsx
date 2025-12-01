@@ -132,9 +132,8 @@ const DashboardHeader = ({ user, page }) => {
   const logout = async () => {
     try {
       const response = await apiService.logout();
-      console.log(response.status);
 
-      if (response && response.message.includes("Successful")) {
+      if (response) {
         navigate("/sign-in")
       }
 
@@ -187,7 +186,7 @@ const DashboardHeader = ({ user, page }) => {
           </section>
           <section className="max-h-72 overflow-y-auto">
             {notifications ? (
-              notifications.reverse().map((notification, index) => (
+              [...notifications].reverse().map((notification, index) => (
                 <div
                   key={notification._id}
                   className={`${
