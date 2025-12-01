@@ -3,54 +3,105 @@ const pino = require('pino');
 
 const logger = pino({ level: 'error' });
 
-const ALGORITHM = 'aes-256-cbc';
-const IV_LENGTH = 16;
-
 /**
- * Derive a 32-byte key using PBKDF2.
- * NOTE: Use environment variables for ENCRYPTION_KEY and ENCRYPTION_SALT in production.
+ * ----------------------------------
+ * KEY MANAGEMENT & VERSION CONTROL
+ * ----------------------------------
  */
-const SECRET_KEY = crypto.pbkdf2Sync(
-  process.env.ENCRYPTION_KEY ||
-    'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2',
-  process.env.ENCRYPTION_SALT || 'salt',
-  100000,
-  32,
-  'sha256'
-);
+const RAW_KEYS = {
+  v1: {
+    key: process.env.ENCRYPTION_KEY_V1,
+    salt: process.env.ENCRYPTION_SALT_V1,
+  },
+  v2: {
+    key: process.env.ENCRYPTION_KEY_V2,
+    salt: process.env.ENCRYPTION_SALT_V2,
+  }
+};
+
+const CURRENT_VERSION = 'v1';
 
 /**
- * Encrypt text safely using AES-256-CBC.
- * @param {string} text - Plain text to encrypt.
- * @returns {string} Base64 encoded encrypted string.
+ * ----------------------------------
+ * ALGORITHM SETTINGS
+ * ----------------------------------
+ */
+const ALGORITHM = 'aes-256-gcm';
+const IV_LENGTH = 12;
+const AUTH_TAG_LENGTH = 16;
+
+/**
+ * ----------------------------------
+ * KEY DERIVATION
+ * ----------------------------------
+ */
+const DERIVED_KEYS = {};
+Object.keys(RAW_KEYS).forEach((version) => {
+  DERIVED_KEYS[version] = crypto.pbkdf2Sync(
+    RAW_KEYS[version].key,
+    RAW_KEYS[version].salt,
+    100000,
+    32,
+    'sha256'
+  );
+});
+
+/**
+ * -----------------------------------------------------------
+ * ENCRYPT TEXT
+ * -----------------------------------------------------------
  */
 const encryptText = (text) => {
   if (typeof text !== 'string' || !text) return '';
+
+  const key = DERIVED_KEYS[CURRENT_VERSION];
   const iv = crypto.randomBytes(IV_LENGTH);
-  const cipher = crypto.createCipheriv(ALGORITHM, SECRET_KEY, iv);
-  let encrypted = cipher.update(text, 'utf8', 'base64');
-  encrypted += cipher.final('base64');
-  return Buffer.concat([iv, Buffer.from(encrypted, 'base64')]).toString('base64');
+  const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
+
+  const encryptedBuffer = Buffer.concat([
+    cipher.update(text, 'utf8'),
+    cipher.final()
+  ]);
+
+  const authTag = cipher.getAuthTag();
+
+  return `${CURRENT_VERSION}:${iv.toString('base64')}:${authTag.toString('base64')}:${encryptedBuffer.toString('base64')}`;
 };
 
 /**
- * Decrypt text safely.
- * @param {string} encryptedText - Base64 encoded encrypted text.
- * @param {object} [context={}] - Optional context for logging errors.
- * @returns {string} Decrypted plain text or empty string on failure.
+ * -----------------------------------------------------------
+ * DECRYPT TEXT
+ * -----------------------------------------------------------
  */
-const decryptText = (encryptedText, context = {}) => {
-  if (!encryptedText || typeof encryptedText !== 'string') return '';
-  try {
-    const buffer = Buffer.from(encryptedText, 'base64');
-    if (buffer.length < IV_LENGTH) throw new Error('Invalid encrypted data');
+const decryptText = (encryptedString, context = {}) => {
+  if (!encryptedString || typeof encryptedString !== 'string') return '';
 
-    const iv = buffer.subarray(0, IV_LENGTH);
-    const encrypted = buffer.subarray(IV_LENGTH).toString('base64');
-    const decipher = crypto.createDecipheriv(ALGORITHM, SECRET_KEY, iv);
-    let decrypted = decipher.update(encrypted, 'base64', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
+  try {
+    const parts = encryptedString.split(':');
+
+    if (parts.length !== 4) {
+      throw new Error('Invalid encrypted string format');
+    }
+
+    const [version, ivBase64, tagBase64, dataBase64] = parts;
+
+    const key = DERIVED_KEYS[version];
+    if (!key) throw new Error(`Unknown encryption key version: ${version}`);
+
+    const iv = Buffer.from(ivBase64, 'base64');
+    const authTag = Buffer.from(tagBase64, 'base64');
+    const encrypted = Buffer.from(dataBase64, 'base64');
+
+    const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
+    decipher.setAuthTag(authTag);
+
+    const decrypted = Buffer.concat([
+      decipher.update(encrypted),
+      decipher.final()
+    ]);
+
+    return decrypted.toString('utf8');
+
   } catch (err) {
     logger.error('Decryption failed', { error: err.message, context });
     return '';
@@ -59,5 +110,5 @@ const decryptText = (encryptedText, context = {}) => {
 
 module.exports = {
   encryptText,
-  decryptText,
+  decryptText
 };
