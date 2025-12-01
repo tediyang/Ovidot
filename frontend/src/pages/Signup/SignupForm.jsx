@@ -114,7 +114,7 @@ const Form = () => {
     const sendRequest = async () => {
       try {
         const response = await apiService.register(formToSend);
-        if (response && response.message.includes("Successful")) {
+        if (response) {
           // Optionally redirect to another page or reset the form
           // For example, redirect to sign-in page after successful signup
           setTimeout(() => {
