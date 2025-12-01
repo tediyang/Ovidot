@@ -324,6 +324,14 @@ class ApiService {
       throw error.data;
     }
   }
+
+  async deactivate(path) {
+    try {
+      return (await this.sendRequest(path, "GET"));
+    } catch (error) {
+      throw error.data;
+    }
+  }
 }
 
 export const apiService = new ApiService();
