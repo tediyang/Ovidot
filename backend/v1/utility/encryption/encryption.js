@@ -1,7 +1,5 @@
 const crypto = require('crypto');
-const pino = require('pino');
-
-const logger = pino({ level: 'error' });
+const { logger } = require('../../middleware/logger.js');
 
 /**
  * ----------------------------------
@@ -28,7 +26,6 @@ const CURRENT_VERSION = 'v1';
  */
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 12;
-const AUTH_TAG_LENGTH = 16;
 
 /**
  * ----------------------------------
