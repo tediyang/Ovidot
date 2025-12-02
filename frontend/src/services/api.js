@@ -281,7 +281,6 @@ class ApiService {
         body: JSON.stringify(data),
       });
     } catch (error) {
-      console.log('yes')
       throw error.data;
     }
   }
