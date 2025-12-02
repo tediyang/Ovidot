@@ -203,7 +203,7 @@ router.post('/login', appController.login.bind(appController));
  * Forget password route
  * @swagger
  * paths:
- *   /forget-password:
+ *   /forgot-password:
  *     post:
  *       summary: allow user to setup a new password
  *       tags:
