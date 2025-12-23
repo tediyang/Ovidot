@@ -2,23 +2,27 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { FaHome, FaEye, FaEyeSlash } from "react-icons/fa";
+import { apiService } from "../../services/api";
+import { useParams } from "react-router-dom";
 import NotificationToast from "../../components/NotificationToast";
 
-const Form = (props) => {
+const Form = ({ currentView }) => {
+  // extract token from URL params
+  const { token } = useParams();
+
   const [formData, setFormData] = useState({
     email: "",
     new_password: "",
     confirm_password: "",
   });
-  const [ passwordValid, setPasswordValid ] = useState(false);
-  const [ passwordMessage, setPasswordMessage ] = useState("");
-  const [ showPassword, setShowPassword ] = useState(false);
-  const [ validation, setValidation ] = useState(false);
+  const [passwordValid, setPasswordValid] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [validation, setValidation] = useState(false);
 
   // State to manage form submission status or messages
   const [submissionMessage, setSubmissionMessage] = useState("");
-
-  const { currentView } = props;
 
   // Handle input changes and update the form data state
   const handleChange = (e) => {
@@ -66,7 +70,7 @@ const Form = (props) => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission behavior
 
     setValidation(true);
@@ -79,14 +83,27 @@ const Form = (props) => {
         return;
       }
       // Simulate an API call to check if the email exists
-
-
-      setSubmissionMessage("Successful, Please check your mail!");
-      // Rest values
-      setFormData({
-        email: "",
-      });
-      setValidation(false);
+      try {
+        const submitData = {
+          email: formData.email,
+          front_url: window.location.origin + "/reset-password"
+        };
+        const response = await apiService.postData(
+          "/forgot-password",
+          submitData
+        );
+        if (response) {
+          setSubmissionMessage("Successful, Please check your mail for reset link");
+          return
+        }
+      } catch (error) {
+        setSubmissionMessage(
+          error?.message || "Failed to send email"
+        );
+        return;
+      } finally {
+        timeOutMessage();
+      }
     }
 
     // If current view is resetPassword, we need new_password and confirm_password
@@ -109,20 +126,36 @@ const Form = (props) => {
         return;
       }
       // Simulate an API call to reset the password
-
-
-      setSubmissionMessage("Password Reset Successful!");
-      // Rest values
-      setFormData({
-        new_password: "",
-        confirm_password: "",
-      });
-      setValidation(false);
-      setPasswordMessage("");
+      if (!token) {
+        try {
+          const submitData = {
+            new_password: formData.new_password,
+            token: token,
+          };
+          const response = await apiService.putData(
+            "/reset-password",
+            null,
+            submitData
+          );
+          if (response) {
+            setSubmissionMessage("Password Reset Successful!");
+            setValidation(false);
+          }
+        } catch (error) {
+          setSubmissionMessage(
+            error?.message || "Failed to reset password. Please try again."
+          );
+          return;
+        } finally {
+          // Rest values
+          setFormData({
+            new_password: "",
+            confirm_password: "",
+          });
+          timeOutMessage();
+        }
+      }
     }
-
-    // Reset submission message after a delay
-    timeOutMessage();
   };
 
   return (
@@ -187,13 +220,15 @@ const Form = (props) => {
               </label>
               <div className="flex relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   id="new_password"
                   name="new_password"
                   value={formData.new_password}
                   onChange={handleChange}
                   className={`${
-                    ((passwordMessage && !passwordValid) ||
+                    ((passwordMessage &&
+                      !passwordMessage.includes("not match") &&
+                      !passwordValid) ||
                       (validation && !formData.new_password)) &&
                     "border-red-500"
                   } border-solid border-[#C9CCCF] rounded-[10px] h-12 p-3 w-full`}
@@ -205,7 +240,11 @@ const Form = (props) => {
                   className="absolute right-3 inset-y-2 border-0 bg-transparent"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? <FaEyeSlash className='w-4 h-4' /> : <FaEye className='w-4 h-4' />}
+                  {showPassword ? (
+                    <FaEyeSlash className="w-4 h-4" />
+                  ) : (
+                    <FaEye className="w-4 h-4" />
+                  )}
                 </button>
               </div>
               <p className="text-sm text-red-500">
@@ -220,21 +259,37 @@ const Form = (props) => {
                 Confirm New Password{" "}
                 <span className="relative top-1 text-red-500">*</span>
               </label>
-              <input
-                type="password"
-                id="confirm_password"
-                name="confirm_password"
-                value={formData.confirm_password}
-                onChange={handleChange}
-                className={`${
-                  ((passwordMessage &&
-                    !passwordValid &&
-                    formData.confirm_password) ||
-                    (validation && !formData.confirm_password)) &&
-                  "border-red-500"
-                } border-solid border-[#C9CCCF] rounded-[10px] h-12 p-3 w-full`}
-                required
-              />
+              <div className="flex relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  id="confirm_password"
+                  name="confirm_password"
+                  value={formData.confirm_password}
+                  onChange={handleChange}
+                  className={`${
+                    ((passwordMessage &&
+                      !passwordValid &&
+                      formData.confirm_password) ||
+                      (validation && !formData.confirm_password)) &&
+                    "border-red-500"
+                  } border-solid border-[#C9CCCF] rounded-[10px] h-12 p-3 w-full`}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 inset-y-2 border-0 bg-transparent"
+                  aria-label={
+                    showConfirmPassword ? "Hide password" : "Show password"
+                  }
+                >
+                  {showConfirmPassword ? (
+                    <FaEyeSlash className="w-4 h-4" />
+                  ) : (
+                    <FaEye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
               <p className="text-sm text-red-500">
                 {passwordMessage.includes("not match") && passwordMessage}
               </p>

@@ -156,7 +156,7 @@ class ApiService {
       }
     }
 
-    return response.data;
+    return response;
   }
 
   /**
@@ -192,7 +192,7 @@ class ApiService {
       throw error?.data || error;
     }
 
-    return response;
+    return response.data;
   }
 
   /**
@@ -259,9 +259,9 @@ class ApiService {
    * @return {Promise<Object>} The response body of the API call.
    * @throws {Error} If the API endpoint is not specified in the config.
    */
-  getData(path) {
+  async getData(path) {
     try {
-      return this.sendRequest(path, "GET");
+      return (await this.sendRequest(path, "GET")).data;
     } catch (error) {
       throw error.data;
     }
@@ -277,12 +277,10 @@ class ApiService {
    */
   async postData(path, data) {
     try {
-      const response = await this.sendRequest(path, "POST", {
+      return await this.sendRequest(path, "POST", {
         body: JSON.stringify(data),
       });
-      alert(response)
     } catch (error) {
-      console.log('yes')
       throw error.data;
     }
   }
@@ -296,12 +294,12 @@ class ApiService {
    * @return {Promise<Object>} The response body of the API call.
    * @throws {Error} If the API endpoint or id is not specified.
    */
-  putData(path, id, data) {
+  async putData(path, id, data) {
     try {
       if (id) {
         path += `/${id}`
       }
-      return this.sendRequest(`${path}`, "PUT", {
+      return await this.sendRequest(`${path}`, "PUT", {
         body: JSON.stringify(data),
       });
     } catch (error) {
@@ -318,9 +316,17 @@ class ApiService {
    * @throws {Error} If the API endpoint or id is not specified.
    */
 
-  deleteData(path, id) {
+  async deleteData(path, id) {
     try {
-      return this.sendRequest(`${path}/${id}`, "DELETE");
+      return await this.sendRequest(`${path}/${id}`, "DELETE");
+    } catch (error) {
+      throw error.data;
+    }
+  }
+
+  async deactivate(path) {
+    try {
+      return (await this.sendRequest(path, "GET"));
     } catch (error) {
       throw error.data;
     }

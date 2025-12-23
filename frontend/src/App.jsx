@@ -8,6 +8,7 @@ import ForgetPassword from "./pages/ForgetPassword/ForgetPasswordPage";
 import ResetPassword from "./pages/ForgetPassword/ResetPasswordPage";
 import Dashboard from "./pages/Dashboard/DashboardPage";
 import Profile from "./pages/Profile/ProfilePage";
+import Settings from "./pages/Settings/SettingsPage";
 
 
 function App() {
@@ -20,9 +21,10 @@ function App() {
         <Route path="/sign-up" element={<Signup />} />
         <Route path="/sign-in" element={<Signin />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </Router>
   );

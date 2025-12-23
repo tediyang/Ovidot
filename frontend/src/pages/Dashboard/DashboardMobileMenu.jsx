@@ -2,9 +2,7 @@ import { Link } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
 import PropTypes from 'prop-types';
 
-const DashboardMobileMenu = (props) => {
-  const { isOpen, toggleMenu, path, handleNav } = props;
-
+const DashboardMobileMenu = ({ isOpen, toggleMenu, path }) => {
   return (
     <>
       {/* Hamburger Icon for Mobile */}
@@ -57,17 +55,21 @@ const DashboardMobileMenu = (props) => {
               PROFILE
             </Link>
           </li>
+          <li>
+            <Link
+              to="/settings"
+              className={`text-[#3F404AB2] no-underline hover:text-[#4D0B5E] ${path.includes("settings"
+              ) && "text-[#4D0B5E]"}`}
+              onClick={toggleMenu}
+            >
+              SETTINGS
+            </Link>
+          </li>
         </ul>
         <div className="self-start flex flex-col items-start gap-2 ml-5 p-6 mt-4">
           <p className="text-gray-600 text-sm">EMAIL</p>
           <p className="text-[#4D0B5E]/90 text-lg">info@ovidot.com</p>
         </div>
-        <button
-          className="w-[70%] h-[4rem] text-base md:w-[90px] min-h-[30px] font-[500] text-[#4D0B5E] bg-white border border-[#4D0B5E] rounded-[8px] font-[cabin] shadow-evenly"
-          onClick={handleNav}
-        >
-          SIGN IN
-        </button>
         <FaTimes
           onClick={toggleMenu}
           className="absolute top-6 right-4 text-[#4D0B5E] text-3xl"
