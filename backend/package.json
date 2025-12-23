@@ -34,7 +34,6 @@
     "morgan": "^1.10.0",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.5",
-    "pino": "^10.1.0",
     "pm2": "^5.4.2",
     "redis": "^4.6.11",
     "swagger-jsdoc": "^6.2.8",
