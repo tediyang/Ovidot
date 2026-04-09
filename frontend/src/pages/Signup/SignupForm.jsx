@@ -141,7 +141,7 @@ const Form = () => {
         }
       } catch (error) {
         setSubmissionMessage(
-          error.message || "An error occurred during submission."
+          error.data.message || "An error occurred during submission."
         );
         setSubmissionInProgress(false);
         timeOutMessage();

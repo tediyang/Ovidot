@@ -48,6 +48,7 @@ class CycleParser {
 	 * @returns cycles properties.
 	 */
 	 Filter(cycle) {
+		cycle = cycle.toJSON();  // Done to trigger decryption by mongoose
 		const result = {
 			id: cycle.id,
 			month: cycle.month,
