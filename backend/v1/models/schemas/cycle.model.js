@@ -10,9 +10,9 @@ const cycleSchema = new Schema({
     month: { type: String, required: true },
     year: { type: String, required: true },
     period: { type: Number, required: true, min: 1 },
-    ovulation: { type: Date },
-    start_date: { type: Date, required: true },
-    next_date: { type: Date, required: true },
+    ovulation: { type: String },
+    start_date: { type: String, required: true },
+    next_date: { type: String, required: true },
     days: { type: Number, required: true, min: 18, max: 38 },
     period_range: { type: [String], required: true },
     ovulation_range: { type: [String], required: true },
@@ -23,29 +23,33 @@ const cycleSchema = new Schema({
  * Encrypt sensitive fields before saving.
  */
 cycleSchema.pre('save', function (next) {
-    if (this.isModified('month')) {
-        this.month = encryptText(this.month);
+    if (this.isModified('ovulation')) {
+        this.ovulation = encryptText(this.ovulation);
     }
 
-    if (this.isModified('year')) {
-        this.year = encryptText(this.year);
+    if (this.isModified('start_date')) {
+        this.start_date = encryptText(this.start_date);
+    }
+
+    if (this.isModified('next_date')) {
+        this.next_date = encryptText(this.next_date);
     }
 
     if (this.isModified('period_range')) {
         this.period_range = this.period_range.map(date =>
-            encryptText(date.toISOString())
+            encryptText(date)
         );
     }
 
     if (this.isModified('ovulation_range')) {
         this.ovulation_range = this.ovulation_range.map(date =>
-            encryptText(date.toISOString())
+            encryptText(date)
         );
     }
 
     if (this.isModified('unsafe_days')) {
         this.unsafe_days = this.unsafe_days.map(date =>
-            encryptText(date.toISOString())
+            encryptText(date)
         );
     }
 
@@ -58,12 +62,16 @@ cycleSchema.pre('save', function (next) {
 cycleSchema.methods.toJSON = function () {
     const obj = this.toObject();
 
-    if (obj.month) {
-        obj.month = decryptText(obj.month);
+    if (obj.ovulation) {
+        obj.ovulation = decryptText(obj.ovulation);
     }
 
-    if (obj.year) {
-        obj.year = decryptText(obj.year);
+    if (obj.start_date) {
+        obj.start_date = decryptText(obj.start_date);
+    }
+
+    if (obj.next_date) {
+        obj.next_date = decryptText(obj.next_date);
     }
 
     if (Array.isArray(obj.period_range)) {
