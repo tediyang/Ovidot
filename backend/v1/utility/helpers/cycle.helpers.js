@@ -25,7 +25,7 @@ class CycleHelper extends CycleCalculator {
     const hasCycles = user._cycles.length > 0;
   
     if (hasCycles) {
-      const lastCycle = user._cycles[user._cycles.length - 1];
+      const lastCycle = user._cycles[user._cycles.length - 1].toJSON(); // Done to trigger decryption by mongoose
       const nextDate = new Date(lastCycle.next_date);
       const startDate = new Date(startdate);
       const differenceInDays = (nextDate - startDate) / this.MILLISECONDS_IN_A_DAY;
