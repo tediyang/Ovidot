@@ -57,6 +57,53 @@ cycleSchema.pre('save', function (next) {
 });
 
 /**
+ * Encrypt sensitive fields before updating (findOneAndUpdate, findByIdAndUpdate, updateOne, etc.)
+ */
+cycleSchema.pre('findOneAndUpdate', async function (next) {
+    const update = this.getUpdate();
+
+    // Helper to encrypt a single field
+    const encryptField = (field) => {
+        if (update[field]) {
+            update[field] = encryptText(update[field]);
+        }
+    };
+
+    // Helper to encrypt an array field
+    const encryptArrayField = (field) => {
+        if (update[field] && Array.isArray(update[field])) {
+            update[field] = update[field].map(v => encryptText(v));
+        }
+    };
+
+    // Handle direct update (without $set)
+    encryptField('ovulation');
+    encryptField('start_date');
+    encryptField('next_date');
+    encryptArrayField('period_range');
+    encryptArrayField('ovulation_range');
+    encryptArrayField('unsafe_days');
+
+    // Handle updates using $set operator (common in findOneAndUpdate)
+    if (update.$set) {
+        if (update.$set.ovulation) update.$set.ovulation = encryptText(update.$set.ovulation);
+        if (update.$set.start_date) update.$set.start_date = encryptText(update.$set.start_date);
+        if (update.$set.next_date) update.$set.next_date = encryptText(update.$set.next_date);
+        if (Array.isArray(update.$set.period_range)) {
+            update.$set.period_range = update.$set.period_range.map(v => encryptText(v));
+        }
+        if (Array.isArray(update.$set.ovulation_range)) {
+            update.$set.ovulation_range = update.$set.ovulation_range.map(v => encryptText(v));
+        }
+        if (Array.isArray(update.$set.unsafe_days)) {
+            update.$set.unsafe_days = update.$set.unsafe_days.map(v => encryptText(v));
+        }
+    }
+
+    next();
+});
+
+/**
  * Decrypt fields when returning JSON.
  */
 cycleSchema.methods.toJSON = function () {

@@ -86,7 +86,6 @@ class CycleHelper extends CycleCalculator {
    */
   performUpdateAndNotify = async (cycle, period, ovulation, cycleId, user) => {
     try {
-      // const updated_at = new Date();
       const month = this.getMonth(cycle.start_date);
       const updatedData = await this.calculate(period, cycle.start_date, ovulation);
       const data = cycleParser.Parse(month, period, cycle.start_date, updatedData);

@@ -162,7 +162,7 @@ class CycleCalculator {
    * @param {Date} date - the date to format
    * @returns {String} - the formatted date string
    */
-  formatDate = (date) => date.toISOString().split('T')[0];
+  formatDate = (date) => new Date(date).toISOString().split('T')[0];
   
   /**
    * Extract the month from the datetime.

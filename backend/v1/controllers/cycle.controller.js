@@ -251,7 +251,7 @@ class CycleController {
         period &&
         ovulation &&
         period === cycle.period &&
-        new Date(ovulation).getTime() === cycle.ovulation.getTime()
+        new Date(ovulation).getTime() === new Date(cycle.ovulation).getTime()
       ) {
         return handleResponse(
           res,
@@ -269,7 +269,7 @@ class CycleController {
       if (
         !period &&
         ovulation &&
-        new Date(ovulation).getTime() === cycle.ovulation.getTime()
+        new Date(ovulation).getTime() === new Date(cycle.ovulation).getTime()
       ) {
         return handleResponse(
           res,
