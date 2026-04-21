@@ -367,6 +367,7 @@ class CycleController {
         return handleResponse(res, 404, "Cycle not found");
       }
 
+      
       // Delete and notify user
       const deletdCycle = await cycleHelper.performDeleteAndNotify(
         cycleId,

@@ -130,7 +130,7 @@ class CycleHelper extends CycleCalculator {
       let cycle;
 
       await Connection.transaction(async () => {
-        cycle = await Cycle.findByIdAndRemove(cycleId);
+        cycle = (await Cycle.findByIdAndRemove(cycleId)).toJSON(); // Done to trigger decryption by mongoose
 
         const message = `Cycle deleted for ${this.formatDate(cycle.start_date)}`;
         const notify = await notifications.generateNotification(userAction.deletedCycle, message, cycle._id);
