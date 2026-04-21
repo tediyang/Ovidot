@@ -7,3 +7,4 @@ blacklist.json
 package-lock.json
 mongo_setup.js
 v1/logs
+.claude/
