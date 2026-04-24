@@ -10,6 +10,7 @@ const { Admin } = require('./v1/models/engine/database.js');
 const { Role, userStatus } = require('./v1/enums.js');
 const util = require('./v1/utility/encryption/cryptography.js');
 const allowedOrigin = require('./setupCors.js');
+const { apiLimiter } = require('./v1/middleware/rateLimiter.js');
 require('dotenv').config();
 
 // Import routes
@@ -52,6 +53,9 @@ const ultimate = (async () => {
 
 // Use loggers
 app.use(appLogger);
+
+// Apply global rate limiting
+app.use(apiLimiter);
 
 // Setup allowed origins (cors)
 allowedOrigin(app);

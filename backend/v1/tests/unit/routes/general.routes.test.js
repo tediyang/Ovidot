@@ -1,5 +1,4 @@
 const { expect } = require('chai');
-const app = require('../../../../app.js');
 const request = require('supertest');
 const sinon = require('sinon');
 const util = require('../../../utility/encryption/cryptography.js');
@@ -10,6 +9,11 @@ const userController = require('../../../controllers/user.controller.js');
 
 describe('GENERAL ROUTES', () => {
   let sandbox;
+  let app;
+
+  before(() => {
+    app = require('../../../../app.js');
+  });
 
   describe('Signup', () => {
     let userData;
@@ -257,7 +261,7 @@ describe('GENERAL ROUTES', () => {
         .send(loginData);
 
       expect(res.status).to.equal(400);
-      expect(res.body).to.have.property('message', "email, phone or password incorrect");
+      expect(res.body).to.have.property('message', "email or phone incorrect");
     });
 
     it('should return 400 if user is deactivated', async () => {
@@ -295,7 +299,7 @@ describe('GENERAL ROUTES', () => {
         .send(loginData);
 
       expect(res.status).to.equal(400);
-      expect(res.body).to.have.property('message', "email, phone or password incorrect");
+      expect(res.body).to.have.property('message', "password incorrect");
     });
 
     it('should successfully login', async () => {

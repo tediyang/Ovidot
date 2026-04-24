@@ -2,6 +2,7 @@
 const { Router } = require('express');
 const appController = require('../controllers/register.controller.js');
 const passwordController = require('../controllers/password.controller.js');
+const { authLimiter, tokenLimiter } = require('../middleware/rateLimiter.js');
 
 
 // Create an Express router
@@ -111,7 +112,7 @@ router.get('/', appController.home);
  *                      error:
  *                        type: object
  */
-router.post('/signup', appController.signup);
+router.post('/signup', authLimiter, appController.signup);
 
 /**
  * Route to log in a user
@@ -197,7 +198,7 @@ router.post('/signup', appController.signup);
  *                       error:
  *                         type: object
  */
-router.post('/login', appController.login.bind(appController));
+router.post('/login', authLimiter, appController.login.bind(appController));
 
 /**
  * Forget password route
@@ -284,7 +285,7 @@ router.post('/login', appController.login.bind(appController));
  *                        error:
  *                          type: object
  */
-router.post('/forgot-password', passwordController.forgotPass.bind(passwordController));
+router.post('/forgot-password', authLimiter, passwordController.forgotPass.bind(passwordController));
 
 /**
  * Validate reset password token
@@ -352,7 +353,7 @@ router.post('/forgot-password', passwordController.forgotPass.bind(passwordContr
  *                        error:
  *                          type: object
  */
-router.get('/reset-password/:token', passwordController.VerifyResetPass);
+router.get('/reset-password/:token', tokenLimiter, passwordController.VerifyResetPass);
 
 /**
  * Reset password route
@@ -438,7 +439,7 @@ router.get('/reset-password/:token', passwordController.VerifyResetPass);
  *                        error:
  *                          type: object
  */
-router.put('/reset-password', passwordController.ResetPass);
+router.put('/reset-password', authLimiter, passwordController.ResetPass);
 
 /**
  * Refresh Token route
@@ -531,6 +532,6 @@ router.put('/reset-password', passwordController.ResetPass);
  *                        error:
  *                          type: object
  */
-router.get('/refresh-token/:token', appController.refreshToken.bind(appController));
+router.get('/refresh-token/:token', tokenLimiter, appController.refreshToken.bind(appController));
 
 module.exports = router;

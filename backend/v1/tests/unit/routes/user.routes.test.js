@@ -274,7 +274,7 @@ describe('USER ROUTES', async () => {
         .send(updateData);
       
       expect(res.statusCode).to.equal(200);
-      expect(res.body).to.have.property('message', 'User succesfully updated');
+      expect(res.body).to.have.property('message', 'User successfully updated');
       expect(res.body).to.have.property('user');
     });
   });

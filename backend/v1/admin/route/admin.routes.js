@@ -4,6 +4,7 @@ const adminController = require('../controller/admin.controller.js');
 const tokenVerification = require('../../middleware/tokenVerification.js');
 const appController = require('../../controllers/register.controller.js');
 const passwordController = require('../../controllers/password.controller.js');
+const { authLimiter } = require('../../middleware/rateLimiter.js');
 
 // Create an Express router
 const router /** @type {ExpressRouter} */ = Router();
@@ -93,7 +94,7 @@ const router /** @type {ExpressRouter} */ = Router();
  *                       error:
  *                         type: object
  */
-router.post('/login', adminController.login.bind(adminController));
+router.post('/login', authLimiter, adminController.login.bind(adminController));
 
 /**
  * Route to logout admin
