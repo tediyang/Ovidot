@@ -4,6 +4,7 @@ const handleResponse = require('../../utility/helpers/handle.response');
 const userPopulate = require('../../utility/helpers/user.populate');
 const requestValidator = require('../../utility/validators/requests.validator.js');
 const dateValidator = require('../../utility/validators/date.validator');
+const { encryptText } = require('../../utility/encryption/encryption');
 const { Role, userStatus, Collections } = require('../../enums');
 const { logger } = require('../../middleware/logger');
 const Joi = require('joi');
@@ -482,11 +483,11 @@ class AdminController {
       };
 
       if(start_date) {
-        query.start_date = start_date;
+        query.start_date = encryptText(start_date);
       };
 
       if(ovulation) {
-        query.ovulation = ovulation;
+        query.ovulation = encryptText(ovulation);
       };
 
       if(days) {
