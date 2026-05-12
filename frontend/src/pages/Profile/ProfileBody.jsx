@@ -150,121 +150,122 @@ const ProfileBody = ({ user, setUser, error, redirect }) => {
         <Error401 error={error} redirect={redirect} />
       ) : (
         <div className="flex flex-col relative lg:flex-row lg:justify-center lg:gap-5">
-          <AsideMenu />
-          <div className="relative flex flex-col rounded bg-white m-4 mt-14 p-4 lg:min-w-[45rem] xl:min-w-[62rem] lg:ml-[16rem]">
-            <section className="flex justify-center items-center mt-5">
-              <div className="w-32 h-32 rounded-full bg-primary text-white">
-                <h2 className="flex justify-center items-center h-full text-4xl font-[700]">
-                  {user?.name.fname[0].toUpperCase() +
-                    user?.name.lname[0]?.toUpperCase()}
-                </h2>
+          <AsideMenu user={user} />
+          <div className="m-4 mt-14 lg:min-w-[45rem] xl:min-w-[62rem] lg:ml-[16rem]">
+            <div className="bg-white rounded-2xl shadow-[0_2px_20px_rgba(77,11,94,0.08)]">
+              {/* Avatar + identity header */}
+              <div className="flex flex-col items-center pt-8 pb-4 text-center px-6">
+                <div className="w-24 h-24 rounded-full bg-primary text-white shadow-[0_4px_16px_rgba(77,11,94,0.25)] flex items-center justify-center text-3xl font-extrabold">
+                  {user?.name.fname[0].toUpperCase() + user?.name.lname[0]?.toUpperCase()}
+                </div>
+                <h3 className="mt-3 text-lg font-bold text-gray-800">
+                  {user?.name.fname[0].toUpperCase() + user?.name.fname.slice(1)}{" "}
+                  {user?.name.lname[0].toUpperCase() + user?.name.lname.slice(1)}
+                </h3>
+                <p className="text-xs text-gray-400 mt-0.5">@{user?.username} · {user?.email}</p>
               </div>
-            </section>
-            <section>
+
+            <section className="px-6 pb-6">
               <form
-                className="flex flex-col mt-2 gap-6"
+                className="flex flex-col gap-6"
                 onSubmit={handleSubmit}
               >
                 <section>
-                  <div className="mt-6">
-                    <h3 className="text-lg font-[500] text-primary mb-3">
-                      Personal Data
-                    </h3>
+                  <div className="mt-2">
+                    {/* Section header */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <h3 className="text-sm font-bold text-primary whitespace-nowrap">Personal Data</h3>
+                      <div className="flex-1 h-px bg-[#f3e8ff]" />
+                    </div>
                     <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="flex flex-col">
-                        <label className="flex items-center gap-2 mb-2 font-[500] text-sm">
-                          <p>First Name</p>
-                          <FaPen size={10} />
+                        <label className="flex items-center gap-1.5 mb-1.5 font-semibold text-xs text-gray-500">
+                          First Name <FaPen size={9} />
                         </label>
                         <input
                           type="text"
                           name="fname"
                           value={formData.fname}
                           onChange={handleChange}
-                          className="p-2 border border-solid border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="px-3 py-2.5 border-[1.5px] border-solid border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-colors"
                         />
                       </div>
                       <div className="flex flex-col">
-                        <label className="flex items-center gap-2 mb-2 font-[500] text-sm ">
-                          <p>Last Name</p>
-                          <FaPen size={10} />
+                        <label className="flex items-center gap-1.5 mb-1.5 font-semibold text-xs text-gray-500">
+                          Last Name <FaPen size={9} />
                         </label>
                         <input
                           type="text"
                           name="lname"
                           value={formData.lname}
                           onChange={handleChange}
-                          className="p-2 border border-solid border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="px-3 py-2.5 border-[1.5px] border-solid border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-colors"
                         />
                       </div>
                       <div className="flex flex-col">
-                        <label className="flex items-center gap-2 mb-2 font-[500] text-sm ">
-                          <p>Username</p>
-                          <FaPen size={10} />
+                        <label className="flex items-center gap-1.5 mb-1.5 font-semibold text-xs text-gray-500">
+                          Username <FaPen size={9} />
                         </label>
                         <input
                           type="text"
                           name="username"
                           value={formData.username}
                           onChange={handleChange}
-                          className="p-2 border border-solid border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="px-3 py-2.5 border-[1.5px] border-solid border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-colors"
                         />
                       </div>
                       <div className="flex flex-col">
-                        <label className="flex items-center gap-2 mb-2 font-[500] text-sm ">
-                          <p>Email</p>
-                          <FaLock size={10} />
+                        <label className="flex items-center gap-1.5 mb-1.5 font-semibold text-xs text-gray-500">
+                          Email <FaLock size={9} className="text-gray-300" />
                         </label>
                         <input
                           type="email"
                           value={user?.email}
                           readOnly
-                          className="p-2 border border-solid border-gray-300 text-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="px-3 py-2.5 border-[1.5px] border-solid border-gray-100 rounded-xl text-sm text-gray-400 bg-gray-50 focus:outline-none"
                         />
                       </div>
                       <div className="flex flex-col">
-                        <label className="flex items-center gap-2 mb-2 font-[500] text-sm ">
-                          <p>Phone Number</p>
-                          <FaPen size={10} />
+                        <label className="flex items-center gap-1.5 mb-1.5 font-semibold text-xs text-gray-500">
+                          Phone Number <FaPen size={9} />
                         </label>
                         <input
                           type="text"
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
-                          className="p-2 border border-solid border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="px-3 py-2.5 border-[1.5px] border-solid border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-colors"
                         />
                       </div>
                       <div className="flex flex-col">
-                        <label className="flex items-center gap-2 mb-2 font-[500] text-sm ">
-                          <p>Date of Birth</p>
-                          <FaPen size={10} />
+                        <label className="flex items-center gap-1.5 mb-1.5 font-semibold text-xs text-gray-500">
+                          Date of Birth <FaPen size={9} />
                         </label>
                         <input
                           type="date"
                           name="dob"
                           value={formData.dob}
                           onChange={handleChange}
-                          className="p-2 border border-solid border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="px-3 py-2.5 border-[1.5px] border-solid border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-colors"
                         />
                       </div>
                     </section>
                   </div>
                   <div className="mt-6">
-                    <h3 className="text-lg font-[500] text-primary mb-3">
-                      Cycle Data
-                    </h3>
+                    <div className="flex items-center gap-3 mb-4">
+                      <h3 className="text-sm font-bold text-primary whitespace-nowrap">Cycle Data</h3>
+                      <div className="flex-1 h-px bg-[#f3e8ff]" />
+                    </div>
                     <div className="flex flex-col">
-                      <label className="flex items-center gap-2 mb-2 font-[500] text-sm ">
-                        <p>Period Length (in days)</p>
-                        <FaPen size={10} />
+                      <label className="flex items-center gap-1.5 mb-1.5 font-semibold text-xs text-gray-500">
+                        Period Length (in days) <FaPen size={9} />
                       </label>
                       <input
                         type="number"
                         name="period"
                         value={formData.period}
                         onChange={handleChange}
-                        className="p-2 border border-solid border-gray-500 rounded md:w-1/2 focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="px-3 py-2.5 border-[1.5px] border-solid border-gray-200 rounded-xl text-sm md:w-1/2 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-colors"
                         min={2}
                         max={8}
                       />
@@ -284,7 +285,7 @@ const ProfileBody = ({ user, setUser, error, redirect }) => {
                           type="password"
                           name="password"
                           onChange={handleChange}
-                          className="p-2 border border-solid border-gray-500 rounded w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="px-3 py-2.5 border-[1.5px] border-solid border-gray-200 rounded-xl w-full text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-colors"
                         />
                         <div className="flex gap-4 mt-4">
                           <button
@@ -313,25 +314,26 @@ const ProfileBody = ({ user, setUser, error, redirect }) => {
                     </div>
                   )}
                 </section>
-                <section className="flex justify-center">
+                <section className="flex justify-center pt-2">
                   <button
                     type="submit"
                     className={`${
                       loading && "opacity-50 cursor-not-allowed"
-                    } px-6 py-3 text-white bg-primary hover:bg-opacity-90 rounded border-0`}
+                    } px-10 py-3 text-white bg-primary hover:opacity-90 rounded-xl border-0 font-semibold text-sm shadow-[0_4px_14px_rgba(77,11,94,0.25)] transition-opacity`}
                     onClick={handleSubmit}
                     disabled={loading}
                   >
                     {loading ? (
                       <FaSpinner className="animate-spin text-white" />
                     ) : (
-                      "Save"
+                      "Save Changes"
                     )}
                   </button>
                 </section>
               </form>
             </section>
-          </div>
+            </div> {/* /white card */}
+          </div> {/* /outer wrapper */}
           {message && (
             <DashboardToast message={message} setMessage={setMessage} />
           )}

@@ -2,12 +2,12 @@ import AsideMenu from "../../components/AsideMenu";
 import Error401 from "../Errors/Error401";
 import DashboardToast from "../Dashboard/DashboadToast";
 import { apiService } from "../../services/api";
-import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaLock, FaEye, FaEyeSlash, FaUserSlash, FaTrashAlt } from "react-icons/fa";
 import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 
 
-const SettingsBody = ({ user, setUser, error, redirect }) => {
+const SettingsBody = ({ user, error, redirect }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [deactivePopup, setDeactivePopup] = useState(false);
@@ -107,36 +107,62 @@ const SettingsBody = ({ user, setUser, error, redirect }) => {
       {error ? (
         <Error401 error={error} redirect={redirect} />
       ) : (
-        <div className="flex flex-col relative lg:flex-row lg:justify-center lg:gap-5 h-[100dvh]">
-          <AsideMenu user={user} setUser={setUser} />
-          <div className="relative flex flex-col gap-6 rounded bg-white m-4 mt-14 p-4 lg:min-w-[45rem] xl:min-w-[62rem] lg:ml-[16rem] lg:h-[12rem]">
-            <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
-              <p>Change Your Current Password</p>
+        <div className="flex flex-col relative lg:flex-row lg:justify-center lg:gap-5 min-h-[100dvh]">
+          <AsideMenu user={user} />
+          <div className="flex flex-col m-4 mt-14 lg:min-w-[45rem] xl:min-w-[62rem] lg:ml-[16rem] gap-4">
+
+            {/* Account Settings section */}
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Account Settings</p>
+            <div className="flex items-center gap-4 bg-white rounded-2xl shadow-[0_2px_14px_rgba(77,11,94,0.07)] p-5 border-l-4 border-primary">
+              <div className="w-11 h-11 rounded-xl bg-[#FDF4FF] flex items-center justify-center flex-shrink-0">
+                <FaLock size={18} className="text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="text-sm font-bold text-gray-800 mb-0.5">Change Password</h4>
+                <p className="text-xs text-gray-500 leading-relaxed">Update your current password to keep your account secure.</p>
+              </div>
               <button
                 onClick={() => setChangePasswordPopup(true)}
-                className="w-[140px] bg-primary text-white px-4 py-3 rounded border-0 shadow-sm"
+                className="flex-shrink-0 bg-primary text-white px-4 py-2.5 rounded-xl border-0 text-xs font-semibold shadow-[0_3px_10px_rgba(77,11,94,0.2)] hover:opacity-90 transition-opacity"
               >
                 Change Password
               </button>
             </div>
-            <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
-              <p>Deactivate your Account</p>
+
+            {/* Danger Zone section */}
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-3 mb-1">Danger Zone</p>
+            <div className="flex items-center gap-4 bg-white rounded-2xl shadow-[0_2px_14px_rgba(77,11,94,0.07)] p-5 border-l-4 border-amber-400">
+              <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0">
+                <FaUserSlash size={18} className="text-amber-500" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="text-sm font-bold text-gray-800 mb-0.5">Deactivate Account</h4>
+                <p className="text-xs text-gray-500 leading-relaxed">Temporarily disable your account. You can reactivate it later using Forget Password.</p>
+              </div>
               <button
                 onClick={() => setDeactivePopup(true)}
-                className="w-[100px] bg-yellow-500 text-white px-4 py-3 rounded border-0 shadow-sm"
+                className="flex-shrink-0 bg-amber-400 text-white px-4 py-2.5 rounded-xl border-0 text-xs font-semibold shadow-[0_3px_10px_rgba(245,158,11,0.2)] hover:opacity-90 transition-opacity"
               >
                 Deactivate
               </button>
             </div>
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-              <p>Delete your Account</p>
+
+            <div className="flex items-center gap-4 bg-white rounded-2xl shadow-[0_2px_14px_rgba(77,11,94,0.07)] p-5 border-l-4 border-red-500">
+              <div className="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+                <FaTrashAlt size={18} className="text-red-500" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="text-sm font-bold text-gray-800 mb-0.5">Delete Account</h4>
+                <p className="text-xs text-gray-500 leading-relaxed">Permanently delete your account and all associated data. This action cannot be undone.</p>
+              </div>
               <button
                 onClick={() => setDeletePopup(true)}
-                className="w-[100px] bg-red-500 text-white px-4 py-3 rounded border-0 shadow-sm"
+                className="flex-shrink-0 bg-red-500 text-white px-4 py-2.5 rounded-xl border-0 text-xs font-semibold shadow-[0_3px_10px_rgba(239,68,68,0.2)] hover:opacity-90 transition-opacity"
               >
-                Delete
+                Delete Account
               </button>
             </div>
+
           </div>
           {/* deactivate */}
           {deactivePopup && (
