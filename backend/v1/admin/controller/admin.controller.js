@@ -182,7 +182,8 @@ class AdminController {
           .skip((value.page - 1) * value.size)
           .limit(value.size)
           .sort({ createdAt: -1 })
-          .exec(); //get orders
+          .lean()
+          .exec();
 
         gather_data = [
           users,
@@ -240,13 +241,13 @@ class AdminController {
         throw filter.error;
       }
 
-      const user = await User.findOne({ email: value.email });
+      const user = await User.findOne({ email: value.email }, { _id: 1, role: 1 }).lean();
       if (!user) {
         return handleResponse(res, 404, `User with ${value.email} not found`);
       }
 
       if (filter.value.length == 0) {
-        const populate_user = await userPopulate.populateWithCycles(user.id);
+        const populate_user = await userPopulate.populateWithCycles(user._id);
         return res.status(200).json({ allCycles: populate_user._cycles });
       }
 
@@ -270,7 +271,7 @@ class AdminController {
         dateValidator.dateParse(query, createdAt)
       }
 
-      const populate_user = await userPopulate.populateWithCyclesBy(user.id, query);
+      const populate_user = await userPopulate.populateWithCyclesBy(user._id, query);
 
       const { haveNextPage, currentPageExists, totalPages } = await page_info({}, null, size, page, populate_user._cycles);
 
@@ -338,7 +339,7 @@ class AdminController {
         throw error;
       };
 
-      const user = await User.findOne({ email: value.email }, this._excluded);
+      const user = await User.findOne({ email: value.email }, this._excluded).lean();
       if (!user) {
         return handleResponse(res, 404, `User with ${value.email} not found`);
       }
@@ -379,14 +380,14 @@ class AdminController {
         throw error;
       };
 
-      const user = await User.findOne({ email: value.oldEmail });
+      const user = await User.findOne({ email: value.oldEmail }, { _id: 1, role: 1 }).lean();
       if (!user) {
         return handleResponse(res, 404, `User with ${value.oldEmail} not found`);
       }
 
       const updateUser = await User
         .findByIdAndUpdate(
-          user.id,
+          user._id,
           { email: value.newEmail },
           { new: true }
         );

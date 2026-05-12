@@ -1,8 +1,6 @@
 const { User } = require("../../models/engine/database.js");
 
-
 class UserPopulate {
-
   /**
    * Populate the user with the data of cycles for the provided searched keyword and return the user object.
    *
@@ -16,11 +14,13 @@ class UserPopulate {
        * The user object with populated cycle data.
        * @type {User | null}
        */
-      const user = await User.findById(userId).populate({
-        path: '_cycles',
-        match: search,
-      }).exec();
-  
+      const user = await User.findById(userId)
+        .populate({
+          path: "_cycles",
+          match: search,
+        })
+        .exec();
+
       return user || null;
     } catch (err) {
       throw err;
@@ -39,10 +39,12 @@ class UserPopulate {
        * The user object with populated cycle data.
        * @type {User|null}
        */
-      const user = await User.findById(userId).populate({
-        path: '_cycles',
-      }).exec();
-  
+      const user = await User.findById(userId)
+        .populate({
+          path: "_cycles",
+        })
+        .exec();
+
       return user || null;
     } catch (error) {
       throw error;

@@ -133,35 +133,54 @@ class EmailService {
   };
 
   /**
+   * Routes a single email document to the correct sender based on its type.
+   * Individual send errors are caught internally so one failure won't abort the batch.
+   */
+  async _dispatchEmail(email) {
+    if (email.email_type === emailType.forget) {
+      return this.sendUserForgetPassEmail(email);
+    }
+    if (email.email_type === emailType.delete) {
+      return this.sendUserTerminationEmail(email);
+    }
+    if (email.email_type === emailType.welcome) {
+      return this.sendUserCreationEmail(email);
+    }
+    return this.sendUserDeactivationEmail(email);
+  };
+
+  /**
    * Asynchronously handles the email cron job.
    *
-   * This function retrieves a limited number of pending emails from the database
-   * and sends the appropriate email based on the email type for each email.
+   * Streams pending emails from the database one at a time via a cursor (avoiding
+   * loading the full result set into memory), then dispatches them in concurrent
+   * batches of EMAIL_BATCH_SIZE (default 10) for throughput without overwhelming
+   * the SMTP server.
    *
    * @return {Promise<void>} A Promise that resolves when all emails have been processed.
    */
   async handleEmailCron() {
-    try {
-      const emails = await Email
-        .find({
-          status: emailStatus.pending})
-        .limit(process.env.LIMIT)
-        .exec();
+    const BATCH_SIZE = parseInt(process.env.EMAIL_BATCH_SIZE) || 10;
 
-      if (emails.length === 0) {
-        return
+    try {
+      const cursor = Email
+        .find({ status: emailStatus.pending })
+        .limit(parseInt(process.env.LIMIT))
+        .cursor();
+
+      let batch = [];
+
+      for await (const email of cursor) {
+        batch.push(email);
+
+        if (batch.length === BATCH_SIZE) {
+          await Promise.all(batch.map(e => this._dispatchEmail(e)));
+          batch = [];
+        }
       }
 
-      for (const email of emails ) {
-        if (email.email_type === emailType.forget) {
-          await this.sendUserForgetPassEmail(email);
-        } else if (email.email_type === emailType.delete) {
-          await this.sendUserTerminationEmail(email);
-        } else if (email.email_type === emailType.welcome) {
-          await this.sendUserCreationEmail(email);
-        } else {
-          await this.sendUserDeactivationEmail(email);
-        }
+      if (batch.length > 0) {
+        await Promise.all(batch.map(e => this._dispatchEmail(e)));
       }
     } catch (error) {
       logger.error(error);

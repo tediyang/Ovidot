@@ -29,8 +29,8 @@ class UserController {
     try {
       // check for existing user
       const existing_data = Promise.all([
-        User.findOne({ email: data.email }),
-        User.findOne({ phone: data.phone }),
+        User.findOne({ email: data.email }, { _id: 1 }).lean(),
+        User.findOne({ phone: data.phone }, { _id: 1 }).lean(),
       ]);
 
       const [email, phone] = await existing_data;
@@ -145,7 +145,7 @@ class UserController {
         // validate password
         if (!is_pwd) {
           return handleResponse(res, 400, "Invalid password");
-        }
+        } 
 
         if (phone) {
           user.phone = phone;
@@ -218,7 +218,7 @@ class UserController {
    */
   async fetchUser(req, res) {
     try {
-      const user = await User.findById(req.user.id, this._EXCLUDE);
+      const user = await User.findById(req.user.id, this._EXCLUDE).lean();
 
       if (!user) {
         return handleResponse(res, 404, "User not found");
@@ -377,7 +377,7 @@ class UserController {
    */
   async getNotifications(req, res) {
     try {
-      const user = await User.findById(req.user.id);
+      const user = await User.findById(req.user.id, { notificationsList: 1 }).lean();
       if (!user) {
         return handleResponse(res, 404, "User not found");
       }

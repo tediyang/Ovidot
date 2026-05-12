@@ -219,7 +219,7 @@ class AppController {
       const user = await User.findById(
         userPayload.id,
         "jwtRefreshToken email _id status",
-      ).exec();
+      ).lean().exec();
       if (!user) {
         return handleResponse(res, 404, "User not found");
       }
