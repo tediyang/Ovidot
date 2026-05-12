@@ -2,7 +2,6 @@
 const { Router } = require('express');
 const adminController = require('../controller/admin.controller.js');
 const tokenVerification = require('../../middleware/tokenVerification.js');
-const appController = require('../../controllers/register.controller.js');
 const passwordController = require('../../controllers/password.controller.js');
 const { authLimiter } = require('../../middleware/rateLimiter.js');
 
@@ -152,7 +151,7 @@ router.post('/login', authLimiter, adminController.login.bind(adminController));
  *                    error:
  *                      type: object
  */
-router.get('/logout', tokenVerification.adminTokenVerification, appController.logout);
+router.get('/logout', tokenVerification.adminTokenVerification, adminController.logout.bind(adminController));
 
 /**
  * Get all users

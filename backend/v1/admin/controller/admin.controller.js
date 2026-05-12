@@ -7,6 +7,7 @@ const dateValidator = require('../../utility/validators/date.validator');
 const { encryptText } = require('../../utility/encryption/encryption');
 const { Role, userStatus, Collections } = require('../../enums');
 const { logger } = require('../../middleware/logger');
+const blacklist = require('../../middleware/tokenBlacklist');
 const Joi = require('joi');
 const { Types } = require('mongoose');
 const { sign, JsonWebTokenError } = require('jsonwebtoken');
@@ -35,6 +36,30 @@ class AdminController {
     */
   createToken(admin) {
     return sign({ id: admin._id, role: admin.role }, this._secretKey, { expiresIn: '1h' });
+  };
+
+  /**
+   * @async Logout an admin user.
+   * Blacklists the current token. Admins have no refresh token to clear.
+   */
+  async logout(req, res) {
+    try {
+      let token = req.header('Authorization');
+      if (token) {
+        token = token.substring(7);
+        blacklist.updateBlacklist(token);
+        logger.info(`Admin ${req.user.id} logged out at ${new Date()}`);
+      }
+      return handleResponse(res, 200, 'Logout Successful');
+    } catch (error) {
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, 'We have a mongoose problem', error);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
+    }
   };
 
   /**
