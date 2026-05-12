@@ -15,8 +15,20 @@ const config = {
       users: '/auth/users',
       cycles: '/auth/cycles',
       logout: '/auth/logout'
+    },
+    admin: {
+      login: '/admin/login',
+      logout: '/admin/logout',
+      users: '/admin/users',
+      userEmail: '/admin/users/email',
+      userCycles: '/admin/users/email/cycles',
+      userForgotPassword: '/admin/users/forgot-password',
+      cycles: '/admin/cycles',
+      switchRole: '/admin/switch',
+      deactivateAdmin: '/admin/deactivate',
     }
   },
+  adminTokenStorageKey: 'adminToken',
   tokenStorageKey: 'accessToken',
   refreshTokenStorageKey: 'refreshToken',
 };
