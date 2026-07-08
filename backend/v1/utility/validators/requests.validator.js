@@ -423,6 +423,42 @@ class Validator {
   });
 
   /**
+   * Admin Route: Create Admin
+   */
+  CreateAdmin = Joi.object({
+    email: Joi.string()
+      .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "ng"] } })
+      .required()
+      .messages({
+        "string.base": "Email must be a string.",
+        "string.empty": "Email is required.",
+        "string.email":
+          "Please provide a valid email address with a domain such as example.com or example.ng etc.",
+        "any.required": "Email is a required field.",
+      }),
+    username: Joi.string()
+      .pattern(/^[a-zA-Z]+$/)
+      .messages({
+        "string.pattern.base":
+          "Username must contain only alphabetic characters.",
+      }),
+    password: Joi.string()
+      .required()
+      .pattern(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()])[a-zA-Z0-9!@#$%^&*()]{8,}$/,
+      )
+      .messages({
+        "string.pattern.base":
+          "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters.",
+        "string.empty": "Password is required.",
+        "any.required": "Password is required.",
+      }),
+    role: Joi.string().valid(Role.admin).default(Role.admin).messages({
+      "any.only": "Only ADMIN role is allowed for new admins",
+    }),
+  });
+
+  /**
    * Admin Route: Switch Role
    */
   SwitchRole = Joi.object({
