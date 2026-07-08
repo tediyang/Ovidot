@@ -1,25 +1,29 @@
-const { compare } = require('bcrypt');
-const { Admin, Cycle, User, page_info, MongooseError } = require('../../models/engine/database');
-const handleResponse = require('../../utility/helpers/handle.response');
-const userPopulate = require('../../utility/helpers/user.populate');
-const requestValidator = require('../../utility/validators/requests.validator.js');
-const dateValidator = require('../../utility/validators/date.validator');
-const { encryptText } = require('../../utility/encryption/encryption');
-const { Role, userStatus, Collections } = require('../../enums');
-const { logger } = require('../../middleware/logger');
-const blacklist = require('../../middleware/tokenBlacklist');
-const Joi = require('joi');
-const { Types } = require('mongoose');
-const { sign, JsonWebTokenError } = require('jsonwebtoken');
-require('dotenv').config();
-
+const bcrypt = require("bcrypt");
+const {
+  Admin,
+  Cycle,
+  User,
+  page_info,
+  MongooseError,
+} = require("../../models/engine/database");
+const handleResponse = require("../../utility/helpers/handle.response");
+const userPopulate = require("../../utility/helpers/user.populate");
+const requestValidator = require("../../utility/validators/requests.validator.js");
+const dateValidator = require("../../utility/validators/date.validator");
+const { encryptText } = require("../../utility/encryption/encryption");
+const { Role, userStatus, Collections } = require("../../enums");
+const { logger } = require("../../middleware/logger");
+const blacklist = require("../../middleware/tokenBlacklist");
+const Joi = require("joi");
+const { Types } = require("mongoose");
+const { sign, JsonWebTokenError } = require("jsonwebtoken");
+require("dotenv").config();
 
 /**
  * Admin Controller
  * @module AdminController
  */
 class AdminController {
-
   /**
    * Initialize the admin controller
    * @constructor
@@ -31,12 +35,14 @@ class AdminController {
   }
 
   /**
-    * Generate token
-    * @param {Admin} admin - Admin Object to generate token for. 
-    */
+   * Generate token
+   * @param {Admin} admin - Admin Object to generate token for.
+   */
   createToken(admin) {
-    return sign({ id: admin._id, role: admin.role }, this._secretKey, { expiresIn: '1h' });
-  };
+    return sign({ id: admin._id, role: admin.role }, this._secretKey, {
+      expiresIn: "1h",
+    });
+  }
 
   /**
    * @async Logout an admin user.
@@ -44,23 +50,23 @@ class AdminController {
    */
   async logout(req, res) {
     try {
-      let token = req.header('Authorization');
+      let token = req.header("Authorization");
       if (token) {
         token = token.substring(7);
         blacklist.updateBlacklist(token);
         logger.info(`Admin ${req.user.id} logged out at ${new Date()}`);
       }
-      return handleResponse(res, 200, 'Logout Successful');
+      return handleResponse(res, 200, "Logout Successful");
     } catch (error) {
       if (error instanceof MongooseError) {
-        return handleResponse(res, 500, 'We have a mongoose problem', error);
+        return handleResponse(res, 500, "We have a mongoose problem", error);
       }
       if (error instanceof JsonWebTokenError) {
         return handleResponse(res, 500, error.message, error);
       }
       return handleResponse(res, 500, error.message, error);
     }
-  };
+  }
 
   /**
    * @async Login an admin user.
@@ -70,7 +76,7 @@ class AdminController {
    * @throws {Object} - Error response object.
    */
   async login(req, res) {
-    try{
+    try {
       const { value, error } = requestValidator.AdminLogin.validate(req.body);
 
       if (error) {
@@ -79,22 +85,28 @@ class AdminController {
 
       // validate email/username
 
-      const [ username, email ] = await Promise.all(
-        [
-          Admin.findOne({ username: value.email_or_username }),
-          Admin.findOne({ email: value.email_or_username })
-        ]
-      );
+      const [username, email] = await Promise.all([
+        Admin.findOne({ username: value.email_or_username }),
+        Admin.findOne({ email: value.email_or_username }),
+      ]);
 
       const admin = username || email;
       if (!admin) {
-        return handleResponse(res, 400, "email, username or password incorrect");
+        return handleResponse(
+          res,
+          400,
+          "email, username or password incorrect",
+        );
       }
 
       if (admin.status === userStatus.deactivated) {
-        return handleResponse(res, 400, "Account deactivated - Contact your super administrator");
+        return handleResponse(
+          res,
+          400,
+          "Account deactivated - Contact your super administrator",
+        );
       }
-      const matched = await compare(value.password, admin.password);
+      const matched = await bcrypt.compare(value.password, admin.password);
       if (matched) {
         const token = this.createToken(admin);
 
@@ -102,10 +114,12 @@ class AdminController {
         admin.loginAttempts = 0;
         await admin.save();
 
-        logger.info(`${admin.role} ${admin._id} logged in successfully at ${new Date()}`);
+        logger.info(
+          `${admin.role} ${admin._id} logged in successfully at ${new Date()}`,
+        );
         return res.status(200).json({
-          message: 'Authentication successful',
-          token
+          message: "Authentication successful",
+          token,
         });
       } else {
         if (admin.loginAttempts >= 3) {
@@ -118,21 +132,25 @@ class AdminController {
 
         admin.loginAttempts += 1;
         await admin.save();
-        return handleResponse(res, 400, "email, username or password incorrect");
+        return handleResponse(
+          res,
+          400,
+          "email, username or password incorrect",
+        );
       }
     } catch (error) {
-			if (error instanceof MongooseError) {
-				return handleResponse(res, 500, "We have a mongoose problem", error);
-			}
-			if (error instanceof Joi.ValidationError) {
-				return handleResponse(res, 400, error.details[0].message);
-			}
-			if (error instanceof JsonWebTokenError) {
-				return handleResponse(res, 500, error.message, error);
-			}
-			return handleResponse(res, 500, error.message, error);
-    };
-  };
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
+    }
+  }
 
   /**
    * @async Get all users.
@@ -151,60 +169,64 @@ class AdminController {
 
       // building filter
       const query = {};
-      const { fname, lname, username, dob, role, createdAt, period, status } = value;
+      const { fname, lname, username, dob, role, createdAt, period, status } =
+        value;
 
       if (fname) {
-        query['name.fname'] = fname.toLowerCase()
+        query["name.fname"] = fname.toLowerCase();
       }
 
       if (lname) {
-        query['name.lname'] = lname.toLowerCase()
+        query["name.lname"] = lname.toLowerCase();
       }
 
       if (username) {
-        query.username = username.toLowerCase()
+        query.username = username.toLowerCase();
       }
 
-      if(dob) {
+      if (dob) {
         query.dob = dob;
       }
 
-      if(role) {
+      if (role) {
         query.role = role;
       }
 
-      if(status) {
+      if (status) {
         query.status = status;
       }
 
-      if(period) {
+      if (period) {
         query.period = period;
       }
 
       if (createdAt) {
-        dateValidator.dateParse(query, createdAt)
+        dateValidator.dateParse(query, createdAt);
       }
 
       // if count is true, admin just wants a count of the filtered documents
       if (value.count) {
-        const count = await User
-          .countDocuments(query);
+        const count = await User.countDocuments(query);
 
-        logger.info(`${req.user.role} ${req.user.id} fetched the count of users data successfully`);
-        return res
-          .status(200)
-          .json({
-            count: count,
-          });
+        logger.info(
+          `${req.user.role} ${req.user.id} fetched the count of users data successfully`,
+        );
+        return res.status(200).json({
+          count: count,
+        });
       }
 
-      const { haveNextPage, currentPageExists, totalPages } = await page_info(query, Collections.User, value.size, value.page);
+      const { haveNextPage, currentPageExists, totalPages } = await page_info(
+        query,
+        Collections.User,
+        value.size,
+        value.page,
+      );
 
       let gather_data = [];
 
       if (currentPageExists) {
-        const users = await User
-          .find({ ...query }, this._excluded)
+        const users = await User.find({ ...query }, this._excluded)
           .skip((value.page - 1) * value.size)
           .limit(value.size)
           .sort({ createdAt: -1 })
@@ -218,7 +240,7 @@ class AdminController {
         ];
       }
 
-      if(!currentPageExists) {
+      if (!currentPageExists) {
         gather_data = [
           [],
           haveNextPage, //have next page
@@ -226,38 +248,39 @@ class AdminController {
         ];
       }
 
-      logger.info(`${req.user.role} ${req.user.id} fetched all users data successfully`);
-      return res
-        .status(200)
-        .json({
-          users: gather_data[0],
-          have_next_page: gather_data[1],
-          total_pages: gather_data[2]
-        });
-
+      logger.info(
+        `${req.user.role} ${req.user.id} fetched all users data successfully`,
+      );
+      return res.status(200).json({
+        users: gather_data[0],
+        have_next_page: gather_data[1],
+        total_pages: gather_data[2],
+      });
     } catch (error) {
-			if (error instanceof MongooseError) {
-				return handleResponse(res, 500, "We have a mongoose problem", error);
-			}
-			if (error instanceof Joi.ValidationError) {
-				return handleResponse(res, 400, error.details[0].message);
-			}
-			if (error instanceof JsonWebTokenError) {
-				return handleResponse(res, 500, error.message, error);
-			}
-			return handleResponse(res, 500, error.message, error);
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
     }
-  };
+  }
 
   /**
    * Return all the cycle for a given user.
    * @param {Object} req - Express request
    * @param {Object} res - Express response
-   * @returns 
+   * @returns
    */
   async getUserCycles(req, res) {
     try {
-      const { value, err } = requestValidator.GetUserCycles[0].validate(req.body);
+      const { value, err } = requestValidator.GetUserCycles[0].validate(
+        req.body,
+      );
       if (err) {
         throw err;
       }
@@ -267,19 +290,23 @@ class AdminController {
         throw filter.error;
       }
 
-      const user = await User.findOne({ email: value.email }, { _id: 1, role: 1 }).lean();
+      const user = await User.findOne(
+        { email: value.email },
+        { _id: 1, role: 1 },
+      ).lean();
       if (!user) {
         return handleResponse(res, 404, `User with ${value.email} not found`);
       }
 
-      if (filter.value.length == 0) {
+      if (Object.keys(filter.value).length === 0) {
         const populate_user = await userPopulate.populateWithCycles(user._id);
         return res.status(200).json({ allCycles: populate_user._cycles });
       }
 
       // building filter
       const query = {};
-      const { count, month, year, period, size, page, createdAt } = filter.value;
+      const { count, month, year, period, size, page, createdAt } =
+        filter.value;
 
       if (month) {
         query.month = month;
@@ -294,18 +321,29 @@ class AdminController {
       }
 
       if (createdAt) {
-        dateValidator.dateParse(query, createdAt)
+        dateValidator.dateParse(query, createdAt);
       }
 
-      const populate_user = await userPopulate.populateWithCyclesBy(user._id, query);
+      const populate_user = await userPopulate.populateWithCyclesBy(
+        user._id,
+        query,
+      );
 
-      const { haveNextPage, currentPageExists, totalPages } = await page_info({}, null, size, page, populate_user._cycles);
+      const { haveNextPage, currentPageExists, totalPages } = await page_info(
+        {},
+        null,
+        size,
+        page,
+        populate_user._cycles,
+      );
 
       let gather_data = [];
 
       if (currentPageExists) {
-        const allCycles = populate_user._cycles
-          .slice((page - 1) * size, page * size);
+        const allCycles = populate_user._cycles.slice(
+          (page - 1) * size,
+          page * size,
+        );
 
         gather_data = [
           allCycles,
@@ -314,40 +352,35 @@ class AdminController {
         ];
       }
 
-      if(!currentPageExists) {
-        gather_data = [
-          [],
-          haveNextPage,
-          totalPages,
-        ];
+      if (!currentPageExists) {
+        gather_data = [[], haveNextPage, totalPages];
       }
 
       if (count) {
-        return res.status(200).json({count: gather_data[0].length});
-      };
+        return res.status(200).json({ count: gather_data[0].length });
+      }
 
-      logger.info(`${req.user.role} ${req.user.id} fetched all ${user.role} ${populate_user._id} cycles successfully`);
-      return res
-        .status(200)
-        .json({
-          allCycles: gather_data[0],
-          have_next_page: gather_data[1],
-          total_pages: gather_data[2]
-        });
-
+      logger.info(
+        `${req.user.role} ${req.user.id} fetched all ${user.role} ${populate_user._id} cycles successfully`,
+      );
+      return res.status(200).json({
+        allCycles: gather_data[0],
+        have_next_page: gather_data[1],
+        total_pages: gather_data[2],
+      });
     } catch (error) {
-			if (error instanceof MongooseError) {
-				return handleResponse(res, 500, "We have a mongoose problem", error);
-			}
-			if (error instanceof Joi.ValidationError) {
-				return handleResponse(res, 400, error.details[0].message);
-			}
-			if (error instanceof JsonWebTokenError) {
-				return handleResponse(res, 500, error.message, error);
-			}
-			return handleResponse(res, 500, error.message, error);
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
     }
-  };
+  }
 
   /**
    * @async  Get a given user.
@@ -356,35 +389,40 @@ class AdminController {
    * @returns {void}
    * @throws {Object} - Error response object.
    */
-  async getUser (req, res) {
+  async getUser(req, res) {
     try {
       // validate data
       const { value, error } = requestValidator.GetUser.validate(req.body);
 
       if (error) {
         throw error;
-      };
+      }
 
-      const user = await User.findOne({ email: value.email }, this._excluded).lean();
+      const user = await User.findOne(
+        { email: value.email },
+        this._excluded,
+      ).lean();
       if (!user) {
         return handleResponse(res, 404, `User with ${value.email} not found`);
       }
 
-      logger.info(`${req.user.role} ${req.user.id} fetched ${user.role} ${user._id} data successfully`);
+      logger.info(
+        `${req.user.role} ${req.user.id} fetched ${user.role} ${user._id} data successfully`,
+      );
       return res.status(200).json({ user });
     } catch (error) {
-			if (error instanceof MongooseError) {
-				return handleResponse(res, 500, "We have a mongoose problem", error);
-			}
-			if (error instanceof Joi.ValidationError) {
-				return handleResponse(res, 400, error.details[0].message);
-			}
-			if (error instanceof JsonWebTokenError) {
-				return handleResponse(res, 500, error.message, error);
-			}
-			return handleResponse(res, 500, error.message, error);
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
     }
-  };
+  }
 
   /**
    * @async Update a user email.
@@ -393,51 +431,63 @@ class AdminController {
    * @returns {void}
    * @throws {Object} - Error response object.
    */
-  async updateUser (req, res) {
+  async updateUser(req, res) {
     try {
       if (Role.super_admin !== req.user.role) {
-        return handleResponse(res, 403, 'Forbidden');
+        return handleResponse(res, 403, "Forbidden");
       }
 
       // validate params
-      const { value, error } = requestValidator.AdminUpdateUser.validate(req.body);
+      const { value, error } = requestValidator.AdminUpdateUser.validate(
+        req.body,
+      );
 
       if (error) {
         throw error;
-      };
-
-      const user = await User.findOne({ email: value.oldEmail }, { _id: 1, role: 1 }).lean();
-      if (!user) {
-        return handleResponse(res, 404, `User with ${value.oldEmail} not found`);
       }
 
-      const updateUser = await User
-        .findByIdAndUpdate(
-          user._id,
-          { email: value.newEmail },
-          { new: true }
+      const user = await User.findOne(
+        { email: value.oldEmail },
+        { _id: 1, role: 1 },
+      ).lean();
+      if (!user) {
+        return handleResponse(
+          res,
+          404,
+          `User with ${value.oldEmail} not found`,
         );
+      }
+
+      const updateUser = await User.findByIdAndUpdate(
+        user._id,
+        { email: value.newEmail },
+        { new: true },
+      );
 
       const updated = updateUser.email === value.newEmail;
       if (updated) {
-        logger.info(`${req.user.role} ${req.user.id} updated ${user.role} ${user._id} email successfully`);
+        logger.info(
+          `${req.user.role} ${req.user.id} updated ${user.role} ${user._id} email successfully`,
+        );
       } else {
-        logger.info(`${req.user.role} ${req.user.id} tried to update ${user.role} ${user._id} email failed`);
+        logger.info(
+          `${req.user.role} ${req.user.id} tried to update ${user.role} ${user._id} email failed`,
+        );
       }
       return res.status(200).json({ updated: updated });
     } catch (error) {
-			if (error instanceof MongooseError) {
-				return handleResponse(res, 500, "We have a mongoose problem", error);
-			}
-			if (error instanceof Joi.ValidationError) {
-				return handleResponse(res, 400, error.details[0].message);
-			}
-			if (error instanceof JsonWebTokenError) {
-				return handleResponse(res, 500, error.message, error);
-			}
-			return handleResponse(res, 500, error.message, error);
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
     }
-  };
+  }
 
   /**
    * @async Delete a given user.
@@ -446,39 +496,43 @@ class AdminController {
    * @returns {void}
    * @throws {Object} - Error response object.
    */
-  async deleteUser (req, res) {
+  async deleteUser(req, res) {
     try {
       if (Role.super_admin !== req.user.role) {
-        return handleResponse(res, 403, 'Forbidden');
+        return handleResponse(res, 403, "Forbidden");
       }
 
       // validate params
-      const { value, error } = requestValidator.AdminDeleteUser.validate(req.body);
+      const { value, error } = requestValidator.AdminDeleteUser.validate(
+        req.body,
+      );
 
       if (error) {
         throw error;
-      };
+      }
 
       const delUser = await User.findOneAndDelete({ email: value.email });
       if (!delUser) {
         return handleResponse(res, 404, `${value.email} not found`);
       }
 
-      logger.info(`Super Admin ${req.user.id} deleted ${delUser.role} ${delUser._id} successfully`);
+      logger.info(
+        `Super Admin ${req.user.id} deleted ${delUser.role} ${delUser._id} successfully`,
+      );
       return res.status(204).send();
     } catch (error) {
       if (error instanceof MongooseError) {
-				return handleResponse(res, 500, "We have a mongoose problem", error);
-			}
-			if (error instanceof Joi.ValidationError) {
-				return handleResponse(res, 400, error.details[0].message);
-			}
-			if (error instanceof JsonWebTokenError) {
-				return handleResponse(res, 500, error.message, error);
-			}
-      return handleResponse(res, 500, 'Internal Server Error', error);
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, "Internal Server Error", error);
     }
-  };
+  }
 
   /**
    * @async  View all cycles.
@@ -487,10 +541,12 @@ class AdminController {
    * @returns {void}
    * @throws {Object} - Error response object.
    */
-  async getCycles (req, res) {
+  async getCycles(req, res) {
     try {
       // validate body
-      const { value, error } = requestValidator.AdminGetCycles.validate(req.query);
+      const { value, error } = requestValidator.AdminGetCycles.validate(
+        req.query,
+      );
       if (error) {
         throw error;
       }
@@ -501,48 +557,49 @@ class AdminController {
 
       if (month) {
         query.month = month;
-      };
+      }
 
       if (year) {
         query.year = year;
-      };
+      }
 
-      if(start_date) {
+      if (start_date) {
         query.start_date = encryptText(start_date);
-      };
+      }
 
-      if(ovulation) {
+      if (ovulation) {
         query.ovulation = encryptText(ovulation);
-      };
+      }
 
-      if(days) {
+      if (days) {
         query.days = days;
-      };
+      }
 
-      if(period) {
+      if (period) {
         query.period = period;
-      };
+      }
 
       // if count is true, admin just wants a count of the filtered documents
       if (value.count) {
-        const count = await Cycle
-          .countDocuments(query);
+        const count = await Cycle.countDocuments(query);
 
         logger.info(`${req.user.id} fetched count of cycles data successfully`);
-        return res
-          .status(200)
-          .json({
-            count: count,
-          });
+        return res.status(200).json({
+          count: count,
+        });
       }
 
-      const { haveNextPage, currentPageExists, totalPages } = await page_info(query, Collections.Cycle, value.size, value.page);
+      const { haveNextPage, currentPageExists, totalPages } = await page_info(
+        query,
+        Collections.Cycle,
+        value.size,
+        value.page,
+      );
 
       let gather_data = [];
 
       if (currentPageExists) {
-        const cycles = await Cycle
-          .find({ ...query })
+        const cycles = await Cycle.find({ ...query })
           .skip((value.page - 1) * value.size)
           .limit(value.size)
           .exec();
@@ -554,7 +611,7 @@ class AdminController {
         ];
       }
 
-      if(!currentPageExists) {
+      if (!currentPageExists) {
         gather_data = [
           [],
           haveNextPage, //have next page
@@ -563,27 +620,24 @@ class AdminController {
       }
 
       logger.info(`${req.user.id} fetched all cycles data successfully`);
-      return res
-        .status(200)
-        .json({
-          cycles: gather_data[0],
-          have_next_page: gather_data[1],
-          total_pages: gather_data[2]
-        });
-
+      return res.status(200).json({
+        cycles: gather_data[0],
+        have_next_page: gather_data[1],
+        total_pages: gather_data[2],
+      });
     } catch (error) {
-			if (error instanceof MongooseError) {
-				return handleResponse(res, 500, "We have a mongoose problem", error);
-			}
-			if (error instanceof Joi.ValidationError) {
-				return handleResponse(res, 400, error.details[0].message);
-			}
-			if (error instanceof JsonWebTokenError) {
-				return handleResponse(res, 500, error.message, error);
-			}
-			return handleResponse(res, 500, error.message, error);
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
     }
-  };
+  }
 
   /**
    * @async Fetch a cycle by ID.
@@ -600,20 +654,20 @@ class AdminController {
       const specificCycleData = await Cycle.findById(cycleId);
       if (!specificCycleData) {
         return handleResponse(res, 404, "Cycle data not found");
-      };
+      }
 
       logger.info(`${req.user.id} fetched cycle data successfully`);
       return res.status(200).json({ cycle: specificCycleData });
     } catch (error) {
-			if (error instanceof MongooseError) {
-				return handleResponse(res, 500, "We have a mongoose problem", error);
-			};
-			if (error instanceof JsonWebTokenError) {
-				return handleResponse(res, 500, error.message, error);
-			};
-			return handleResponse(res, 500, error.message, error);
-    };
-  };
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
+    }
+  }
 
   /**
    * @async Delete cycle data.
@@ -625,7 +679,7 @@ class AdminController {
   async deleteCycle(req, res) {
     try {
       if (Role.super_admin !== req.user.role) {
-        return handleResponse(res, 403, 'Forbidden');
+        return handleResponse(res, 403, "Forbidden");
       }
 
       const cycleIdToDelete = req.params.cycleId;
@@ -636,18 +690,83 @@ class AdminController {
         return handleResponse(res, 404, "Cycle not found");
       }
 
-      logger.info(`${req.user.role} ${req.user.id} deleted cycle data successfully`);
+      logger.info(
+        `${req.user.role} ${req.user.id} deleted cycle data successfully`,
+      );
       return res.status(204).send();
     } catch (error) {
-			if (error instanceof MongooseError) {
-				return handleResponse(res, 500, "We have a mongoose problem", error);
-			};
-			if (error instanceof JsonWebTokenError) {
-				return handleResponse(res, 500, error.message, error);
-			};
-			return handleResponse(res, 500, error.message, error);
-    };
-  };
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
+    }
+  }
+
+  /**
+   * @async Create a new admin account.
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   * @throws {Object} - Error response object.
+   */
+  async createAdmin(req, res) {
+    try {
+      if (Role.super_admin !== req.user.role) {
+        return handleResponse(res, 403, "Forbidden");
+      }
+
+      const { value, error } = requestValidator.CreateAdmin.validate(req.body);
+      if (error) {
+        throw error;
+      }
+
+      if (value.role === Role.super_admin) {
+        return handleResponse(
+          res,
+          400,
+          "Only ADMIN role is allowed for new admins",
+        );
+      }
+
+      const existingAdmin = await Admin.findOne({
+        $or: [{ email: value.email }, { username: value.username }],
+      });
+      if (existingAdmin) {
+        return handleResponse(res, 409, "Admin already exists");
+      }
+
+      const hashedPassword = await bcrypt.hash(value.password, 10);
+      const admin = await Admin.create({
+        email: value.email,
+        username: value.username ?? null,
+        password: hashedPassword,
+        role: value.role || Role.admin,
+        status: userStatus.active,
+      });
+
+      logger.info(
+        `Super Admin ${req.user.id} created admin ${admin._id} successfully`,
+      );
+      return res.status(201).json({
+        message: "Admin created successfully",
+        admin,
+      });
+    } catch (error) {
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
+    }
+  }
 
   /**
    * @async Switch admin role.
@@ -659,7 +778,7 @@ class AdminController {
   async switchAdmin(req, res) {
     try {
       if (Role.super_admin !== req.user.role) {
-        return handleResponse(res, 403, 'Forbidden');
+        return handleResponse(res, 403, "Forbidden");
       }
 
       const { value, error } = requestValidator.SwitchRole.validate(req.body);
@@ -674,11 +793,11 @@ class AdminController {
       const { email_username_id, role } = value;
 
       if (Types.ObjectId.isValid(email_username_id)) {
-        id = await Admin.findById(email_username_id)
+        id = await Admin.findById(email_username_id);
       } else {
-        [ email, username ] = await Promise.all([
-          Admin.findOne({ email: email_username_id}),
-          Admin.findOne({ username: email_username_id })
+        [email, username] = await Promise.all([
+          Admin.findOne({ email: email_username_id }),
+          Admin.findOne({ username: email_username_id }),
         ]);
       }
 
@@ -690,22 +809,23 @@ class AdminController {
       admin.role = role;
       await admin.save();
 
-      logger.info(`Super Admin ${req.user.id} switched admin ${admin._id} to ${role} successfully`);
+      logger.info(
+        `Super Admin ${req.user.id} switched admin ${admin._id} to ${role} successfully`,
+      );
       return res.status(200).json({ admin });
-
     } catch (error) {
-			if (error instanceof MongooseError) {
-				return handleResponse(res, 500, "We have a mongoose problem", error);
-			};
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
       if (error instanceof Joi.ValidationError) {
-				return handleResponse(res, 400, error.details[0].message);
-			};
-			if (error instanceof JsonWebTokenError) {
-				return handleResponse(res, 500, error.message, error);
-			};
-			return handleResponse(res, 500, error.message, error);
-    };
-  };
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
+    }
+  }
 
   /**
    * @async Deactivate an admin user.
@@ -717,10 +837,12 @@ class AdminController {
   async deactivateAdmin(req, res) {
     try {
       if (Role.super_admin !== req.user.role) {
-        return handleResponse(res, 403, 'Forbidden');
+        return handleResponse(res, 403, "Forbidden");
       }
 
-      const { value, error } = requestValidator.DeactivateAdmin.validate(req.body);
+      const { value, error } = requestValidator.DeactivateAdmin.validate(
+        req.body,
+      );
       if (error) {
         throw error;
       }
@@ -732,11 +854,11 @@ class AdminController {
       const { email_username_id } = value;
 
       if (Types.ObjectId.isValid(email_username_id)) {
-        id = await Admin.findById(email_username_id)
+        id = await Admin.findById(email_username_id);
       } else {
-        [ email, username ] = await Promise.all([
-          Admin.findOne({ email: email_username_id}),
-          Admin.findOne({ username: email_username_id })
+        [email, username] = await Promise.all([
+          Admin.findOne({ email: email_username_id }),
+          Admin.findOne({ username: email_username_id }),
         ]);
       }
 
@@ -745,7 +867,6 @@ class AdminController {
         return handleResponse(res, 404, "Admin not found");
       }
 
-
       if (admin.role === Role.super_admin) {
         return handleResponse(res, 400, "Can't deactivate a Super Admin");
       }
@@ -753,23 +874,24 @@ class AdminController {
       admin.status = userStatus.deactivated;
       await admin.save();
 
-      logger.info(`Super Admin ${req.user.id} deactivated admin with id ${admin._id} successfully`);
+      logger.info(
+        `Super Admin ${req.user.id} deactivated admin with id ${admin._id} successfully`,
+      );
       return handleResponse(res, 200, "Admin deactivated");
     } catch (error) {
-			if (error instanceof MongooseError) {
-				return handleResponse(res, 500, "We have a mongoose problem", error);
-			};
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
       if (error instanceof Joi.ValidationError) {
-				return handleResponse(res, 400, error.details[0].message);
-			};
-			if (error instanceof JsonWebTokenError) {
-				return handleResponse(res, 500, error.message, error);
-			};
-			return handleResponse(res, 500, error.message, error);
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
     }
   }
-};
-
+}
 
 const adminController = new AdminController();
 module.exports = adminController;
