@@ -12,7 +12,6 @@ const adminSchema = new Schema({
     username: {
         type: String,
         unique: true,
-        required: true,
         validate: {
             validator: function(v) {
                 return /^[a-zA-Z]+$/.test(v); // Regex to ensure username contains only alphabets
