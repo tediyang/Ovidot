@@ -1,15 +1,67 @@
 // Import necessary modules
-const { Router } = require('express');
-const appController = require('../controllers/register.controller.js');
-const passwordController = require('../controllers/password.controller.js');
-const { authLimiter, tokenLimiter } = require('../middleware/rateLimiter.js');
-
+const { Router } = require("express");
+const appController = require("../controllers/register.controller.js");
+const passwordController = require("../controllers/password.controller.js");
+const { logger } = require("../middleware/logger.js");
+const { authLimiter, tokenLimiter } = require("../middleware/rateLimiter.js");
+const email_service = require("../services/emailService.js");
 
 // Create an Express router
 const router /** @type {ExpressRouter} */ = Router();
 
 /* welcome route */
-router.get('/', appController.home);
+router.get("/", appController.home);
+
+/**
+ * Trigger email cron processing from an external service.
+ * @swagger
+ * paths:
+ *  /email-cron:
+ *    post:
+ *      summary: Process pending emails
+ *      tags:
+ *        - General Routes
+ *      responses:
+ *        '200':
+ *          description: Email cron processed successfully
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    example: Email cron processed successfully.
+ *        '500':
+ *          description: Failed to process email cron
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    example: Failed to process email cron.
+ *                  error:
+ *                    type: string
+ *                    example: Error message
+ */
+router.post("/email-cron", async (req, res) => {
+  try {
+    await email_service.handleEmailCron();
+
+    return res.status(200).json({
+      message: "Email cron processed successfully.",
+    });
+  } catch (error) {
+    logger.error("Email cron endpoint failed:", error);
+
+    return res.status(500).json({
+      message: "Failed to process email cron.",
+      error: error.message,
+    });
+  }
+});
 
 /**
  * Route to register user
@@ -112,7 +164,7 @@ router.get('/', appController.home);
  *                      error:
  *                        type: object
  */
-router.post('/signup', authLimiter, appController.signup);
+router.post("/signup", authLimiter, appController.signup);
 
 /**
  * Route to log in a user
@@ -139,7 +191,7 @@ router.post('/signup', authLimiter, appController.signup);
  *              required:
  *                - email_or_phone
  *                - password
- * 
+ *
  *      responses:
  *         '200':
  *           description: Successful
@@ -198,7 +250,7 @@ router.post('/signup', authLimiter, appController.signup);
  *                       error:
  *                         type: object
  */
-router.post('/login', authLimiter, appController.login.bind(appController));
+router.post("/login", authLimiter, appController.login.bind(appController));
 
 /**
  * Forget password route
@@ -285,7 +337,11 @@ router.post('/login', authLimiter, appController.login.bind(appController));
  *                        error:
  *                          type: object
  */
-router.post('/forgot-password', authLimiter, passwordController.forgotPass.bind(passwordController));
+router.post(
+  "/forgot-password",
+  authLimiter,
+  passwordController.forgotPass.bind(passwordController),
+);
 
 /**
  * Validate reset password token
@@ -302,7 +358,7 @@ router.post('/forgot-password', authLimiter, passwordController.forgotPass.bind(
  *           required: true
  *           schema:
  *             type: string
- * 
+ *
  *       responses:
  *          '200':
  *            description: Successful
@@ -353,7 +409,11 @@ router.post('/forgot-password', authLimiter, passwordController.forgotPass.bind(
  *                        error:
  *                          type: object
  */
-router.get('/reset-password/:token', tokenLimiter, passwordController.VerifyResetPass);
+router.get(
+  "/reset-password/:token",
+  tokenLimiter,
+  passwordController.VerifyResetPass,
+);
 
 /**
  * Reset password route
@@ -379,7 +439,7 @@ router.get('/reset-password/:token', tokenLimiter, passwordController.VerifyRese
  *                   type: string
  *                   required: true
  *                   description: user new password
- * 
+ *
  *       responses:
  *          '200':
  *            description: Successful
@@ -439,7 +499,7 @@ router.get('/reset-password/:token', tokenLimiter, passwordController.VerifyRese
  *                        error:
  *                          type: object
  */
-router.put('/reset-password', authLimiter, passwordController.ResetPass);
+router.put("/reset-password", authLimiter, passwordController.ResetPass);
 
 /**
  * Refresh Token route
@@ -500,7 +560,7 @@ router.put('/reset-password', authLimiter, passwordController.ResetPass);
  *                        resolve:
  *                         type: string
  *                         description: route to activate account
- * 
+ *
  *          '404':
  *            description: User Not Found Error
  *            content:
@@ -532,6 +592,10 @@ router.put('/reset-password', authLimiter, passwordController.ResetPass);
  *                        error:
  *                          type: object
  */
-router.get('/refresh-token/:token', tokenLimiter, appController.refreshToken.bind(appController));
+router.get(
+  "/refresh-token/:token",
+  tokenLimiter,
+  appController.refreshToken.bind(appController),
+);
 
 module.exports = router;
