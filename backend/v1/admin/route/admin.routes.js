@@ -1,13 +1,12 @@
 // Import necessary modules
-const { Router } = require('express');
-const adminController = require('../controller/admin.controller.js');
-const tokenVerification = require('../../middleware/tokenVerification.js');
-const passwordController = require('../../controllers/password.controller.js');
-const { authLimiter } = require('../../middleware/rateLimiter.js');
+const { Router } = require("express");
+const adminController = require("../controller/admin.controller.js");
+const tokenVerification = require("../../middleware/tokenVerification.js");
+const passwordController = require("../../controllers/password.controller.js");
+const { authLimiter } = require("../../middleware/rateLimiter.js");
 
 // Create an Express router
 const router /** @type {ExpressRouter} */ = Router();
-
 
 /**
  * Login into the admin profile
@@ -93,7 +92,7 @@ const router /** @type {ExpressRouter} */ = Router();
  *                       error:
  *                         type: object
  */
-router.post('/login', authLimiter, adminController.login.bind(adminController));
+router.post("/login", authLimiter, adminController.login.bind(adminController));
 
 /**
  * Route to logout admin
@@ -106,7 +105,7 @@ router.post('/login', authLimiter, adminController.login.bind(adminController));
  *          - Admin Routes
  *        security:
  *          - adminToken: []
- * 
+ *
  *        responses:
  *         '200':
  *            description: Succesful
@@ -151,7 +150,60 @@ router.post('/login', authLimiter, adminController.login.bind(adminController));
  *                    error:
  *                      type: object
  */
-router.get('/logout', tokenVerification.adminTokenVerification, adminController.logout.bind(adminController));
+router.get(
+  "/logout",
+  tokenVerification.adminTokenVerification,
+  adminController.logout.bind(adminController),
+);
+
+/**
+ * Create a new admin account
+ * @swagger
+ * paths:
+ *   /admin/create:
+ *     post:
+ *       summary: Create a new admin account
+ *       tags:
+ *         - Admin Routes
+ *       security:
+ *         - adminToken: []
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 email:
+ *                   type: string
+ *                   example: newadmin@example.com
+ *                 username:
+ *                   type: string
+ *                   example: newadmin
+ *                 password:
+ *                   type: string
+ *                   example: Password123#
+ *                 role:
+ *                   type: string
+ *                   example: ADMIN
+ *               required:
+ *                 - email
+ *                 - password
+ *       responses:
+ *         '201':
+ *           description: Admin created successfully
+ *         '400':
+ *           description: Validation error or invalid role
+ *         '403':
+ *           description: Forbidden for non-super-admin users
+ *         '409':
+ *           description: Admin already exists
+ */
+router.post(
+  "/create",
+  tokenVerification.adminTokenVerification,
+  adminController.createAdmin.bind(adminController),
+);
 
 /**
  * Get all users
@@ -186,7 +238,7 @@ router.get('/logout', tokenVerification.adminTokenVerification, adminController.
  *             type: string
  *             example: tediyang
  *         - in: query
- *           name: dob 
+ *           name: dob
  *           schema:
  *             type: string
  *             example: 2023-05-30
@@ -211,7 +263,7 @@ router.get('/logout', tokenVerification.adminTokenVerification, adminController.
  *           name: page
  *           schema:
  *             type: number
- *             default: 1 
+ *             default: 1
  *         - in: query
  *           name: size
  *           schema:
@@ -227,7 +279,7 @@ router.get('/logout', tokenVerification.adminTokenVerification, adminController.
  *                 properties:
  *                   time_share:
  *                     type: string
- *                     enum: 
+ *                     enum:
  *                       - hour
  *                       - day
  *                       - week
@@ -264,7 +316,7 @@ router.get('/logout', tokenVerification.adminTokenVerification, adminController.
  *                        type: number
  *                        description: total number of pages
  *                        example: 1
- * 
+ *
  *          '400':
  *             description: Validation Error
  *             content:
@@ -316,7 +368,11 @@ router.get('/logout', tokenVerification.adminTokenVerification, adminController.
  *                        error:
  *                          type: object
  */
-router.get('/users', tokenVerification.adminTokenVerification, adminController.getUsers.bind(adminController));
+router.get(
+  "/users",
+  tokenVerification.adminTokenVerification,
+  adminController.getUsers.bind(adminController),
+);
 
 /**
  * Get user by email
@@ -416,7 +472,7 @@ router.get('/users', tokenVerification.adminTokenVerification, adminController.g
  *                                    type: date
  *                                 updatedAt:
  *                                    type: date
- * 
+ *
  *          '400':
  *             description: Validation Error
  *             content:
@@ -427,7 +483,7 @@ router.get('/users', tokenVerification.adminTokenVerification, adminController.g
  *                    message:
  *                      type: string
  *                      description: email is required
- * 
+ *
  *          '401':
  *             description: Unauthorized request
  *             content:
@@ -479,7 +535,11 @@ router.get('/users', tokenVerification.adminTokenVerification, adminController.g
  *                        error:
  *                          type: object
  */
-router.post('/users/email', tokenVerification.adminTokenVerification, adminController.getUser.bind(adminController));
+router.post(
+  "/users/email",
+  tokenVerification.adminTokenVerification,
+  adminController.getUser.bind(adminController),
+);
 
 /**
  * Fetch all user cycles
@@ -509,7 +569,7 @@ router.post('/users/email', tokenVerification.adminTokenVerification, adminContr
  *           required: false
  *           schema:
  *             type: string
- *             description: 
+ *             description:
  *               Can be either a number (1-12) or a month name (e.g., January).
  *               If a number is provided, it must be between 1 and 12.
  *             example: 5
@@ -546,7 +606,7 @@ router.post('/users/email', tokenVerification.adminTokenVerification, adminContr
  *                 properties:
  *                   time_share:
  *                     type: string
- *                     enum: 
+ *                     enum:
  *                       - hour
  *                       - day
  *                       - week
@@ -643,7 +703,7 @@ router.post('/users/email', tokenVerification.adminTokenVerification, adminContr
  *                        message:
  *                          type: string
  *                          description: Account Deactivated
- * 
+ *
  *          '404':
  *            description: User Not Found
  *            content:
@@ -654,7 +714,7 @@ router.post('/users/email', tokenVerification.adminTokenVerification, adminContr
  *                    message:
  *                      type: string
  *                      description: User with {email} not found
- * 
+ *
  *          '500':
  *            description: MongooseError or JsonWebTokenError
  *            content:
@@ -675,7 +735,11 @@ router.post('/users/email', tokenVerification.adminTokenVerification, adminContr
  *                        error:
  *                          type: object
  */
-router.post('/users/email/cycles', tokenVerification.adminTokenVerification, adminController.getUserCycles.bind(adminController));
+router.post(
+  "/users/email/cycles",
+  tokenVerification.adminTokenVerification,
+  adminController.getUserCycles.bind(adminController),
+);
 
 /**
  * Update user
@@ -704,7 +768,7 @@ router.post('/users/email/cycles', tokenVerification.adminTokenVerification, adm
  *               required:
  *                 - oldEmail
  *                 - newEmail
- * 
+ *
  *       responses:
  *          '200':
  *            description: success
@@ -820,7 +884,7 @@ router.post('/users/email/cycles', tokenVerification.adminTokenVerification, adm
  *                        message:
  *                          type: string
  *                          description: Account Deactivated
- * 
+ *
  *          '403':
  *            description: Forbidden access
  *            content:
@@ -831,7 +895,7 @@ router.post('/users/email/cycles', tokenVerification.adminTokenVerification, adm
  *                    message:
  *                      type: string
  *                      description: Forbidden
- * 
+ *
  *          '404':
  *            description: User Not Found
  *            content:
@@ -842,7 +906,7 @@ router.post('/users/email/cycles', tokenVerification.adminTokenVerification, adm
  *                    message:
  *                      type: string
  *                      description: User with {email} not found
- * 
+ *
  *          '500':
  *            description: MongooseError or JsonWebTokenError
  *            content:
@@ -863,7 +927,11 @@ router.post('/users/email/cycles', tokenVerification.adminTokenVerification, adm
  *                        error:
  *                          type: object
  */
-router.put('/users/email', tokenVerification.adminTokenVerification, adminController.updateUser.bind(adminController));
+router.put(
+  "/users/email",
+  tokenVerification.adminTokenVerification,
+  adminController.updateUser.bind(adminController),
+);
 
 /**
  * Delete user
@@ -922,7 +990,7 @@ router.put('/users/email', tokenVerification.adminTokenVerification, adminContro
  *                        message:
  *                          type: string
  *                          description: Account Deactivated
- * 
+ *
  *          '403':
  *            description: Forbidden access
  *            content:
@@ -933,7 +1001,7 @@ router.put('/users/email', tokenVerification.adminTokenVerification, adminContro
  *                    message:
  *                      type: string
  *                      description: Forbidden
- * 
+ *
  *          '404':
  *            description: User Not Found
  *            content:
@@ -944,7 +1012,7 @@ router.put('/users/email', tokenVerification.adminTokenVerification, adminContro
  *                    message:
  *                      type: string
  *                      description: email not found
- * 
+ *
  *          '500':
  *            description: MongooseError or JsonWebTokenError
  *            content:
@@ -965,7 +1033,11 @@ router.put('/users/email', tokenVerification.adminTokenVerification, adminContro
  *                        error:
  *                          type: object
  */
-router.delete('/users/email', tokenVerification.adminTokenVerification, adminController.deleteUser);
+router.delete(
+  "/users/email",
+  tokenVerification.adminTokenVerification,
+  adminController.deleteUser,
+);
 
 /**
  * Send forget pass to user
@@ -1054,7 +1126,11 @@ router.delete('/users/email', tokenVerification.adminTokenVerification, adminCon
  *                        error:
  *                          type: object
  */
-router.post('/users/forgot-password', tokenVerification.adminTokenVerification, passwordController.forgotPass.bind(passwordController));
+router.post(
+  "/users/forgot-password",
+  tokenVerification.adminTokenVerification,
+  passwordController.forgotPass.bind(passwordController),
+);
 
 /**
  * Get all cycles
@@ -1073,7 +1149,7 @@ router.post('/users/forgot-password', tokenVerification.adminTokenVerification, 
  *           required: false
  *           schema:
  *             type: string
- *             description: 
+ *             description:
  *               Can be either a number (1-12) or a month name (e.g., January).
  *               If a number is provided, it must be between 1 and 12.
  *             example: 5
@@ -1232,7 +1308,11 @@ router.post('/users/forgot-password', tokenVerification.adminTokenVerification, 
  *                        error:
  *                          type: object
  */
-router.get('/cycles', tokenVerification.adminTokenVerification, adminController.getCycles);
+router.get(
+  "/cycles",
+  tokenVerification.adminTokenVerification,
+  adminController.getCycles,
+);
 
 /**
  * Fetch cycle by id
@@ -1327,7 +1407,7 @@ router.get('/cycles', tokenVerification.adminTokenVerification, adminController.
  *                    message:
  *                      type: string
  *                      description: Cycle data not found
- * 
+ *
  *          '500':
  *            description: MongooseError or JsonWebTokenError
  *            content:
@@ -1348,7 +1428,11 @@ router.get('/cycles', tokenVerification.adminTokenVerification, adminController.
  *                        error:
  *                          type: object
  */
-router.get('/cycles/:cycleId', tokenVerification.adminTokenVerification, adminController.getCycle);
+router.get(
+  "/cycles/:cycleId",
+  tokenVerification.adminTokenVerification,
+  adminController.getCycle,
+);
 
 /**
  * Delete cycle
@@ -1402,7 +1486,7 @@ router.get('/cycles/:cycleId', tokenVerification.adminTokenVerification, adminCo
  *                    message:
  *                      type: string
  *                      description: Forbidden
- * 
+ *
  *          '404':
  *            description: Cycle Not Found
  *            content:
@@ -1413,7 +1497,7 @@ router.get('/cycles/:cycleId', tokenVerification.adminTokenVerification, adminCo
  *                    message:
  *                      type: string
  *                      description: Cycle not found
- * 
+ *
  *          '500':
  *            description: MongooseError or JsonWebTokenError
  *            content:
@@ -1434,7 +1518,11 @@ router.get('/cycles/:cycleId', tokenVerification.adminTokenVerification, adminCo
  *                        error:
  *                          type: object
  */
-router.delete('/cycles/:cycleId', tokenVerification.adminTokenVerification, adminController.deleteCycle);
+router.delete(
+  "/cycles/:cycleId",
+  tokenVerification.adminTokenVerification,
+  adminController.deleteCycle,
+);
 
 /**
  * Switch Role
@@ -1458,7 +1546,7 @@ router.delete('/cycles/:cycleId', tokenVerification.adminTokenVerification, admi
  *                   type: string
  *                 role:
  *                   type: string
- *                   enum: 
+ *                   enum:
  *                     - USER
  *                     - ADMIN
  *                     - SUPER ADMIN
@@ -1477,7 +1565,7 @@ router.delete('/cycles/:cycleId', tokenVerification.adminTokenVerification, admi
  *                properties:
  *                  admin:
  *                    type: object
- * 
+ *
  *          '400':
  *             description: Validation Error
  *             content:
@@ -1513,7 +1601,7 @@ router.delete('/cycles/:cycleId', tokenVerification.adminTokenVerification, admi
  *                        message:
  *                          type: string
  *                          description: Account Deactivated
- * 
+ *
  *          '403':
  *            description: Forbidden access
  *            content:
@@ -1524,7 +1612,7 @@ router.delete('/cycles/:cycleId', tokenVerification.adminTokenVerification, admi
  *                    message:
  *                      type: string
  *                      description: Forbidden
- * 
+ *
  *          '404':
  *            description: Admin Not Found
  *            content:
@@ -1535,7 +1623,7 @@ router.delete('/cycles/:cycleId', tokenVerification.adminTokenVerification, admi
  *                    message:
  *                      type: string
  *                      description: Admin not found
- * 
+ *
  *          '500':
  *            description: MongooseError or JsonWebTokenError
  *            content:
@@ -1556,7 +1644,11 @@ router.delete('/cycles/:cycleId', tokenVerification.adminTokenVerification, admi
  *                        error:
  *                          type: object
  */
-router.put('/switch', tokenVerification.adminTokenVerification, adminController.switchAdmin);
+router.put(
+  "/switch",
+  tokenVerification.adminTokenVerification,
+  adminController.switchAdmin,
+);
 
 /**
  * Deactivate admin
@@ -1592,7 +1684,7 @@ router.put('/switch', tokenVerification.adminTokenVerification, adminController.
  *                  message:
  *                    type: string
  *                    example: Admin deactivted
- * 
+ *
  *          '400':
  *             description: Validation Error and bad request
  *             content:
@@ -1628,7 +1720,7 @@ router.put('/switch', tokenVerification.adminTokenVerification, adminController.
  *                        message:
  *                          type: string
  *                          description: Account Deactivated
- * 
+ *
  *          '403':
  *            description: Forbidden access
  *            content:
@@ -1639,7 +1731,7 @@ router.put('/switch', tokenVerification.adminTokenVerification, adminController.
  *                    message:
  *                      type: string
  *                      description: Forbidden
- * 
+ *
  *          '404':
  *            description: Admin Not Found
  *            content:
@@ -1650,7 +1742,7 @@ router.put('/switch', tokenVerification.adminTokenVerification, adminController.
  *                    message:
  *                      type: string
  *                      description: Admin not found
- * 
+ *
  *          '500':
  *            description: MongooseError or JsonWebTokenError
  *            content:
@@ -1671,7 +1763,10 @@ router.put('/switch', tokenVerification.adminTokenVerification, adminController.
  *                        error:
  *                          type: object
  */
-router.put('/deactivate', tokenVerification.adminTokenVerification, adminController.deactivateAdmin);
-
+router.put(
+  "/deactivate",
+  tokenVerification.adminTokenVerification,
+  adminController.deactivateAdmin,
+);
 
 module.exports = router;
