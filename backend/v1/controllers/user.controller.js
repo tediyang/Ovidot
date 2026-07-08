@@ -218,7 +218,10 @@ class UserController {
    */
   async fetchUser(req, res) {
     try {
-      const user = await User.findById(req.user.id, this._EXCLUDE).lean();
+      const userQuery = User.findById(req.user.id, this._EXCLUDE);
+      const user = typeof userQuery?.lean === 'function'
+        ? await userQuery.lean()
+        : await userQuery;
 
       if (!user) {
         return handleResponse(res, 404, "User not found");
@@ -377,7 +380,10 @@ class UserController {
    */
   async getNotifications(req, res) {
     try {
-      const user = await User.findById(req.user.id, { notificationsList: 1 }).lean();
+      const userQuery = User.findById(req.user.id, { notificationsList: 1 });
+      const user = typeof userQuery?.lean === 'function'
+        ? await userQuery.lean()
+        : await userQuery;
       if (!user) {
         return handleResponse(res, 404, "User not found");
       }
