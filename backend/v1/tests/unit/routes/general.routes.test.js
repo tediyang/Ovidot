@@ -57,7 +57,7 @@ describe('GENERAL ROUTES', () => {
         lname: "Eyang",
         email: 'daniel.eyang.ed@gmail.cng',
         username: "Reaper",
-        phone: "+2347064618847",
+        phone: "07064618847",
         password: 'Ovidotsuper123#',
         dob: '1996-05-30',
         period: 5,
@@ -90,9 +90,9 @@ describe('GENERAL ROUTES', () => {
       userData = {
         fname: "Daniel",
         lname: "Eyang",
-        email: 'daniel.eyang.ed@gmail.cng',
+        email: 'daniel.eyang.ed@gmail.com',
         username: "Reaper",
-        phone: "07064618847",
+        phone: "2347064618847",
         password: 'Ovidotsuper123#',
         dob: '1996-05-30',
         period: 5,
@@ -102,13 +102,13 @@ describe('GENERAL ROUTES', () => {
         res.status(500).json({ message: "We have a Mongoose Error" });
       });
   
-      // No country code
+      // Invalid length
       res = await request(app)
         .post('/api/v1/signup')
         .send(userData);
   
       expect(res.status).to.equal(400);
-      expect(res.body).to.have.property('message', "Phone number must start with a country code and contain only numbers.");
+      expect(res.body).to.have.property('message', '"phone" length must be less than or equal to 12 characters long');
   
       // Empty phone field
       res = await request(app)
@@ -117,6 +117,14 @@ describe('GENERAL ROUTES', () => {
   
       expect(res.status).to.equal(400);
       expect(res.body).to.have.property('message', "Phone number is required.");
+
+      // Empty phone field
+      res = await request(app)
+        .post('/api/v1/signup')
+        .send({...userData, phone: "abcdefghi"});
+  
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property('message', "Phone number must contain only numbers.");
     });
 
     it('should return 400 when an invalid username is passed', async () => {
@@ -148,7 +156,7 @@ describe('GENERAL ROUTES', () => {
         lname: "Eyang",
         email: 'daniel.eyang.ed@gmail.com',
         username: "Reaper",
-        phone: "+2347064618847",
+        phone: "07064618847",
         password: 'Ovidotsur123',
         dob: '1996-05-30',
         period: 5,
@@ -181,7 +189,7 @@ describe('GENERAL ROUTES', () => {
         lname: "Eyang",
         email: 'daniel.eyang.ed@gmail.com',
         username: "Reaper",
-        phone: "+2347064618847",
+        phone: "07064618847",
         password: 'Ovidotsur123#',
         dob: '1996-05-30',
         period: 5,
@@ -205,7 +213,7 @@ describe('GENERAL ROUTES', () => {
         lname: "Eyang",
         email: 'daniel.eyang.ed@gmail.com',
         username: "Reaper",
-        phone: "+2347064618847",
+        phone: "07064618847",
         password: 'Ovidotsuper123#',
         dob: '1996-05-30',
         period: 5,

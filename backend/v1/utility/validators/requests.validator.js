@@ -16,16 +16,16 @@ class Validator {
           "Username must contain only alphabetic characters.",
       }),
     phone: Joi.string()
-      .pattern(/^\+\d+$/) // Pattern starts with country code
-      .max(14)
+      .pattern(/^\d+$/)
+      .max(12)
       .required()
       .messages({
-        "string.pattern.base":
-          "Phone number must start with a country code and contain only numbers.",
         "string.empty": "Phone number is required.",
         "any.required": "Phone number is required.",
-      }),
-    dob: Joi.date().required(),
+        "string.pattern.base": "Phone number must contain only numbers.",
+    }),
+    dob: Joi.date()
+      .required(),
     email: Joi.string()
       .email({
         minDomainSegments: 2,
@@ -113,15 +113,11 @@ class Validator {
         "any.required": "Username is required.",
       }),
     sensitive: Joi.object({
-      phone: Joi.string()
-        .pattern(/^\+\d+$/)
-        .max(14)
-        .messages({
-          "string.pattern.base":
-            "Phone number must start with a country code and contain only numbers.",
-          "string.empty": "Phone number is required.",
-          "any.required": "Phone number is required.",
-        }),
+      phone: Joi.string().pattern(/^\d+$/).max(12).messages({
+        "string.empty": "Phone number is required.",
+        "any.required": "Phone number is required.",
+        "string.pattern.base": "Phone number must contain only numbers.",
+      }),
       new_password: Joi.string()
         .pattern(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()])[a-zA-Z0-9!@#$%^&*()]{8,}$/,
