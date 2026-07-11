@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 const fs = require("fs");
 const path = require("path");
+const { logger } = require("../v1/middleware/logger");
 
 const migrationName = process.argv[2];
 
 if (!migrationName) {
-  console.error("Usage: npm run migrate:create -- <migration-name>");
+  logger.error("Usage: npm run migrate:create -- <migration-name>");
   process.exit(1);
 }
 
@@ -29,4 +30,4 @@ const template = `module.exports = {
 `;
 
 fs.writeFileSync(targetPath, template);
-console.log(`Created migration ${fileName}`);
+logger.info(`Created migration ${fileName}`);
