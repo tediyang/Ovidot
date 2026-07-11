@@ -12,7 +12,11 @@
     "start": "node app.js",
     "test": "mocha --timeout 540000",
     "test:coverage": "nyc --reporter=text --reporter=html npm test",
-    "demon": "nodemon app.js"
+    "demon": "nodemon app.js",
+    "migrate": "node scripts/run-migrations.js",
+    "migrate:up": "node scripts/run-migrations.js up",
+    "migrate:down": "node scripts/run-migrations.js down",
+    "migrate:create": "node scripts/create-migration.js"
   },
   "keywords": [],
   "author": "Eyang, Daniel Eyoh",
