@@ -11,8 +11,6 @@ const fs = require('fs').promises;
 require('dotenv').config();
 
 const db_name = process.env.DB_TEST;
-// const db_user = process.env.DB_TEST_USER;
-// const db_pwd = process.env.DB_TEST_URI_PWD;
 const db_host = process.env.DB_TEST_HOST;
 const db_port = process.env.DB_TEST_PORT;
 
