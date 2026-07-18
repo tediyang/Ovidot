@@ -4,6 +4,8 @@ const { sign, JsonWebTokenError, verify } = require("jsonwebtoken");
 const { compare } = require("bcrypt");
 const { PATH_PREFIX } = require("../swagger-docs");
 const userController = require("./user.controller.js");
+const googleAuthService = require("../services/googleAuthService.js");
+const tempDataService = require("../services/tempDataService.js");
 const handleResponse = require("../utility/helpers/handle.response.js");
 const blacklist = require("../middleware/tokenBlacklist.js");
 const requestValidator = require("../utility/validators/requests.validator.js");
@@ -86,6 +88,109 @@ class AppController {
       return handleResponse(res, 500, error.message, error);
     }
   }
+
+  async googleAuth(req, res) {
+    try {      // validate body
+      const { value, error } = requestValidator.GoogleOauth.validate(req.body);
+      if (error) {
+        throw error;
+      }
+
+      // Verify Google token
+      const verification = await googleAuthService.verifyToken(value.token);
+      if (!verification.success) {
+        return handleResponse(res, 401, verification.error);
+      }
+
+      const googleData = verification.data;
+
+      // Check if user already exists in database
+      const existingUser = User.findOne({ email: googleData.email });
+
+      if (existingUser) {
+        if (userStatus.deactivated == existingUser.status) {
+          const resolve = `Account deactivated - resolve with: ${PATH_PREFIX}/general/forget-password`;
+          return handleResponse(res, 400, resolve);
+        }
+
+        // If user exists, generate JWT and login
+        const tokens = await this.createToken(existingUser);
+
+        // reset login attempts
+        existingUser.loginAttempts = 0;
+        existingUser.jwtRefreshToken = tokens.refreshToken;
+        await existingUser.save();
+
+        return res.status(200).json({
+          message: "Authentication successful",
+          tokens,
+        });
+      }
+
+      // Check if user is already in temp storage (prevent duplicates)
+      // if user is not in temp storage, store Google data and generate UUID
+      const uuid = await tempDataService.findByEmail(googleData.email) || await tempDataService.storeGoogleData(googleData);
+
+      // Return success with UUID
+      return res.status(200).json({
+        success: true,
+        message: 'Google authentication successful. Please complete your profile.',
+        isNewUser: true,
+        uuid: uuid,
+        email: googleData.email,
+        firstName: googleData.firstName,
+        lastName: googleData.lastName,
+        missingFields: {
+          phone: true,
+          dateOfBirth: true
+        }
+      });
+    } catch (error) {
+      return handleResponse(res, 500, error.message, error);
+    }
+  }
+
+  async completeRegistration(req, res) {
+    try {
+      const { value, error } = requestValidator.CompleteRegistration.validate(req.body);
+
+      if (error) {
+        throw error;
+      }
+
+      const { uuid, phone, dob } = value;
+
+      // Retrieve temp data from Redis
+      const tempData = await tempDataService.retrieveAndDeleteData(uuid);
+      if (!tempData) {
+        return res.status(404).json({
+          success: false,
+          error: 'Registration session expired or invalid. Please try again.'
+        });
+      }
+
+      // Combine Google data with provided data
+      const userData = {
+        ...tempData,
+        phone,
+        dob
+      };
+
+      return await userController.createUser(res, { ...userData });
+    } catch (error) {
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      return handleResponse(res, 500, error.message, error);
+    }
+  }
+
 
   /**
    * Login user
