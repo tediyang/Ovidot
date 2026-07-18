@@ -146,6 +146,15 @@ class AppController {
         }
       });
     } catch (error) {
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
       return handleResponse(res, 500, error.message, error);
     }
   }
