@@ -213,9 +213,6 @@ router.post("/signup", authLimiter, appController.signup);
  *                    firstName:
  *                      type: string
  *                      example: 'John'
- *                    firstName:
- *                      type: string
- *                      example: 'John'
  *                    lastName:
  *                      type: string
  *                      example: 'Doe'
