@@ -62,6 +62,10 @@ class RedisManager {
       return;
     }
   }
+
+  // async exists(hash, key) {
+  //   return await (await redisClient).hExists(hash, key);
+  // }
 };
 
 
