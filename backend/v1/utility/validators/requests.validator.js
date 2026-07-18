@@ -62,6 +62,27 @@ class Validator {
   });
 
   /**
+   * Validate Google Oauth Route Input
+   */
+  GoogleOauth = Joi.object({
+    token: Joi.string().required(),
+  });
+
+  CompleteRegistration = Joi.object({
+    uuid: Joi.string().required(),
+    phone: Joi.string()
+      .pattern(/^\d+$/)
+      .max(12)
+      .required()
+      .messages({
+        "string.empty": "Phone number is required.",
+        "any.required": "Phone number is required.",
+        "string.pattern.base": "Phone number must contain only numbers.",
+      }),
+    dob: Joi.date().required(),
+  });
+
+  /**
    * Validate Forget Password Route Input
    */
   ForgetPass = Joi.object({
@@ -470,23 +491,6 @@ class Validator {
   DeactivateAdmin = Joi.object({
     email_username_id: Joi.string().required(),
   });
-
-  /**
-   * Generates a new date based on the given time share and number of times.
-   * This basically means the admin either wants to return the last 1 (default) or more hours, minutes of the data.
-   *
-   * @param {timeShare} time_share - The time share to be used for calculation (default: Time_share.hour).
-   * @param {number} times - The number of times to multiply the time share by (default: 1).
-   */
-  last_times(time_share = timeShare.hour, times = 1) {
-    try {
-      const now = new Date();
-      const time = time_share * times;
-      return new Date(now.getTime() - time);
-    } catch (error) {
-      throw error;
-    }
-  }
 }
 
 const requestValidator = new Validator();
