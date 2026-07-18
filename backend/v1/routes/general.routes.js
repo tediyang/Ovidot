@@ -167,6 +167,111 @@ router.post("/email-cron", async (req, res) => {
 router.post("/signup", authLimiter, appController.signup);
 
 /**
+ * Route to register user via Google
+ * @swagger
+ * paths:
+ *  /signup-google:
+ *   post:
+ *     summary: Register a new user via Google
+ *     tags:
+ *        - General Routes
+ *     requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *             type: object
+ *             properties:
+ *                token:
+ *                  type: string
+ *                  example: google_token_example
+ *             required:
+ *                - token
+ *     responses:
+ *         '200':
+ *           description: Successful
+ *           content:
+ *             application/json:
+ *                schema:
+ *                  type: object
+ *                  properties:
+ *                    success:
+ *                      type: boolean
+ *                      example: true
+ *                    message:
+ *                      type: string
+ *                      example: 'Google authentication successful. Please complete your profile.'
+ *                    isNewUser:
+ *                      type: boolean
+ *                      example: true
+ *                    uuid:
+ *                      type: string
+ *                      example: '34567dfghucvbjerdtfg567'
+ *                    email:
+ *                      type: string
+ *                      example: 'user@example.com'
+ *                    firstName:
+ *                      type: string
+ *                      example: 'John'
+ *                    firstName:
+ *                      type: string
+ *                      example: 'John'
+ *                    lastName:
+ *                      type: string
+ *                      example: 'Doe'
+ *                    missingFields:
+ *                      type: Object
+ *                      properties:
+ *                        phone:
+ *                          type: string
+ *                          example: '+1234567890'
+ *                        dateOfBirth:
+ *                          type: string
+ *                          example: '1990-01-01'
+ *
+ *         '400':
+ *           description: Validation Error or Bad request
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                    message:
+ *                      type: string
+ *                      description: token is required
+ *
+ *         '500':
+ *           description: MongooseError or JsonWebTokenError
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 oneOf:
+ *                   - properties:
+ *                       message:
+ *                         type: string
+ *                         description: MongooseError occured
+ *                       error:
+ *                         type: object
+ *                   - properties:
+ *                       message:
+ *                         type: string
+ *                         description: JsonWebTokenError occured
+ *                       error:
+ *                         type: object
+ */
+router.post(
+  "/signup-google",
+  authLimiter,
+  appController.googleAuth.bind(appController),
+);
+
+/**
+ * Route to complete Google registration
+ */
+router.post("/google-complete-registration", authLimiter, appController.completeRegistration);
+
+/**
  * Route to log in a user
  * @swagger
  * paths:
