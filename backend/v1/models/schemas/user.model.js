@@ -41,9 +41,9 @@ const userSchema = new Schema({
         unique: true,
         validate: {
             validator: function(v) {
-                return /^\+\d+$/.test(v); // Regex to check if the string contains only digits and starts with country code
+                return /^\d+$/.test(v); // Regex to check if the string contains only digits and starts with country code
             },
-            message: props => `${props.value} is not a valid phone number! It should start with country code and contain only numbers.`
+            message: props => `${props.value} is not a valid phone number! It should contain only numbers.`
         }
     },
     username: {
