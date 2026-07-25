@@ -51,7 +51,7 @@ const Selector = ({ setUserAction }) => {
   }
 
   return (
-    <div className="absolute lg:relative basis-1/2 flex flex-col lg:justify-center lg:items-center gap-4 max-h-full overflow-y-auto lg:min-h-[42.5rem] w-full lg:max-w-[50rem] xl:rounded-tr-3xl xl:rounded-br-3xl bg-white p-4 sm:px-8 lg:px-32 py-8 font-['Cabin'] z-10">
+    <div className="absolute lg:relative basis-1/2 flex flex-col lg:justify-center lg:items-center gap-4 max-h-full overflow-y-auto lg:min-h-[47.5rem] w-full lg:max-w-[50rem] xl:rounded-tr-3xl xl:rounded-br-3xl bg-white p-4 sm:px-8 lg:px-32 py-8 font-['Cabin'] z-10">
       <div className='text-center w-full'>
         <h2 className="text-2xl font-semibold text-gray-800 mb-2">
           Select your Average Period Length
