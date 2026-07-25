@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaHome, FaEye, FaEyeSlash } from "react-icons/fa";
 import NotificationToast from "../../components/NotificationToast";
+import GoogleOAuth from "../../components/GoogleOAuth";
 import { apiService } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
@@ -118,7 +119,7 @@ const Form = () => {
           // Optionally redirect to another page or reset the form
           // For example, redirect to sign-in page after successful signup
           setTimeout(() => {
-            setSubmissionMessage(response.message);
+            setSubmissionMessage(response.data?.message);
 
             // reset form
             setFormData({
@@ -173,6 +174,8 @@ const Form = () => {
           Hello, Please fill the form below to get started.
         </h4>
       </hgroup>
+      <GoogleOAuth setSubmissionMessage={setSubmissionMessage} />
+      <h4 className="flex justify-center mt-3">OR</h4>
       <form
         onSubmit={handleSubmit}
         noValidate
