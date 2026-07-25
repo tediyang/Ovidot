@@ -9,6 +9,7 @@ const tempDataService = require("../services/tempDataService.js");
 const handleResponse = require("../utility/helpers/handle.response.js");
 const blacklist = require("../middleware/tokenBlacklist.js");
 const requestValidator = require("../utility/validators/requests.validator.js");
+const util = require("../utility/encryption/cryptography.js");
 const { userStatus } = require("../enums.js");
 const Joi = require("joi");
 require("dotenv").config();
@@ -105,7 +106,7 @@ class AppController {
       const googleData = verification.data;
 
       // Check if user already exists in database
-      const existingUser = User.findOne({ email: googleData.email });
+      const existingUser = await User.findOne({ email: googleData.email });
 
       if (existingUser) {
         if (userStatus.deactivated == existingUser.status) {
@@ -178,11 +179,15 @@ class AppController {
         });
       }
 
+      // generate password
+      const password = await util.encrypt(util.generatePassword());
+
       // Combine Google data with provided data
       const userData = {
         ...tempData,
         phone,
-        dob
+        dob,
+        password
       };
 
       return await userController.createUser(res, { ...userData });
