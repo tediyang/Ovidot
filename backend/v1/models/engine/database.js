@@ -141,60 +141,6 @@ class DbStorage {
       throw error;
     }
   }
-
-  /**
-   * Asynchronously adds a JWT object to the blacklist.
-   *
-   * @param {Object} jwtObj - The JWT object to be blacklisted.
-   * @return {Promise<void>} - A promise that resolves when the JWT is successfully blacklisted.
-   * @throws {Error} - If there is an error reading or writing the blacklist file.
-   */
-  async blacklist_jwt(jwtObj) {
-    try {
-      // Read data from blacklist.json
-      const data = await fs.readFile(this._blacklist_file, 'utf8');
-      let jsonData;
-      if (!data) {
-        jsonData = {
-          jwts: [],
-        };
-      } else {
-        jsonData = JSON.parse(data);
-      }
-  
-      jsonData.jwts.push(jwtObj);
-  
-      const updatedData = JSON.stringify(jsonData, null, 2);
-
-      await fs.writeFile(this._blacklist_file, updatedData, 'utf8');
-  
-      logger.info('jwt blacklisted');
-      
-    } catch (error) {
-      logger.error(`Token not blacklisted: ${error}`);
-      throw error;
-    }
-  }
-
-  /**
-   * Retrieves a JSON Web Token (JWT) from the given token.
-   *
-   * @param {string} token - The JWT token to retrieve.
-   * @return {Object|null} The JWT object if found, or null if not found.
-   */
-  async get_jwt(token) {
-    try {
-      const jsonData = await fs.readFile(this._blacklist_file, 'utf8');
-      if (!jsonData) {
-        return null;
-      }
-      const jwt = JSON.parse(jsonData).jwts.find((j) => j.token === token);
-      return jwt;
-    } catch (error) {
-      logger.error(`Couldn't fetch jwt: ${error}`);
-      return null;
-    }
-  }
 }
 
 
