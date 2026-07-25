@@ -182,10 +182,10 @@ class ApiService {
         }
       );
 
-      if (response.tokens) {
+      if (response.data.tokens) {
         tokenStorage.setTokens(
-          response.tokens.accessToken,
-          response.tokens.refreshToken
+          response.data.tokens.accessToken,
+          response.data.tokens.refreshToken
         );
       }
     } catch (error) {
