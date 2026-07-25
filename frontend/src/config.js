@@ -1,11 +1,13 @@
-// src/config.js
 const config = {
   backendUrl: process.env.REACT_APP_BACKEND_URL || 'http://localhost:1245',
   environment: process.env.REACT_APP_ENVIRONMENT || 'development',
   prefix: process.env.REACT_APP_PREFIX || '/api/v1',
+  googleClientId: process.env.REACT_APP_GOOGLE_CLIENT_ID,
   apiEndpoints: {
     general: {
       signup: '/signup',
+      signupGoogle: '/signup-google',
+      completeRegistration: '/complete-registration',
       login: '/login',
       forgetPassword: '/forget-password',
       resetPassword: '/reset-password',
