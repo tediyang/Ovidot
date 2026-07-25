@@ -14,6 +14,7 @@ import AdminDashboardPage from "./pages/Admin/AdminDashboardPage";
 import AdminUsersPage from "./pages/Admin/AdminUsersPage";
 import AdminCyclesPage from "./pages/Admin/AdminCyclesPage";
 import AdminSettingsPage from "./pages/Admin/AdminSettingsPage";
+import CompleteRegistrationPage from "./pages/CompleteRegistration/CompleteRegistrationPage";
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="/help" element={<Help />} />
         <Route path="/sign-up" element={<Signup />} />
         <Route path="/sign-in" element={<Signin />} />
+        <Route path="/complete-registration" element={<CompleteRegistrationPage />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
