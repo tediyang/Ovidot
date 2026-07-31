@@ -121,7 +121,6 @@ const Form = () => {
             `${error?.message} attempts left: ${error.remainingAttempts}`
           );
           setSubmissionInProgress(false);
-          console.log(error);
           return;
         } else {
           setSubmissionMessage(
