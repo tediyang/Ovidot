@@ -66,7 +66,6 @@ class AppController {
    * @return Payload on Success
    */
   async signup(req, res) {
-    // Validate the user input
     try {
       // validate body
       const { value, error } = requestValidator.Signup.validate(req.body);
@@ -75,7 +74,8 @@ class AppController {
         throw error;
       }
 
-      return await userController.createUser(res, { ...value });
+      await userController.createUser({ ...value });
+      return handleResponse(res, 201, "Registration Successful");
     } catch (error) {
       if (error instanceof MongooseError) {
         return handleResponse(res, 500, "We have a mongoose problem", error);
@@ -86,12 +86,20 @@ class AppController {
       if (error instanceof Joi.ValidationError) {
         return handleResponse(res, 400, error.details[0].message);
       }
+      // Handle custom errors from createUser
+      if (error.message === 'Email already exists' || 
+          error.message === 'Phone already exists' ||
+          error.message === 'You are too young to menstrate' ||
+          error.message === 'You are above the menstrual age') {
+        return handleResponse(res, 400, error.message);
+      }
       return handleResponse(res, 500, error.message, error);
     }
   }
 
   async googleAuth(req, res) {
-    try {      // validate body
+    try {      
+      // validate body
       const { value, error } = requestValidator.GoogleOauth.validate(req.body);
       if (error) {
         throw error;
@@ -138,13 +146,6 @@ class AppController {
         message: 'Google authentication successful. Please complete your profile.',
         isNewUser: true,
         uuid: uuid,
-        email: googleData.email,
-        firstName: googleData.firstName,
-        lastName: googleData.lastName,
-        missingFields: {
-          phone: true,
-          dateOfBirth: true
-        }
       });
     } catch (error) {
       if (error instanceof MongooseError) {
@@ -168,29 +169,44 @@ class AppController {
         throw error;
       }
 
-      const { uuid, phone, dob } = value;
+      const { uuid, phone, dob, google } = value;
 
       // Retrieve temp data from Redis
-      const tempData = await tempDataService.retrieveAndDeleteData(uuid);
+      const tempData = await tempDataService.retrieveData(uuid);
       if (!tempData) {
         return res.status(404).json({
           success: false,
-          error: 'Registration session expired or invalid. Please try again.'
+          message: 'Registration session expired or invalid. Please try again.'
         });
       }
 
       // generate password
       const password = await util.encrypt(util.generatePassword());
-
+      
       // Combine Google data with provided data
       const userData = {
         ...tempData,
         phone,
         dob,
-        password
+        password,
+        google
       };
+      
+      const user = await userController.createUser({ ...userData });
 
-      return await userController.createUser(res, { ...userData });
+      // generate token to login user
+      const tokens = await this.createToken(user);
+
+      user.jwtRefreshToken = tokens.refreshToken;
+      await user.save();
+
+      // delete google temp data
+      await tempDataService.deleteData(uuid, tempData.email);
+
+      return res.status(200).json({
+        message: "Authentication successful",
+        tokens,
+      });
     } catch (error) {
       if (error instanceof MongooseError) {
         return handleResponse(res, 500, "We have a mongoose problem", error);
@@ -201,10 +217,16 @@ class AppController {
       if (error instanceof Joi.ValidationError) {
         return handleResponse(res, 400, error.details[0].message);
       }
+      // Handle custom errors from createUser
+      if (error.message === 'Email already exists' || 
+          error.message === 'Phone already exists' ||
+          error.message === 'You are too young to menstrate' ||
+          error.message === 'You are above the menstrual age') {
+        return handleResponse(res, 400, error.message);
+      }
       return handleResponse(res, 500, error.message, error);
     }
   }
-
 
   /**
    * Login user
