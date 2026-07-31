@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaHome, FaEye, FaEyeSlash, FaExclamationCircle } from "react-icons/fa";
 import NotificationToast from "../../components/NotificationToast";
+import GoogleOAuth from "../../components/GoogleOAuth";
 import { apiService } from "../../services/api";
 import { tokenStorage } from "../../services/storage";
 
@@ -158,6 +159,8 @@ const Form = () => {
           Experience the convenience of a modern period tracker.
         </h4>
       </hgroup>
+      <GoogleOAuth setSubmissionMessage={setSubmissionMessage} />
+      <h4 className="flex justify-center mt-3 text-primary">OR</h4>
       <form
         onSubmit={handleSubmit}
         noValidate
