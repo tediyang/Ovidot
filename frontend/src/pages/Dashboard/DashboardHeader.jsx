@@ -1,4 +1,5 @@
 import DashboardMobileMenu from "./DashboardMobileMenu";
+import NotificationToast from "../../components/NotificationToast";
 import logo from "../../assets/logo.png";
 import { apiService } from "../../services/api";
 import { useLocation } from "react-router-dom";
@@ -13,6 +14,7 @@ const DashboardHeader = ({ user, page }) => {
   const [notificationToggle, setNotificationToggle] = useState(false);
   const [userToggle, setUserToggle] = useState(false);
   const [notifications, setNotifications] = useState(user?.notificationsList);
+  const [notificationMessage, setNotificationMessage] = useState("");
   const navigate = useNavigate();
 
   const notificationUnread = notifications && notifications.filter(
@@ -32,6 +34,12 @@ const DashboardHeader = ({ user, page }) => {
   const toggleUser = () => {
     if (notificationToggle) setNotificationToggle(!notificationToggle);
     setUserToggle(!userToggle);
+  };
+
+  const timeOutMessage = () => {
+    setTimeout(() => {
+      setNotificationMessage("");
+    }, 2000);
   };
 
   function getTime(timestamp, options = {}) {
@@ -139,6 +147,8 @@ const DashboardHeader = ({ user, page }) => {
 
     } catch (error) {
       console.error("Failed to logout:", error);
+      setNotificationMessage(error?.message || "Error logging out");
+      timeOutMessage();
     }
   }
 
@@ -247,6 +257,9 @@ const DashboardHeader = ({ user, page }) => {
           </div>
         </nav>
       )}
+
+      {/* Display submission message */}
+      {notificationMessage && NotificationToast({ submissionMessage: notificationMessage })}
     </div>
   );
 };
