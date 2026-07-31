@@ -39,8 +39,8 @@ const GoogleOAuth = ({ setSubmissionMessage }) => {
         }, 2000);
       }
     } catch (err) {
-      console.error('Error completing registration', err);
-      setSubmissionMessage(err?.message || "Error completing registration, please check your connection");
+      console.error('Error completing request', err);
+      setSubmissionMessage(err?.message || "Error completing request, please check your connection");
     }
   };
 
