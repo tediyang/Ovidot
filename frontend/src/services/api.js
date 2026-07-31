@@ -215,7 +215,7 @@ class ApiService {
         body: JSON.stringify(userData),
       });
     } catch (error) {
-      throw error.data;
+      throw error?.data || error;
     }
   }
 
@@ -235,9 +235,8 @@ class ApiService {
       return response
     } catch (error) {
       // Even if logout API call fails, clear tokens locally
-      console.warn("Logout API call failed", error);
       tokenStorage.clearTokens();
-      throw error.data;
+      throw error?.data || error ;
     } finally {
       tokenStorage.clearTokens();
     }
@@ -263,7 +262,7 @@ class ApiService {
     try {
       return (await this.sendRequest(path, "GET")).data;
     } catch (error) {
-      throw error.data;
+      throw error?.data || error;
     }
   }
 
@@ -281,7 +280,7 @@ class ApiService {
         body: JSON.stringify(data),
       });
     } catch (error) {
-      throw error.data;
+      throw error?.data || error;
     }
   }
 
@@ -303,7 +302,7 @@ class ApiService {
         body: JSON.stringify(data),
       });
     } catch (error) {
-      throw error.data;
+      throw error?.data || error;
     }
   }
 
@@ -320,7 +319,7 @@ class ApiService {
     try {
       return await this.sendRequest(`${path}/${id}`, "DELETE");
     } catch (error) {
-      throw error.data;
+      throw error?.data || error;
     }
   }
 
@@ -328,7 +327,7 @@ class ApiService {
     try {
       return (await this.sendRequest(path, "GET"));
     } catch (error) {
-      throw error.data;
+      throw error?.data || error;
     }
   }
 }
