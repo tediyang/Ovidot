@@ -266,7 +266,7 @@ router.post(
 /**
  * Route to complete Google registration
  */
-router.post("/google-complete-registration", authLimiter, appController.completeRegistration);
+router.post("/google-complete-registration", authLimiter, appController.completeRegistration.bind(appController));
 
 /**
  * Route to log in a user
