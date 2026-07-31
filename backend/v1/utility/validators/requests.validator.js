@@ -80,6 +80,7 @@ class Validator {
         "string.pattern.base": "Phone number must contain only numbers.",
       }),
     dob: Joi.date().required(),
+    google: Joi.bool().required()
   });
 
   /**
