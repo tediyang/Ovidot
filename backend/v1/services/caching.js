@@ -14,11 +14,14 @@ class RedisManager {
    * @param {string} key - The key to delete.
    * @return {undefined} Returns nothing.
    */
-  async cacheDel(hash, key) {
+  async cacheDel(hash=null, key) {
     try {
-      (await redisClient).hDel(hash, key);
-
-      return;
+      if (hash) {
+        (await redisClient).hDel(hash, key);
+        return;
+      }
+      (await redisClient).del(key)
+      return
     } catch (err) {
       logger.error(err);
       return;
