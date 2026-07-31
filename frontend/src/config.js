@@ -7,7 +7,7 @@ const config = {
     general: {
       signup: '/signup',
       signupGoogle: '/signup-google',
-      completeRegistration: '/complete-registration',
+      completeRegistration: '/google-complete-registration',
       login: '/login',
       forgetPassword: '/forget-password',
       resetPassword: '/reset-password',
@@ -31,6 +31,7 @@ const config = {
     }
   },
   adminTokenStorageKey: 'adminToken',
+  googleRegistrationKey: 'googleRegistrationKey',
   tokenStorageKey: 'accessToken',
   refreshTokenStorageKey: 'refreshToken',
 };
