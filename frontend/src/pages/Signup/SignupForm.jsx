@@ -141,7 +141,6 @@ const Form = () => {
           return;
         }
       } catch (error) {
-        console.log(error)
         setSubmissionMessage(
           error?.data?.message || error?.message || "An error occurred during submission."
         );
