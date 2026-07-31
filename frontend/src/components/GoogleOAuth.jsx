@@ -30,6 +30,9 @@ const GoogleOAuth = ({ setSubmissionMessage }) => {
           return
         }
 
+        // set registration key
+        tokenStorage.setRegistrationKey(response.data?.uuid);
+
         setSubmissionMessage("Successful! Redirecting to complete registration...");
         setTimeout(() => {
           navigate("/complete-registration");
@@ -37,6 +40,7 @@ const GoogleOAuth = ({ setSubmissionMessage }) => {
       }
     } catch (err) {
       console.error('Error completing registration', err);
+      setSubmissionMessage(err?.message || "Error completing registration, please check your connection");
     }
   };
 
