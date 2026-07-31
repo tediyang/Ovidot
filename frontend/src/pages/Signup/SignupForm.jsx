@@ -141,8 +141,9 @@ const Form = () => {
           return;
         }
       } catch (error) {
+        console.log(error)
         setSubmissionMessage(
-          error.data.message || "An error occurred during submission."
+          error?.data?.message || error?.message || "An error occurred during submission."
         );
         setSubmissionInProgress(false);
         timeOutMessage();
@@ -175,7 +176,7 @@ const Form = () => {
         </h4>
       </hgroup>
       <GoogleOAuth setSubmissionMessage={setSubmissionMessage} />
-      <h4 className="flex justify-center mt-3">OR</h4>
+      <h4 className="flex justify-center mt-3 text-primary">OR</h4>
       <form
         onSubmit={handleSubmit}
         noValidate
@@ -229,7 +230,7 @@ const Form = () => {
             className="block text-sm font-medium text-[#FFFFFF] lg:text-[#757575] mb-1"
           >
             Email <span className="relative top-1 text-red-500">*</span>
-          </label>
+          </label>        
           <input
             type="email"
             id="email"
