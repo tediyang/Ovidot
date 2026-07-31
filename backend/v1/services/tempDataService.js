@@ -37,17 +37,14 @@ class TempDataService {
 
       const multi = (await redisClient).multi();
 
-      multi.hSet(hash, uuid, dataToStore);
+      multi.hSet(hash, uuid, JSON.stringify(dataToStore));
       multi.expire(hash, this.GOOGLE_CACHE_EXPIRATION_TIME);
 
       // 2. Store the index (Map email -> uuid)
       if (email) {
-        multi.set(
-          this.getEmailKey(email),
-          uuid,
-          "EX",
-          this.GOOGLE_CACHE_EXPIRATION_TIME,
-        );
+        const emailKey = this.getEmailKey(email)
+        multi.set(emailKey, uuid)
+        multi.expire(emailKey, this.GOOGLE_CACHE_EXPIRATION_TIME);
       }
 
       await multi.exec();
@@ -59,19 +56,23 @@ class TempDataService {
     }
   }
 
-  async retrieveAndDeleteData(uuid) {
+  async retrieveData(uuid) {
     const hash = this.getHash(uuid);
 
     // Get the data
-    const data = await redisManager.cacheGet(hash, uuid);
-    if (!data) {
-      return null;
-    }
+    let data = await redisManager.cacheGet(hash, uuid);
+    return data? JSON.parse(data) : null
+  }
 
-    // Delete the data from Redis (used once)
-    await redisManager.cacheDelete(hash, uuid);
+  async deleteData(uuid, email) {
+    // delete hash
+    const hash = this.getHash(uuid);
+    await redisManager.cacheDel(hash, uuid);
 
-    return data;
+    // delete email key
+    const emailKey = this.getEmailKey(email.toLowerCase());
+    await redisManager.cacheDel(null, emailKey);
+    return
   }
 
   async findByEmail(email) {
