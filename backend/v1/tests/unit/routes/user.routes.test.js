@@ -116,7 +116,7 @@ describe('USER ROUTES', async () => {
     it('should return 400 if sensitive data is passed without current password', async () => {
       updateData = {
         sensitive: {
-          phone: "+2348123456789"
+          phone: "08123456789"
         }
       };
 
@@ -134,7 +134,7 @@ describe('USER ROUTES', async () => {
       
       updateData = {
         sensitive : {
-          phone: "8123456789"
+          phone: "0812345678945"
         },
         password: "Ajumnyovidot123#"
       };
@@ -145,7 +145,7 @@ describe('USER ROUTES', async () => {
         .send(updateData);
 
       expect(res.status).to.equal(400);
-      expect(res.body).to.have.property('message', 'Phone number must start with a country code and contain only numbers.');
+      expect(res.body).to.have.property('message', '"sensitive.phone" length must be less than or equal to 12 characters long');
 
       res = await request(app)
         .put('/api/v1/auth/users/update')
@@ -154,6 +154,14 @@ describe('USER ROUTES', async () => {
       
       expect(res.status).to.equal(400);
       expect(res.body).to.have.property('message', 'Phone number is required.');
+
+      res = await request(app)
+        .put('/api/v1/auth/users/update')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ ...updateData, sensitive: { phone: "abcdgefgh" } });
+      
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property('message', 'Phone number must contain only numbers.');
 
       res = await request(app)
         .put('/api/v1/auth/users/update')
@@ -224,7 +232,7 @@ describe('USER ROUTES', async () => {
         _id: 1,
         period: 3,
         password: await util.encrypt('Jennyovidot123#'),
-        phone: "+2347012345367",
+        phone: "07012345367",
         notificationsList: []
       });
 
@@ -232,7 +240,7 @@ describe('USER ROUTES', async () => {
         period: 3,
         password: 'Jennyovidota123#',
         sensitive: {
-          phone: "+2347012345367"
+          phone: "07012345368"
         }
       };
 
@@ -274,7 +282,7 @@ describe('USER ROUTES', async () => {
         .send(updateData);
       
       expect(res.statusCode).to.equal(200);
-      expect(res.body).to.have.property('message', 'User succesfully updated');
+      expect(res.body).to.have.property('message', 'User successfully updated');
       expect(res.body).to.have.property('user');
     });
   });

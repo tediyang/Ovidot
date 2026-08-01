@@ -41,13 +41,18 @@ describe('CYCLE ROUTES', () => {
     };
 
     cycle = {
+      _id: '66dcd446a0fe28cd6d78d605',
       month: "September",
       year: "2024",
       period: 4,
       ovulation: new Date("2024-09-20T00:00:00.000+00:00"),
       start_date: "2024-09-07T00:00:00.000+00:00",
       next_date: "2024-10-05T00:00:00.000+00:00",
-      days: 28
+      days: 28,
+      period_range: [],
+      ovulation_range: [],
+      unsafe_days: [],
+      toJSON() { return this; }
     }
   });
 
@@ -61,7 +66,7 @@ describe('CYCLE ROUTES', () => {
 
     beforeEach(() => {
       sandbox = sinon.createSandbox();
-      sandbox.useFakeTimers(new Date('2023-11-26').getTime());
+      sandbox.useFakeTimers({ now: new Date('2023-11-26').getTime(), toFake: ['Date'] });
     });
 
     afterEach(() => {
@@ -162,7 +167,7 @@ describe('CYCLE ROUTES', () => {
 
     beforeEach(() => {
       sandbox = sinon.createSandbox();
-      sandbox.useFakeTimers(new Date('2023-11-26').getTime());
+      sandbox.useFakeTimers({ now: new Date('2023-11-26').getTime(), toFake: ['Date'] });
     });
 
     afterEach(() => {
@@ -280,7 +285,7 @@ describe('CYCLE ROUTES', () => {
 
     beforeEach(() => {
       sandbox = sinon.createSandbox();
-      sandbox.useFakeTimers(new Date('2023-11-26').getTime());
+      sandbox.useFakeTimers({ now: new Date('2023-11-26').getTime(), toFake: ['Date'] });
     });
 
     afterEach(() => {
@@ -327,7 +332,7 @@ describe('CYCLE ROUTES', () => {
 
     beforeEach(() => {
       sandbox = sinon.createSandbox();
-      sandbox.useFakeTimers(new Date('2024-09-30').getTime());
+      sandbox.useFakeTimers({ now: new Date('2024-09-30').getTime(), toFake: ['Date'] });
     });
 
     afterEach(() => {
@@ -474,7 +479,7 @@ describe('CYCLE ROUTES', () => {
 
     beforeEach(() => {
       sandbox = sinon.createSandbox();
-      sandbox.useFakeTimers(new Date('2024-09-30').getTime());
+      sandbox.useFakeTimers({ now: new Date('2024-09-30').getTime(), toFake: ['Date'] });
     });
 
     afterEach(() => {

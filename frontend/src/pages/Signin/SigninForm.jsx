@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaHome, FaEye, FaEyeSlash, FaExclamationCircle } from "react-icons/fa";
 import NotificationToast from "../../components/NotificationToast";
+import GoogleOAuth from "../../components/GoogleOAuth";
 import { apiService } from "../../services/api";
 import { tokenStorage } from "../../services/storage";
 
@@ -120,7 +121,6 @@ const Form = () => {
             `${error?.message} attempts left: ${error.remainingAttempts}`
           );
           setSubmissionInProgress(false);
-          console.log(error);
           return;
         } else {
           setSubmissionMessage(
@@ -143,7 +143,7 @@ const Form = () => {
   };
 
   return (
-    <div className="absolute lg:relative basis-1/2 flex flex-col lg:justify-center gap-4 max-h-full overflow-y-auto lg:min-h-[42.5rem] w-full lg:max-w-[50rem] xl:rounded-tr-3xl xl:rounded-br-3xl lg:bg-white p-4 sm:px-8 lg:py-8 font-['Cabin'] z-10">
+    <div className="absolute lg:relative basis-1/2 flex flex-col lg:justify-center gap-4 max-h-full overflow-y-auto lg:min-h-[47.5rem] w-full lg:max-w-[50rem] xl:rounded-tr-3xl xl:rounded-br-3xl lg:bg-white p-4 sm:px-8 lg:py-8 font-['Cabin'] z-10">
       <Link
         to="/"
         className="w-8 text-white hover:text-primary lg:text-primary lg:hover:text-[#757575] transition-colors"
@@ -158,6 +158,8 @@ const Form = () => {
           Experience the convenience of a modern period tracker.
         </h4>
       </hgroup>
+      <GoogleOAuth setSubmissionMessage={setSubmissionMessage} />
+      <h4 className="flex justify-center mt-3 text-primary">OR</h4>
       <form
         onSubmit={handleSubmit}
         noValidate

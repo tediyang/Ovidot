@@ -1,0 +1,4 @@
+spec: v1/tests/**/*.test.js
+timeout: 540000
+require: dotenv/config
+exit: true

@@ -112,15 +112,18 @@ class PasswordController {
         return handleResponse(res, 401, 'Invalid or expired token');
       }
   
-      const user = await User.findOne({
-        reset: token,
-        resetExp: { $gt: Date.now() },
-      });
-  
+      const userQuery = User.findOne(
+        { reset: token, resetExp: { $gt: Date.now() } },
+        { _id: 1 }
+      );
+      const user = typeof userQuery?.lean === 'function'
+        ? await userQuery.lean()
+        : await userQuery;
+
       if (!user) {
         return handleResponse(res, 401, 'Invalid or expired token');
       }
-  
+
       return res.status(200).json({
         message: "success",
         token

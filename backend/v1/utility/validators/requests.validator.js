@@ -16,16 +16,16 @@ class Validator {
           "Username must contain only alphabetic characters.",
       }),
     phone: Joi.string()
-      .pattern(/^\+\d+$/) // Pattern starts with country code
-      .max(14)
+      .pattern(/^\d+$/)
+      .max(12)
       .required()
       .messages({
-        "string.pattern.base":
-          "Phone number must start with a country code and contain only numbers.",
         "string.empty": "Phone number is required.",
         "any.required": "Phone number is required.",
-      }),
-    dob: Joi.date().required(),
+        "string.pattern.base": "Phone number must contain only numbers.",
+    }),
+    dob: Joi.date()
+      .required(),
     email: Joi.string()
       .email({
         minDomainSegments: 2,
@@ -59,6 +59,28 @@ class Validator {
   Login = Joi.object({
     email_or_phone: Joi.string().required(),
     password: Joi.string().required(),
+  });
+
+  /**
+   * Validate Google Oauth Route Input
+   */
+  GoogleOauth = Joi.object({
+    token: Joi.string().required(),
+  });
+
+  CompleteRegistration = Joi.object({
+    uuid: Joi.string().required(),
+    phone: Joi.string()
+      .pattern(/^\d+$/)
+      .max(12)
+      .required()
+      .messages({
+        "string.empty": "Phone number is required.",
+        "any.required": "Phone number is required.",
+        "string.pattern.base": "Phone number must contain only numbers.",
+      }),
+    dob: Joi.date().required(),
+    google: Joi.bool().required()
   });
 
   /**
@@ -113,15 +135,11 @@ class Validator {
         "any.required": "Username is required.",
       }),
     sensitive: Joi.object({
-      phone: Joi.string()
-        .pattern(/^\+\d+$/)
-        .max(14)
-        .messages({
-          "string.pattern.base":
-            "Phone number must start with a country code and contain only numbers.",
-          "string.empty": "Phone number is required.",
-          "any.required": "Phone number is required.",
-        }),
+      phone: Joi.string().pattern(/^\d+$/).max(12).messages({
+        "string.empty": "Phone number is required.",
+        "any.required": "Phone number is required.",
+        "string.pattern.base": "Phone number must contain only numbers.",
+      }),
       new_password: Joi.string()
         .pattern(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()])[a-zA-Z0-9!@#$%^&*()]{8,}$/,
@@ -423,6 +441,42 @@ class Validator {
   });
 
   /**
+   * Admin Route: Create Admin
+   */
+  CreateAdmin = Joi.object({
+    email: Joi.string()
+      .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "ng"] } })
+      .required()
+      .messages({
+        "string.base": "Email must be a string.",
+        "string.empty": "Email is required.",
+        "string.email":
+          "Please provide a valid email address with a domain such as example.com or example.ng etc.",
+        "any.required": "Email is a required field.",
+      }),
+    username: Joi.string()
+      .pattern(/^[a-zA-Z]+$/)
+      .messages({
+        "string.pattern.base":
+          "Username must contain only alphabetic characters.",
+      }),
+    password: Joi.string()
+      .required()
+      .pattern(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()])[a-zA-Z0-9!@#$%^&*()]{8,}$/,
+      )
+      .messages({
+        "string.pattern.base":
+          "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters.",
+        "string.empty": "Password is required.",
+        "any.required": "Password is required.",
+      }),
+    role: Joi.string().valid(Role.admin).default(Role.admin).messages({
+      "any.only": "Only ADMIN role is allowed for new admins",
+    }),
+  });
+
+  /**
    * Admin Route: Switch Role
    */
   SwitchRole = Joi.object({
@@ -438,23 +492,6 @@ class Validator {
   DeactivateAdmin = Joi.object({
     email_username_id: Joi.string().required(),
   });
-
-  /**
-   * Generates a new date based on the given time share and number of times.
-   * This basically means the admin either wants to return the last 1 (default) or more hours, minutes of the data.
-   *
-   * @param {timeShare} time_share - The time share to be used for calculation (default: Time_share.hour).
-   * @param {number} times - The number of times to multiply the time share by (default: 1).
-   */
-  last_times(time_share = timeShare.hour, times = 1) {
-    try {
-      const now = new Date();
-      const time = time_share * times;
-      return new Date(now.getTime() - time);
-    } catch (error) {
-      throw error;
-    }
-  }
 }
 
 const requestValidator = new Validator();

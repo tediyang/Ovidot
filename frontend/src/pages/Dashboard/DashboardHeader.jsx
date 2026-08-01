@@ -1,4 +1,5 @@
 import DashboardMobileMenu from "./DashboardMobileMenu";
+import NotificationToast from "../../components/NotificationToast";
 import logo from "../../assets/logo.png";
 import { apiService } from "../../services/api";
 import { useLocation } from "react-router-dom";
@@ -13,6 +14,7 @@ const DashboardHeader = ({ user, page }) => {
   const [notificationToggle, setNotificationToggle] = useState(false);
   const [userToggle, setUserToggle] = useState(false);
   const [notifications, setNotifications] = useState(user?.notificationsList);
+  const [notificationMessage, setNotificationMessage] = useState("");
   const navigate = useNavigate();
 
   const notificationUnread = notifications && notifications.filter(
@@ -32,6 +34,12 @@ const DashboardHeader = ({ user, page }) => {
   const toggleUser = () => {
     if (notificationToggle) setNotificationToggle(!notificationToggle);
     setUserToggle(!userToggle);
+  };
+
+  const timeOutMessage = () => {
+    setTimeout(() => {
+      setNotificationMessage("");
+    }, 2000);
   };
 
   function getTime(timestamp, options = {}) {
@@ -139,11 +147,13 @@ const DashboardHeader = ({ user, page }) => {
 
     } catch (error) {
       console.error("Failed to logout:", error);
+      setNotificationMessage(error?.message || "Error logging out");
+      timeOutMessage();
     }
   }
 
   return (
-    <div className="flex justify-between items-center px-5 bg-white h-16 -mt-5 fixed w-full z-10">
+    <div className="flex justify-between items-center px-5 bg-white h-16 -mt-5 fixed w-full z-10 shadow-[0_1px_8px_rgba(77,11,94,0.09)]">
       {/* Nav and header */}
       <div className="flex flex-nowrap items-center">
         <DashboardMobileMenu
@@ -158,16 +168,18 @@ const DashboardHeader = ({ user, page }) => {
       {/* Notification */}
       <div className="flex items-center gap-4">
         <div
-          className="relative flex justify-center items-center gap-2 bg-primary w-10 h-10 rounded-full cursor-pointer"
+          className="relative flex justify-center items-center w-10 h-10 rounded-full bg-[#FDF4FF] border border-[#e9d5f5] cursor-pointer"
           onClick={toggleNotification}
         >
-          <FaBell className="w-6 h-6 text-white" />
-          <div className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
-            {notificationCount > 9 ? "9+" : notificationCount}
-          </div>
+          <FaBell className="w-5 h-5 text-primary" />
+          {notificationCount > 0 && (
+            <div className="absolute -top-0.5 -right-0.5 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[9px] font-bold">
+              {notificationCount > 9 ? "9+" : notificationCount}
+            </div>
+          )}
         </div>
         <div
-          className="flex justify-center items-center w-10 h-10 bg-primary text-white rounded-full"
+          className="flex justify-center items-center w-10 h-10 bg-primary text-white rounded-full border-2 border-[#e9d5f5] cursor-pointer text-sm font-bold"
           onClick={toggleUser}
         >
           {user?.name.fname[0].toUpperCase()}
@@ -245,6 +257,9 @@ const DashboardHeader = ({ user, page }) => {
           </div>
         </nav>
       )}
+
+      {/* Display submission message */}
+      {notificationMessage && NotificationToast({ submissionMessage: notificationMessage })}
     </div>
   );
 };

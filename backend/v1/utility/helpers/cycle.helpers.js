@@ -86,7 +86,6 @@ class CycleHelper extends CycleCalculator {
    */
   performUpdateAndNotify = async (cycle, period, ovulation, cycleId, user) => {
     try {
-      // const updated_at = new Date();
       const month = this.getMonth(cycle.start_date);
       const updatedData = await this.calculate(period, cycle.start_date, ovulation);
       const data = cycleParser.Parse(month, period, cycle.start_date, updatedData);
@@ -131,7 +130,7 @@ class CycleHelper extends CycleCalculator {
       let cycle;
 
       await Connection.transaction(async () => {
-        cycle = await Cycle.findByIdAndRemove(cycleId);
+        cycle = (await Cycle.findByIdAndRemove(cycleId)).toJSON(); // Done to trigger decryption by mongoose
 
         const message = `Cycle deleted for ${this.formatDate(cycle.start_date)}`;
         const notify = await notifications.generateNotification(userAction.deletedCycle, message, cycle._id);

@@ -21,86 +21,82 @@ class UserController {
   _EXCLUDE = process.env.EXCLUDE;
   /**
    * Create the user object for the new user if it doesn't exist
-   * @res - Express Response
    * @data - user data passed, used for creating a user.
    * @returns Payload on success
    */
-  async createUser(res, data) {
-    try {
-      // check for existing user
-      const existing_data = Promise.all([
-        User.findOne({ email: data.email }),
-        User.findOne({ phone: data.phone }),
-      ]);
+  async createUser(data) {
+    // check for existing user
+    const existing_data = Promise.all([
+      User.findOne({ email: data.email }, { _id: 1 }).lean(),
+      User.findOne({ phone: data.phone }, { _id: 1 }).lean(),
+    ]);
 
-      const [email, phone] = await existing_data;
+    const [email, phone] = await existing_data;
 
-      if (email || phone) {
-        if (email) {
-          return handleResponse(res, 400, "Email already exists");
-        } else {
-          return handleResponse(res, 400, "Phone already exists");
-        }
-      }
+    if (email) {
+      throw new Error('Email already exists');
+    }
+    if (phone) {
+      throw new Error('Phone already exists');
+    }
 
-      // check for min age (8 years)
-      const minDOB = new Date(); // minimum age
-      const maxDOB = new Date(); // maximum age
-      minDOB.setFullYear(minDOB.getFullYear() - 8);
-      maxDOB.setFullYear(maxDOB.getFullYear() - 58);
-      const userDOB = new Date(data.dob);
-      if (userDOB > minDOB) {
-        return handleResponse(res, 400, "You are too young to menstrate");
-      }
-      if (userDOB < maxDOB) {
-        return handleResponse(res, 400, "You are above the menstrual age");
-      }
+    // check for min age (8 years)
+    const minDOB = new Date(); // minimum age
+    const maxDOB = new Date(); // maximum age
+    minDOB.setFullYear(minDOB.getFullYear() - 8);
+    maxDOB.setFullYear(maxDOB.getFullYear() - 58);
+    const userDOB = new Date(data.dob);
+    if (userDOB > minDOB) {
+      throw new Error('You are too young to menstrate');
+    }
+    if (userDOB < maxDOB) {
+      throw new Error('You are above the menstrual age');
+    }
 
-      // create user
-      const user = {
-        name: {
-          fname: data.fname,
-          lname: data.lname,
-        },
-        email: data.email,
-        phone: data.phone,
-        username: data.username,
-        dob: data.dob,
-        period: data.period,
-      };
+    // create user
+    const user = {
+      name: {
+        fname: data.fname,
+        lname: data.lname,
+      },
+      email: data.email,
+      phone: data.phone,
+      username: data.username,
+      dob: data.dob,
+      period: data.period,
+    };
 
-      // encrypt user password
-      const pwd = await util.encrypt(data.password);
-      user.password = pwd;
+    // encrypt user password
+    const pwd = await util.encrypt(data.password);
+    user.password = pwd;
 
-      await Connection.transaction(async () => {
-        const resoled_u = await User.create(user);
+    let resolved;
 
-        // Send email
-        await Email.create({
-          email: user.email,
-          username: user.name.fname,
-          email_type: emailType.welcome,
-        });
+    await Connection.transaction(async () => {
+      const resoled_u = await User.create(user);
 
-        // Generate notification
-        const message = `${user.name.fname}, your account has been created`;
-        const notify = await notifications.generateNotification(
-          userAction.createdUser,
-          message,
-        );
-
-        // Add the notification
-        resoled_u.notificationsList.push(notify);
-        await resoled_u.save();
+      // Send email
+      await Email.create({
+        email: user.email,
+        username: user.name.fname,
+        email_type: emailType.welcome,
       });
 
-      return handleResponse(res, 201, "Registration Successful");
-    } catch (error) {
-      throw error;
-    }
-  }
+      // Generate notification
+      const message = `${user.name.fname}, your account has been created`;
+      const notify = await notifications.generateNotification(
+        userAction.createdUser,
+        message,
+      );
 
+      // Add the notification
+      resoled_u.notificationsList.push(notify);
+      await resoled_u.save();
+      resolved = resoled_u;
+    });
+
+    return resolved;
+  }
   /**
    * Find the user and update the data passed.
    * @param {Object} req - Express Request
@@ -145,7 +141,7 @@ class UserController {
         // validate password
         if (!is_pwd) {
           return handleResponse(res, 400, "Invalid password");
-        }
+        } 
 
         if (phone) {
           user.phone = phone;
@@ -218,7 +214,10 @@ class UserController {
    */
   async fetchUser(req, res) {
     try {
-      const user = await User.findById(req.user.id, this._EXCLUDE);
+      const userQuery = User.findById(req.user.id, this._EXCLUDE);
+      const user = typeof userQuery?.lean === 'function'
+        ? await userQuery.lean()
+        : await userQuery;
 
       if (!user) {
         return handleResponse(res, 404, "User not found");
@@ -377,7 +376,10 @@ class UserController {
    */
   async getNotifications(req, res) {
     try {
-      const user = await User.findById(req.user.id);
+      const userQuery = User.findById(req.user.id, { notificationsList: 1 });
+      const user = typeof userQuery?.lean === 'function'
+        ? await userQuery.lean()
+        : await userQuery;
       if (!user) {
         return handleResponse(res, 404, "User not found");
       }

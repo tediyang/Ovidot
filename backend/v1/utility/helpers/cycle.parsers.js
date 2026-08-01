@@ -29,7 +29,7 @@ class CycleParser {
 	Parse(month, period, startdate, data ) {
 		const result = {
 			month: month,
-			year: startdate.toISOString().slice(0, 4),
+			year: new Date(startdate).toISOString().slice(0, 4),
 			period: period,
 			ovulation: data.ovulation,
 			start_date: startdate,
@@ -50,7 +50,7 @@ class CycleParser {
 	 Filter(cycle) {
 		cycle = cycle.toJSON();  // Done to trigger decryption by mongoose
 		const result = {
-			id: cycle.id,
+			id: cycle._id.toString(),
 			month: cycle.month,
 			year: cycle.year,
 			period: cycle.period,

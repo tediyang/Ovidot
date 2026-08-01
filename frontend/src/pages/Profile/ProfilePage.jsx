@@ -78,7 +78,7 @@ const Profile = () => {
       {isLoading ? (
         <OvidotLoader />
       ) :
-        <div className="bg-[#4D0B5E] bg-opacity-20 mt-5">
+        <div className="bg-[#FDF4FF] mt-5">
           <DashboardHeader
             user={user}
             page="Profile"

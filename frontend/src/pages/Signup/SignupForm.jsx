@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaHome, FaEye, FaEyeSlash } from "react-icons/fa";
 import NotificationToast from "../../components/NotificationToast";
+import GoogleOAuth from "../../components/GoogleOAuth";
 import { apiService } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
@@ -118,7 +119,7 @@ const Form = () => {
           // Optionally redirect to another page or reset the form
           // For example, redirect to sign-in page after successful signup
           setTimeout(() => {
-            setSubmissionMessage(response.message);
+            setSubmissionMessage(response.data?.message);
 
             // reset form
             setFormData({
@@ -141,7 +142,7 @@ const Form = () => {
         }
       } catch (error) {
         setSubmissionMessage(
-          error.data.message || "An error occurred during submission."
+          error?.data?.message || error?.message || "An error occurred during submission."
         );
         setSubmissionInProgress(false);
         timeOutMessage();
@@ -173,6 +174,8 @@ const Form = () => {
           Hello, Please fill the form below to get started.
         </h4>
       </hgroup>
+      <GoogleOAuth setSubmissionMessage={setSubmissionMessage} />
+      <h4 className="flex justify-center mt-3 text-primary">OR</h4>
       <form
         onSubmit={handleSubmit}
         noValidate
@@ -226,7 +229,7 @@ const Form = () => {
             className="block text-sm font-medium text-[#FFFFFF] lg:text-[#757575] mb-1"
           >
             Email <span className="relative top-1 text-red-500">*</span>
-          </label>
+          </label>        
           <input
             type="email"
             id="email"

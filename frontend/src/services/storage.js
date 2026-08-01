@@ -53,6 +53,25 @@ class TokenStorage {
     }
   }
 
+  // set registration key
+  setRegistrationKey(key) {
+    try {
+      localStorage.setItem(config.googleRegistrationKey, key);
+    } catch (error) {
+      console.error('Failed to store registration key:', error);
+    }
+  }
+
+  // get registration key
+  getRegistrationKey() {
+    try {
+      return localStorage.getItem(config.googleRegistrationKey);
+    } catch (error) {
+      console.error('Failed to get registration key from storage:', error);
+      return null;
+    }
+  }
+
   // Get current token
   getToken() {
     return this.accessToken;
