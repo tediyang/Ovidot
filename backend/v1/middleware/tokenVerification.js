@@ -51,7 +51,7 @@ class TokenVerification {
         });
       };
 
-      req.user = user;
+      req.user = found;
       req.token = token;
       next();
     });
@@ -94,7 +94,7 @@ class TokenVerification {
         });
       };
 
-      req.user = user;
+      req.user = found;
       req.token = token;
       next();
     });
