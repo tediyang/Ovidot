@@ -12,9 +12,11 @@ const adminSchema = new Schema({
     username: {
         type: String,
         unique: true,
+        sparse: true, // Allows multiple documents to omit the username field
         validate: {
             validator: function(v) {
-                return /^[a-zA-Z]+$/.test(v); // Regex to ensure username contains only alphabets
+                // Return true if value is null/undefined to let optional validation pass
+                return v == null || /^[a-zA-Z]+$/.test(v);
             },
             message: props => `${props.value} is not a valid username! It should contain only alphabets.`
         }
@@ -36,6 +38,10 @@ const adminSchema = new Schema({
     loginAttempts: {
         type: Number,
         default: 0
+    },
+    changePasswordRequired: {
+        type: Boolean,
+        default: false
     }
 }, {timestamps: true});
 
