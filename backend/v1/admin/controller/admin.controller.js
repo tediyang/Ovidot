@@ -1,4 +1,3 @@
-const bcrypt = require("bcrypt");
 const {
   Admin,
   Cycle,
@@ -17,7 +16,9 @@ const blacklist = require("../../middleware/tokenBlacklist");
 const Joi = require("joi");
 const { Types } = require("mongoose");
 const { sign, JsonWebTokenError } = require("jsonwebtoken");
+const util = require("../../utility/encryption/cryptography");
 require("dotenv").config();
+
 
 /**
  * Admin Controller
@@ -106,7 +107,7 @@ class AdminController {
           "Account deactivated - Contact your super administrator",
         );
       }
-      const matched = await bcrypt.compare(value.password, admin.password);
+      const matched = await util.validate_encryption(value.password, admin.password);
       if (matched) {
         const token = this.createToken(admin);
 
@@ -161,6 +162,15 @@ class AdminController {
    */
   async getUsers(req, res) {
     try {
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+
       // validate body
       const { value, error } = requestValidator.GetUsers.validate(req.query);
       if (error) {
@@ -278,6 +288,15 @@ class AdminController {
    */
   async getUserCycles(req, res) {
     try {
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+
       const { value, err } = requestValidator.GetUserCycles[0].validate(
         req.body,
       );
@@ -296,11 +315,6 @@ class AdminController {
       ).lean();
       if (!user) {
         return handleResponse(res, 404, `User with ${value.email} not found`);
-      }
-
-      if (Object.keys(filter.value).length === 0) {
-        const populate_user = await userPopulate.populateWithCycles(user._id);
-        return res.status(200).json({ allCycles: populate_user._cycles });
       }
 
       // building filter
@@ -391,6 +405,15 @@ class AdminController {
    */
   async getUser(req, res) {
     try {
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+    
       // validate data
       const { value, error } = requestValidator.GetUser.validate(req.body);
 
@@ -433,6 +456,15 @@ class AdminController {
    */
   async updateUser(req, res) {
     try {
+        // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+
       if (Role.super_admin !== req.user.role) {
         return handleResponse(res, 403, "Forbidden");
       }
@@ -498,6 +530,15 @@ class AdminController {
    */
   async deleteUser(req, res) {
     try {
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+
       if (Role.super_admin !== req.user.role) {
         return handleResponse(res, 403, "Forbidden");
       }
@@ -543,6 +584,15 @@ class AdminController {
    */
   async getCycles(req, res) {
     try {
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+
       // validate body
       const { value, error } = requestValidator.AdminGetCycles.validate(
         req.query,
@@ -648,6 +698,15 @@ class AdminController {
    */
   async getCycle(req, res) {
     try {
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+
       const cycleId = req.params.cycleId;
 
       // Retrieve specific cycle data by ID
@@ -678,6 +737,15 @@ class AdminController {
    */
   async deleteCycle(req, res) {
     try {
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+
       if (Role.super_admin !== req.user.role) {
         return handleResponse(res, 403, "Forbidden");
       }
@@ -714,6 +782,15 @@ class AdminController {
    */
   async createAdmin(req, res) {
     try {
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+
       if (Role.super_admin !== req.user.role) {
         return handleResponse(res, 403, "Forbidden");
       }
@@ -735,25 +812,221 @@ class AdminController {
         $or: [{ email: value.email }, { username: value.username }],
       });
       if (existingAdmin) {
-        return handleResponse(res, 409, "Admin already exists");
+        return handleResponse(res, 409, "Admin username or email already exists");
       }
 
-      const hashedPassword = await bcrypt.hash(value.password, 10);
+      const hashedPassword = await util.encrypt(value.password);
       const admin = await Admin.create({
         email: value.email,
         username: value.username ?? null,
         password: hashedPassword,
         role: value.role || Role.admin,
         status: userStatus.active,
+        changePasswordRequired: true,
       });
 
       logger.info(
-        `Super Admin ${req.user.id} created admin ${admin._id} successfully`,
+        `Super Admin ${req.user.id} created ${admin.role} ${admin._id} successfully`,
       );
       return res.status(201).json({
         message: "Admin created successfully",
-        admin,
+        admin: {
+          email: admin.email,
+          password: value.password,
+        },
       });
+    } catch (error) {
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
+    }
+  }
+
+  /**
+   * @async Delete an admin account.
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   * @throws {Object} - Error response object.
+   */
+  async deleteAdmin(req, res) {
+    try {
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+
+      if (Role.super_admin !== req.user.role) {
+        return handleResponse(res, 403, "Forbidden");
+      }
+
+      const { adminId } = req.params;
+
+      const admin = await Admin.findByIdAndRemove(adminId);
+      if (!admin) {
+        return handleResponse(res, 404, "Admin not found");
+      }
+
+      logger.info(
+        `Super Admin ${req.user.id} deleted ${admin.role} ${admin._id} successfully`,
+      );
+      return res.status(204).send();
+    } catch (error) {
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
+    }
+  }
+
+  /**
+   * @async Get all admins.
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express reery,sponse object.
+   * @returns {void}
+   * @throws {Object} - Error response object.
+   */
+  async getAdmins(req, res) {
+    try {
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+
+      if (Role.super_admin !== req.user.role) {
+        return handleResponse(res, 403, "Forbidden");
+      }
+
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+
+      const { value, error } = requestValidator.GetAdmins.validate(req.query);
+      if (error) {
+        throw error;
+      }
+
+      // building filter
+      const query = {};
+      const { username, role, status } =
+        value;
+
+      if (username) {
+        query.username = username.toLowerCase();
+      }
+
+      if (role) {
+        query.role = role;
+      }
+
+      if (status) {
+        query.status = status;
+      }  
+
+      const { haveNextPage, currentPageExists, totalPages } = await page_info(
+        query,
+        Collections.Admin,
+        value.size,
+        value.page,
+      );
+
+      let gather_data = [];
+
+      if (currentPageExists) {
+        const admins = await Admin.find(query, { password: 0 })
+          .skip((value.page - 1) * value.size)
+          .limit(value.size)
+          .sort({ createdAt: -1 })
+          .lean()
+          .exec();
+
+        gather_data = [admins, haveNextPage, totalPages];
+      }
+
+      if (!currentPageExists) {
+        gather_data = [[], haveNextPage, totalPages];
+      }
+
+      logger.info(
+        `Super Admin ${req.user.id} fetched all admins data successfully`,
+      );
+      return res.status(200).json({
+        admins: gather_data[0],
+        have_next_page: gather_data[1],
+        total_pages: gather_data[2],
+      });
+    } catch (error) {
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
+    }
+  }
+
+  async changeAdminPassword(req, res) {
+    try {
+      const { value, error } = requestValidator.ChangeAdminPassword.validate(
+        req.body,
+      );
+      if (error) {
+        throw error;
+      }
+
+      const admin = await Admin.findById(req.user.id);
+      if (!admin) {
+        return handleResponse(res, 404, "Admin not found");
+      }
+
+      // check if the current password matches the stored password
+      const isMatch = await util.validate_encryption(value.currentPassword, admin.password);
+      if (!isMatch) {
+        return handleResponse(res, 400, "Current password is incorrect");
+      }
+
+      const hashedPassword = await util.encrypt(value.newPassword);
+      admin.password = hashedPassword;
+
+      // change update the loginAttempts to 0 after successful password change
+      admin.loginAttempts = 0;
+      admin.changePasswordRequired = false;
+      await admin.save();
+
+      logger.info(
+        `${admin.role} ${req.user.id} changed password successfully`,
+      );
+      return res.status(200).json({ message: "Password changed successfully" });
     } catch (error) {
       if (error instanceof MongooseError) {
         return handleResponse(res, 500, "We have a mongoose problem", error);
@@ -777,6 +1050,15 @@ class AdminController {
    */
   async switchAdmin(req, res) {
     try {
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+
       if (Role.super_admin !== req.user.role) {
         return handleResponse(res, 403, "Forbidden");
       }
@@ -806,11 +1088,21 @@ class AdminController {
         return handleResponse(res, 404, "Admin not found");
       }
 
+      // admin cannot switch their own role
+      if (admin._id.equals(req.user.id) || admin.email === req.user.email || admin.username === req.user.username) {
+        return handleResponse(res, 400, "You cannot switch your own role");
+      }
+
+      const previousRole = admin.role;
+      if (previousRole === role) {
+        return handleResponse(res, 400, "Admin already has this role");
+      }
+
       admin.role = role;
       await admin.save();
 
       logger.info(
-        `Super Admin ${req.user.id} switched admin ${admin._id} to ${role} successfully`,
+        `Super Admin ${req.user.id} switched ${previousRole} ${admin._id} to ${role} successfully`,
       );
       return res.status(200).json({ admin });
     } catch (error) {
@@ -836,6 +1128,15 @@ class AdminController {
    */
   async deactivateAdmin(req, res) {
     try {
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+      
       if (Role.super_admin !== req.user.role) {
         return handleResponse(res, 403, "Forbidden");
       }
@@ -872,12 +1173,76 @@ class AdminController {
       }
 
       admin.status = userStatus.deactivated;
+      admin.changeAdminPasswordRequired = true;
       await admin.save();
 
       logger.info(
-        `Super Admin ${req.user.id} deactivated admin with id ${admin._id} successfully`,
+        `Super Admin ${req.user.id} deactivated ${admin.role} ${admin._id} successfully`,
       );
       return handleResponse(res, 200, "Admin deactivated");
+    } catch (error) {
+      if (error instanceof MongooseError) {
+        return handleResponse(res, 500, "We have a mongoose problem", error);
+      }
+      if (error instanceof Joi.ValidationError) {
+        return handleResponse(res, 400, error.details[0].message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        return handleResponse(res, 500, error.message, error);
+      }
+      return handleResponse(res, 500, error.message, error);
+    }
+  }
+
+  async activateAdmin(req, res) {
+    try {
+      // check if admin hasn't changed password, they cannot create another admin
+      if (req.user.changePasswordRequired) {
+        return handleResponse(
+          res,
+          403,
+          "You must change your password before performing such action",
+        );
+      }
+
+      if (Role.super_admin !== req.user.role) {
+        return handleResponse(res, 403, "Forbidden");
+      }
+
+      const { value, error } = requestValidator.ActivateAdmin.validate(
+        req.body,
+      );
+      if (error) {
+        throw error;
+      }
+
+      let id;
+      let email;
+      let username;
+
+      const { email_username_id } = value;
+
+      if (Types.ObjectId.isValid(email_username_id)) {
+        id = await Admin.findById(email_username_id);
+      } else {
+        [email, username] = await Promise.all([
+          Admin.findOne({ email: email_username_id }),
+          Admin.findOne({ username: email_username_id }),
+        ]);
+      }
+
+      const admin = id || email || username;
+      if (!admin) {
+        return handleResponse(res, 404, "Admin not found");
+      }
+
+      admin.status = userStatus.active;
+      await admin.save();
+
+      logger.info(
+        `Super Admin ${req.user.id} activated ${admin.role} ${admin._id} successfully`,
+      );
+      return handleResponse(res, 200, "Admin activated");
     } catch (error) {
       if (error instanceof MongooseError) {
         return handleResponse(res, 500, "We have a mongoose problem", error);
