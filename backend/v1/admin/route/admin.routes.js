@@ -1769,4 +1769,34 @@ router.put(
   adminController.deactivateAdmin,
 );
 
+router.put(
+  "/activate",
+  tokenVerification.adminTokenVerification,
+  adminController.activateAdmin,
+);
+
+router.post(
+  "/create-admin",
+  tokenVerification.adminTokenVerification,
+  adminController.createAdmin.bind(adminController),
+);
+
+router.get(
+  "/admins",
+  tokenVerification.adminTokenVerification,
+  adminController.getAdmins.bind(adminController),
+);
+
+router.delete(
+  "/delete-admin/:adminId",
+  tokenVerification.adminTokenVerification,
+  adminController.deleteAdmin.bind(adminController),
+);
+
+router.put(
+  "/updatePassword",
+  tokenVerification.adminTokenVerification,
+  adminController.changeAdminPassword.bind(adminController),
+)
+
 module.exports = router;
