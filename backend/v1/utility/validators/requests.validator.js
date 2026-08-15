@@ -440,6 +440,11 @@ class Validator {
     size: Joi.number().integer().default(20),
   });
 
+  GetAdmins = Joi.object({
+    page: Joi.number().integer().default(1),
+    size: Joi.number().integer().default(20),
+  });
+
   /**
    * Admin Route: Create Admin
    */
@@ -476,6 +481,26 @@ class Validator {
     }),
   });
 
+  ChangeAdminPassword = Joi.object({
+    currentPassword: Joi.string()
+      .required()
+      .messages({
+        "string.empty": "Current password is required.",
+        "any.required": "Current password is required.",
+      }),
+    newPassword: Joi.string()
+      .required()
+      .pattern(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()])[a-zA-Z0-9!@#$%^&*()]{8,}$/,
+      )
+      .messages({
+        "string.pattern.base":
+          "New password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters.",
+        "string.empty": "New password is required.",
+        "any.required": "New password is required.",
+      }),
+  });
+
   /**
    * Admin Route: Switch Role
    */
@@ -490,6 +515,13 @@ class Validator {
    * Admin Route: Deactivate
    */
   DeactivateAdmin = Joi.object({
+    email_username_id: Joi.string().required(),
+  });
+
+  /**
+   * Admin Route: Activate
+   */
+  ActivateAdmin = Joi.object({
     email_username_id: Joi.string().required(),
   });
 }
