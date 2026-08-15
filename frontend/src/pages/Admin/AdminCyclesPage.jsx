@@ -18,6 +18,7 @@ const MONTHS = [
 const AdminCyclesPage = () => {
   const navigate = useNavigate();
 
+  const [error, setError] = useState(null);
   const payload = adminStorage.getPayload();
   const username = payload?.username || 'Admin';
   const role = payload?.role || '';
@@ -52,7 +53,7 @@ const AdminCyclesPage = () => {
       setTotalPages(data.total_pages);
     } catch (err) {
       if (err?.message?.includes('Session expired')) navigate('/admin/sign-in');
-      else flashToast(err?.message || 'Failed to load cycles.');
+      else setError(err?.message || 'Failed to load cycles.');
     } finally {
       setLoading(false);
     }
@@ -95,7 +96,7 @@ const AdminCyclesPage = () => {
       const data = await adminApiService.getCycle(cycleId);
       setSelected(data.cycle);
     } catch (err) {
-      flashToast(err?.message || 'Failed to load cycle detail.');
+      setError(err?.message || 'Failed to load cycle detail.');
     } finally {
       setDetailLoading(false);
     }
@@ -109,7 +110,7 @@ const AdminCyclesPage = () => {
       setSelected(null);
       fetchCycles(page, applied);
     } catch (err) {
-      flashToast(err?.message || 'Failed to delete cycle.');
+      setError(err?.message || 'Failed to delete cycle.');
     }
   };
 
@@ -181,6 +182,12 @@ const AdminCyclesPage = () => {
             </div>
           </div>
 
+          {error && (
+            <div className="bg-red-100 text-red-800 border border-red-200 rounded-xl px-4 py-3 text-sm font-medium">
+              {error}
+            </div>
+          )}
+          
           {/* Table */}
           <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)]">
             {loading ? (
