@@ -15,13 +15,13 @@ const FRONT_URL = `${window.location.origin}/reset-password`;
 const AdminUsersPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
   const payload = adminStorage.getPayload();
   const username = payload?.username || 'Admin';
   const role = payload?.role || '';
   const isSuperAdmin = role === 'SUPER ADMIN';
-
+  
   // List state
+  const [error, setError] = useState(null);
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -31,7 +31,7 @@ const AdminUsersPage = () => {
 
   // Filters
   const [filters, setFilters] = useState({
-    fname: '', lname: '', username: '', status: '', role: '',
+    fname: '', lname: '', username: '', status: '',
   });
   const [applied, setApplied] = useState({});
 
@@ -65,7 +65,7 @@ const AdminUsersPage = () => {
       setTotalPages(data.total_pages);
     } catch (err) {
       if (err?.message?.includes('Session expired')) navigate('/admin/sign-in');
-      else flashToast(err?.message || 'Failed to load users.');
+      else setError(err?.message || 'Failed to load users.');
     } finally {
       setLoading(false);
     }
@@ -92,14 +92,13 @@ const AdminUsersPage = () => {
     if (filters.lname) active.lname = filters.lname;
     if (filters.username) active.username = filters.username;
     if (filters.status) active.status = filters.status;
-    if (filters.role) active.role = filters.role;
     setApplied(active);
     setPage(1);
     fetchUsers(1, active);
   };
 
   const clearFilters = () => {
-    setFilters({ fname: '', lname: '', username: '', status: '', role: '' });
+    setFilters({ fname: '', lname: '', username: '', status: '' });
     setApplied({});
     setPage(1);
     fetchUsers(1, {});
@@ -142,7 +141,7 @@ const AdminUsersPage = () => {
       const data = await adminApiService.getUserCycles(detail.email);
       setCycles(data.allCycles || []);
     } catch (err) {
-      flashToast(err?.message || 'Failed to load cycles.');
+      setError(err?.message || 'Failed to load cycles.');
     } finally {
       setCyclesLoading(false);
     }
@@ -195,7 +194,7 @@ const AdminUsersPage = () => {
           {/* Filter bar */}
           <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] p-5">
             <h3 className="text-sm font-bold text-gray-700 mb-4">Search &amp; Filter</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
               {[['fname', 'First name'], ['lname', 'Last name'], ['username', 'Username']].map(([key, ph]) => (
                 <input
                   key={key}
@@ -215,15 +214,6 @@ const AdminUsersPage = () => {
                 <option value="ACTIVE">Active</option>
                 <option value="DEACTIVATED">Deactivated</option>
               </select>
-              <select
-                value={filters.role}
-                onChange={e => setFilters(p => ({ ...p, role: e.target.value }))}
-                className="px-3 py-2 border-[1.5px] border-solid border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-colors"
-              >
-                <option value="">All roles</option>
-                <option value="USER">User</option>
-                <option value="ADMIN">Admin</option>
-              </select>
             </div>
             <div className="flex gap-3 mt-4">
               <button
@@ -242,6 +232,12 @@ const AdminUsersPage = () => {
               )}
             </div>
           </div>
+
+          {error && (
+            <div className="bg-red-100 text-red-800 border border-red-200 rounded-xl px-4 py-3 text-sm font-medium">
+              {error}
+            </div>
+          )}
 
           {/* Table */}
           <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)]">
