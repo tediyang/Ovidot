@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaEye, FaEyeSlash, FaShieldAlt } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { adminApiService } from '../../services/adminApi';
 import { adminStorage } from '../../services/adminStorage';
+import logo from '../../assets/ovary.png';
 
 const AdminSigninPage = () => {
   const [formData, setFormData] = useState({ email_or_username: '', password: '' });
@@ -51,8 +52,8 @@ const AdminSigninPage = () => {
       <div className="flex flex-col lg:flex-row w-full h-full">
         {/* Left panel — brand */}
         <div className="hidden lg:flex flex-col justify-center items-center basis-1/2 text-white px-12 gap-6">
-          <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center">
-            <FaShieldAlt size={40} className="text-white" />
+          <div className="w-20 h-20 rounded-2xl bg-white/80 flex items-center justify-center">
+            <img className="h-16" alt="logo" src={logo} />
           </div>
           <hgroup className="text-center">
             <h1 className="text-4xl font-extrabold leading-tight">Ovidot Admin</h1>
