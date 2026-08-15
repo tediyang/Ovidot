@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const userSchema = require("../../../models/schemas/user.model.js");
 const cycleSchema = require("../../../models/schemas/cycle.model.js");
 const emailSchema = require("../../../models/schemas/email.model.js");
+const adminSchema = require("../../../admin/model/admin.model.js");
 const {
   Role,
   userStatus,
@@ -22,7 +23,7 @@ describe("MODEL SCHEMAS", () => {
     const user = new User({
       name: { fname: "John", lname: "Doe" },
       email: "john@example.com",
-      phone: "+2348130001111",
+      phone: "08130001111",
       username: "john",
       password: "Password123#",
       dob: "1995-01-01",
@@ -43,7 +44,7 @@ describe("MODEL SCHEMAS", () => {
     const invalidUser = new User({
       name: { fname: "John", lname: "Doe" },
       email: "john@example.com",
-      phone: "08130001111",
+      phone: "+2348130001111",
       username: "john123",
       password: "Password123#",
       dob: "1995-01-01",
@@ -75,6 +76,55 @@ describe("MODEL SCHEMAS", () => {
     expect(validationError.errors.email).to.exist;
     expect(validationError.errors.username).to.exist;
     expect(validationError.errors.email_type).to.exist;
+  });
+
+  it("applies defaults and validates an admin document", () => {
+    const Admin = createModel(adminSchema, "AdminSchemaTest");
+    const adminDoc = new Admin({
+      email: "admin@example.com",
+      username: "AdminUser",
+      password: "Password123#",
+    });
+
+    const validationError = adminDoc.validateSync();
+
+    expect(validationError).to.equal(undefined);
+    expect(adminDoc.status).to.equal(userStatus.active);
+    expect(adminDoc.role).to.equal(Role.admin);
+    expect(adminDoc.loginAttempts).to.equal(0);
+  });
+
+  it("rejects invalid admin usernames and missing required fields", () => {
+    const Admin = createModel(adminSchema, "AdminSchemaValidationTest");
+    const invalidAdmin = new Admin({
+      email: "",
+      username: "admin123",
+      password: "",
+    });
+
+    const validationError = invalidAdmin.validateSync();
+
+    expect(validationError.errors.email).to.exist;
+    expect(validationError.errors.password).to.exist;
+    expect(validationError.errors.username.message).to.include(
+      "valid username",
+    );
+  });
+
+  it("rejects unsupported role and status values on the admin schema", () => {
+    const Admin = createModel(adminSchema, "AdminSchemaEnumTest");
+    const invalidAdmin = new Admin({
+      email: "admin3@example.com",
+      username: "admin3",
+      password: "Password123#",
+      role: "OWNER",
+      status: "BLOCKED",
+    });
+
+    const validationError = invalidAdmin.validateSync();
+
+    expect(validationError.errors.role).to.exist;
+    expect(validationError.errors.status).to.exist;
   });
 
   it("decrypts sensitive cycle values when converting to JSON", () => {

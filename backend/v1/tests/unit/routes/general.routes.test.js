@@ -5,6 +5,7 @@ const util = require('../../../utility/encryption/cryptography.js');
 const { User, Connection } = require('../../../models/engine/database.js');
 const blacklist = require('../../../middleware/tokenBlacklist.js');
 const userController = require('../../../controllers/user.controller.js');
+const appController = require('../../../controllers/register.controller.js');
 
 
 describe('GENERAL ROUTES', () => {
@@ -195,9 +196,7 @@ describe('GENERAL ROUTES', () => {
         period: 5,
       };
   
-      sandbox.stub(userController, 'createUser').callsFake((res) => {
-        res.status(400).json({ message: "Email already exists" });
-      });
+      sandbox.stub(userController, 'createUser').rejects(new Error('Email already exists'));
   
       const res = await request(app)
         .post('/api/v1/signup')
@@ -211,22 +210,25 @@ describe('GENERAL ROUTES', () => {
       userData = {
         fname: "Daniel",
         lname: "Eyang",
-        email: 'daniel.eyang.ed@gmail.com',
+        email: 'daniel.eyang.e@gmail.com',
         username: "Reaper",
-        phone: "07064618847",
+        phone: "07064618840",
         password: 'Ovidotsuper123#',
         dob: '1996-05-30',
         period: 5,
       };
   
-      sandbox.stub(userController, 'createUser').callsFake((res) => {
-        res.status(201).json({ message: "Registration Successful" });
+      sandbox.stub(userController, 'createUser').resolves({
+        id: '567867896789789890',
+        name: { fname: 'John', lname: 'Doe' },
+        email: 'john@example.com',
       });
   
       const res = await request(app)
         .post('/api/v1/signup')
         .send(userData);
   
+      console.log(res.body);
       expect(res.status).to.equal(201);
       expect(res.body).to.have.property('message', "Registration Successful");
     });
