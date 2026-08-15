@@ -145,8 +145,18 @@ class AdminApiService {
     return this.putData(config.apiEndpoints.admin.switchRole, { email_username_id, role });
   }
 
-  deactivateAdmin(email_username_id) {
-    return this.putData(config.apiEndpoints.admin.deactivateAdmin, { email_username_id });
+  createAdmin(adminData) {
+    return this.postData(config.apiEndpoints.admin.createAdmin, adminData);
+  }
+
+  deactivateActivateAdmin(email_username_id, action) {
+    if (action === 'deactivate') {
+      return this.putData(config.apiEndpoints.admin.deactivateAdmin, { email_username_id });
+    } else if (action === 'activate') {
+      return this.putData(config.apiEndpoints.admin.activateAdmin, { email_username_id });
+    } else {
+      throw new Error('Invalid action. Use "deactivate" or "activate".');
+    }
   }
 }
 
