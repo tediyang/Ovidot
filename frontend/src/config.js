@@ -28,6 +28,9 @@ const config = {
       cycles: '/admin/cycles',
       switchRole: '/admin/switch',
       deactivateAdmin: '/admin/deactivate',
+      activateAdmin: '/admin/activate',
+      createAdmin: '/admin/create-admin',
+      deleteAdmin: '/admin/delete-admin'
     }
   },
   adminTokenStorageKey: 'adminToken',
