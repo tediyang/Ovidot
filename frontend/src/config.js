@@ -30,7 +30,9 @@ const config = {
       deactivateAdmin: '/admin/deactivate',
       activateAdmin: '/admin/activate',
       createAdmin: '/admin/create-admin',
-      deleteAdmin: '/admin/delete-admin'
+      deleteAdmin: '/admin/delete-admin',
+      changePassword: '/admin/update-password',
+      getAdmins: '/admin/admins',
     }
   },
   adminTokenStorageKey: 'adminToken',
