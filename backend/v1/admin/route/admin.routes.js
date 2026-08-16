@@ -1794,7 +1794,7 @@ router.delete(
 );
 
 router.put(
-  "/updatePassword",
+  "/update-password",
   tokenVerification.adminTokenVerification,
   adminController.changeAdminPassword.bind(adminController),
 )
