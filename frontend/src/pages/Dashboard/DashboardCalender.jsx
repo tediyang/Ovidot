@@ -62,6 +62,7 @@ const DashboardCalendar = ({
     } catch (err) {
       console.error("Error fetching adjacent cycle data:", err);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
