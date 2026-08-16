@@ -40,7 +40,7 @@ class AdminController {
    * @param {Admin} admin - Admin Object to generate token for.
    */
   createToken(admin) {
-    return sign({ id: admin._id, role: admin.role }, this._secretKey, {
+    return sign({ id: admin._id, role: admin.role, username: admin.username }, this._secretKey, {
       expiresIn: "1h",
     });
   }
