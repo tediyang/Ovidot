@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback  } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaShieldAlt,
@@ -7,7 +7,15 @@ import {
   FaLock,
   FaUserPlus,
   FaCopy,
+  FaUser,
+  FaKey,
+  FaTimes,
+  FaChevronLeft,
+  FaChevronRight,
+  FaTrash,
+  FaExclamationCircle
 } from "react-icons/fa";
+import config from "../../config";
 import AdminHeader from "../../components/AdminHeader";
 import AdminAsideMenu from "../../components/AdminAsideMenu";
 import DashboardToast from "../Dashboard/DashboadToast";
@@ -33,8 +41,19 @@ const AdminSettingsPage = () => {
   const role = payload?.role || "";
   const isSuperAdmin = role === "SUPER ADMIN";
 
+  const [error, setError] = useState(null);
   const [toast, setToast] = useState("");
   const [newAdmin, setNewAdmin] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [admins, setAdmins] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [haveNextPage, setHaveNextPage] = useState(false);
+
+  const goPage = (p) => {
+    setPage(p);
+    fetchAdmins(p);
+  };
 
   // Switch role state
   const [createForm, setCreateForm] = useState({
@@ -69,9 +88,128 @@ const AdminSettingsPage = () => {
   const [passwordMessage, setPasswordMessage] = useState("");
   const [passwordValid, setPasswordValid] = useState(false);
 
+  // Change password modal state
+  const [changePwdModalOpen, setChangePwdModalOpen] = useState(false);
+  const [changePwdForm, setChangePwdForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+    loading: false,
+  });
+
+  const [pwdChecks, setPwdChecks] = useState({
+    length: false,
+    uppercase: false,
+    number: false,
+    special: false,
+    match: false,
+  });
+  const [changePwdError, setChangePwdError] = useState("");
+  const [changePwdAttempted, setChangePwdAttempted] = useState(false);
+
   const flashToast = (msg) => {
     setToast(msg);
     setTimeout(() => setToast(""), 3500);
+  };
+
+  const evaluatePasswordChecks = (newPwd, confirmPwd) => {
+    const length = newPwd.length >= 8;
+    const uppercase = /(?=.*[A-Z])/.test(newPwd);
+    const number = /(?=.*\d)/.test(newPwd);
+    const special = /(?=.*[^a-zA-Z0-9])/.test(newPwd);
+    const match = newPwd && newPwd === confirmPwd;
+    setPwdChecks({ length, uppercase, number, special, match });
+    return length && uppercase && number && special && match;
+  };
+
+  const handleNewPasswordChange = (value, field = "new") => {
+    if (field === "new") {
+      setChangePwdForm((p) => ({ ...p, newPassword: value }));
+      setChangePwdAttempted(false);
+      setChangePwdError("");
+      evaluatePasswordChecks(value, changePwdForm.confirmPassword);
+    } else {
+      setChangePwdForm((p) => ({ ...p, confirmPassword: value }));
+      setChangePwdAttempted(false);
+      setChangePwdError("");
+      evaluatePasswordChecks(changePwdForm.newPassword, value);
+    }
+  };
+
+  const handleChangePasswordSubmit = async (e) => {
+    e.preventDefault();
+    const { currentPassword, newPassword, confirmPassword } = changePwdForm;
+    // Clear previous modal errors
+    setChangePwdError("");
+    setChangePwdAttempted(false);
+
+    if (
+      !currentPassword.trim() ||
+      !newPassword.trim() ||
+      !confirmPassword.trim()
+    ) {
+      setChangePwdAttempted(true);
+      setChangePwdError("Please fill in all password fields.");
+      return;
+    }
+
+    const allValid = evaluatePasswordChecks(newPassword, confirmPassword);
+    if (!allValid) {
+      setChangePwdAttempted(true);
+      setChangePwdError(
+        "Please ensure the new password meets all requirements.",
+      );
+      return;
+    }
+    setChangePwdForm((p) => ({ ...p, loading: true }));
+    try {
+      await adminApiService.putData(config.apiEndpoints.admin.changePassword, {
+        currentPassword: currentPassword.trim(),
+        newPassword: newPassword.trim(),
+      });
+      flashToast("Password changed successfully.");
+      setChangePwdModalOpen(false);
+      setChangePwdForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+        loading: false,
+      });
+      setPwdChecks({
+        length: false,
+        uppercase: false,
+        number: false,
+        special: false,
+        match: false,
+      });
+      setChangePwdError("");
+      setChangePwdAttempted(false);
+    } catch (err) {
+      // Server-side / network errors: show toast
+      flashToast(
+        err?.message || err?.data?.message || "Failed to change password.",
+      );
+      setChangePwdForm((p) => ({ ...p, loading: false }));
+    }
+  };
+
+  const closeChangePwdModal = () => {
+    setChangePwdModalOpen(false);
+    setChangePwdError("");
+    setChangePwdAttempted(false);
+    setChangePwdForm({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+      loading: false,
+    });
+    setPwdChecks({
+      length: false,
+      uppercase: false,
+      number: false,
+      special: false,
+      match: false,
+    });
   };
 
   const copyCredentials = async () => {
@@ -84,12 +222,6 @@ const AdminSettingsPage = () => {
       flashToast("Failed to copy credentials.");
     }
   };
-
-  useEffect(() => {
-    if (!adminStorage.hasToken() || adminStorage.isExpired()) {
-      navigate("/admin/sign-in");
-    }
-  }, [navigate]);
 
   const handlePasswordValidation = (password) => {
     if (
@@ -226,14 +358,52 @@ const AdminSettingsPage = () => {
     }
   };
 
+  const handleDeleteAdmin = async (adminId) => {
+    if (!window.confirm(`Delete this admin? This cannot be undone.`)) return;
+    try {
+      await adminApiService.deleteAdmin(adminId);
+      flashToast('Admin deleted successfully.');
+      fetchAdmins(page);
+    } catch (err) {
+      flashToast(err?.message || 'Failed to delete admin.');
+    }
+  };
+
+  const fetchAdmins = useCallback(async (pg = 1) => {
+    setLoading(true);
+    try {
+      const params = { page: pg, size: 5 };
+      Object.keys(params).forEach(k => !params[k] && delete params[k]);
+      const data = await adminApiService.getAdmins(params);
+      setAdmins(data.admins || []);
+      setHaveNextPage(data.have_next_page);
+      setTotalPages(data.total_pages);
+      console.log("successfully fetched admins");
+    } catch (err) {
+      if (err?.message?.includes('Session expired')) navigate('/admin/sign-in');
+      else setError(err?.message || 'Failed to load users.');
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!adminStorage.hasToken() || adminStorage.isExpired()) {
+      navigate('/admin/sign-in');
+      return;
+    }
+    isSuperAdmin && fetchAdmins(1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <div className="bg-[#FDF4FF] mt-5">
+    <div className="bg-[#FDF4FF] mt-5 h-[100dvh] lg:h-[100dvh] overflow-y-auto">
       <AdminHeader page="Settings" username={username} role={role} />
       <div className="flex flex-col relative lg:flex-row lg:justify-center lg:gap-5 min-h-[100dvh]">
         <AdminAsideMenu username={username} role={role} />
         <div className="flex flex-col m-4 mt-14 lg:min-w-[45rem] xl:min-w-[62rem] lg:ml-[16rem] gap-5">
           {/* Account info card */}
-          <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] p-6">
+          <div className="flex flex-col gap-y-6 md:flex-row justify-between md:items-center bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] p-6">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-extrabold shadow-[0_4px_16px_rgba(77,11,94,0.25)]">
                 {username[0].toUpperCase()}
@@ -253,6 +423,13 @@ const AdminSettingsPage = () => {
                 </span>
               </div>
             </div>
+            <button
+              onClick={() => setChangePwdModalOpen(true)}
+              className="flex gap-2 items-center justify-center md:w-fit px-6 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl border-0 cursor-pointer transition-opacity shadow-[0_4px_14px_rgba(77,11,94,0.2)]"
+            >
+              <FaKey size={13} />
+              <span>Change Password</span>
+            </button>
           </div>
 
           {/* Super admin only notice for non-super admins */}
@@ -266,17 +443,103 @@ const AdminSettingsPage = () => {
                   </p>
                   <p className="text-xs text-gray-500 mt-0.5">
                     Admin management actions (switching roles, deactivating
-                    admins) are only available to Super Admins.
+                    admins etc.) are only available to Super Admins.
                   </p>
                 </div>
               </div>
             </div>
           )}
+
+          {error && (
+            <div className="bg-red-100 text-red-800 border border-red-200 rounded-xl px-4 py-3 text-sm font-medium">
+              {error}
+            </div>
+          )}
+
+          {/* Table */}
+          <div className={`bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] ${!isSuperAdmin ? "opacity-50 pointer-events-none select-none" : ""}`}>
+            {!isSuperAdmin ? (
+              <div className="flex justify-center items-center px-6 py-4 border-b border-[#f3e8ff]">
+                <FaExclamationCircle className="text-red-500" size={32}/>
+              </div>
+            ) : loading ? (
+              <div className="flex justify-center items-center py-16">
+                <FaSpinner className="animate-spin text-primary" size={24} />
+              </div>
+            ) : admins.length === 0 ? (
+              <p className="text-center text-gray-400 text-sm py-12">No admins found.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-[#f3e8ff]">
+                      {['Email', 'Username', 'Status', 'Role'].map(h => (
+                        <th key={h} className="px-6 py-3 font-semibold">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {admins.map(u => (
+                      <tr
+                        key={u._id}
+                        className="border-b border-[#f3e8ff] hover:bg-[#fdf4ff] cursor-pointer transition-colors"
+                      >
+                        <td className="px-6 py-3 text-gray-500">{u.email}</td>
+                        <td className="px-6 py-3 text-gray-500">@{u.username}</td>
+                        <td className="px-6 py-3">
+                          <span className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold ${
+                            u.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
+                          }`}>
+                            {u.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-3 text-gray-500">{u.role}</td>
+                        <td className="px-5 py-3">
+                          <div className="flex items-center gap-2">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleDeleteAdmin(u._id); }}
+                                className="text-red-400 border-0 bg-transparent cursor-pointer hover:text-red-600 transition-colors"
+                              >
+                                <FaTrash size={12} />
+                              </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Pagination */}
+            {!loading && totalPages > 1 && (
+              <div className="flex items-center justify-between px-6 py-4 border-t border-[#f3e8ff]">
+                <span className="text-xs text-gray-400">Page {page} of {totalPages}</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => goPage(page - 1)}
+                    disabled={page <= 1}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 disabled:opacity-40 cursor-pointer hover:bg-[#fdf4ff] hover:text-primary transition-colors"
+                  >
+                    <FaChevronLeft size={12} />
+                  </button>
+                  <button
+                    onClick={() => goPage(page + 1)}
+                    disabled={!haveNextPage}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 disabled:opacity-40 cursor-pointer hover:bg-[#fdf4ff] hover:text-primary transition-colors"
+                  >
+                    <FaChevronRight size={12} />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Create Admin and Switch Role */}
           <section className="flex flex-col md:flex-row gap-5">
             {/* Create Admin */}
             <div
-              className={`md:basis-[50%] bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] p-6 max-w-lg ${!isSuperAdmin ? "opacity-50 pointer-events-none select-none" : ""}`}
+              className={`md:basis-[50%] bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] p-6 md:max-w-lg ${!isSuperAdmin ? "opacity-50 pointer-events-none select-none" : ""}`}
             >
               <SectionHeader label="Create Admin" />
               <p className="text-xs text-gray-400 mb-5">
@@ -374,7 +637,7 @@ const AdminSettingsPage = () => {
                       <FaCopy
                         className="text-green-800 cursor-pointer hover:text-green-900 transition-colors"
                         size={18}
-                        onClick={copyCredentials} 
+                        onClick={copyCredentials}
                       />
                     </div>
 
@@ -402,7 +665,7 @@ const AdminSettingsPage = () => {
                     </>
                   ) : (
                     <>
-                      <FaShieldAlt size={13} /> Create Admin
+                      <FaUser size={13} /> Create Admin
                     </>
                   )}
                 </button>
@@ -601,6 +864,142 @@ const AdminSettingsPage = () => {
           </section>
         </div>
       </div>
+
+      {changePwdModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={closeChangePwdModal}
+          />
+          <div className="relative bg-white rounded-2xl p-6 w-full max-w-md mx-4 shadow-lg z-10">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold">Change Password</h3>
+              <button
+                onClick={closeChangePwdModal}
+                className="border-0 bg-transparent text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
+              >
+                <FaTimes
+                  size={18} 
+                />
+              </button>
+            </div>
+            <form
+              onSubmit={handleChangePasswordSubmit}
+              className="flex flex-col gap-4"
+            >
+              {changePwdError && (
+                <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
+                  {changePwdError}
+                </div>
+              )}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-gray-500">
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  value={changePwdForm.currentPassword}
+                  onChange={(e) =>
+                    setChangePwdForm((p) => ({
+                      ...p,
+                      currentPassword: e.target.value,
+                    }))
+                  }
+                  onInput={() => {
+                    setChangePwdAttempted(false);
+                    setChangePwdError("");
+                  }}
+                  className={`px-3 py-2.5 border-[1.5px] border-solid rounded-xl text-sm focus:outline-none transition-colors ${changePwdAttempted && !changePwdForm.currentPassword.trim() ? "border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-100" : "border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10"}`}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-gray-500">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  value={changePwdForm.newPassword}
+                  onChange={(e) =>
+                    handleNewPasswordChange(e.target.value, "new")
+                  }
+                  className={`px-3 py-2.5 border-[1.5px] border-solid rounded-xl text-sm focus:outline-none transition-colors ${changePwdAttempted && (!pwdChecks.length || !pwdChecks.uppercase || !pwdChecks.number || !pwdChecks.special) ? "border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-100" : "border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10"}`}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-gray-500">
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  value={changePwdForm.confirmPassword}
+                  onChange={(e) =>
+                    handleNewPasswordChange(e.target.value, "confirm")
+                  }
+                  className={`px-3 py-2.5 border-[1.5px] border-solid rounded-xl text-sm focus:outline-none transition-colors ${changePwdAttempted && !pwdChecks.match ? "border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-100" : "border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10"}`}
+                />
+              </div>
+
+              <div className="text-xs">
+                <p className="font-semibold mb-2">Password requirements:</p>
+                <ul className="space-y-1 list-none">
+                  <li
+                    className={`${pwdChecks.length ? "text-emerald-600" : "text-gray-400"}`}
+                  >
+                    {pwdChecks.length ? "✓" : "○"} At least 8 characters
+                  </li>
+                  <li
+                    className={`${pwdChecks.uppercase ? "text-emerald-600" : "text-gray-400"}`}
+                  >
+                    {pwdChecks.uppercase ? "✓" : "○"} At least one uppercase
+                    letter
+                  </li>
+                  <li
+                    className={`${pwdChecks.number ? "text-emerald-600" : "text-gray-400"}`}
+                  >
+                    {pwdChecks.number ? "✓" : "○"} At least one number
+                  </li>
+                  <li
+                    className={`${pwdChecks.special ? "text-emerald-600" : "text-gray-400"}`}
+                  >
+                    {pwdChecks.special ? "✓" : "○"} At least one special
+                    character
+                  </li>
+                  <li
+                    className={`${pwdChecks.match ? "text-emerald-600" : "text-gray-400"}`}
+                  >
+                    {pwdChecks.match ? "✓" : "○"} Passwords match
+                  </li>
+                </ul>
+              </div>
+
+              <div className="flex gap-3 justify-end">
+                <button
+                  type="button"
+                  onClick={closeChangePwdModal}
+                  className="px-4 py-2 rounded-xl bg-gray-100 text-sm border-0 cursor-pointer hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={changePwdForm.loading}
+                  className={`${changePwdForm.loading ? "opacity-60 cursor-not-allowed" : "hover:opacity-90"} flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold border-0 cursor-pointer transition-opacity shadow-[0_4px_14px_rgba(77,11,94,0.2)]`}
+                >
+                  {changePwdForm.loading ? (
+                    <>
+                      <FaSpinner className="animate-spin" size={13} /> Updating…
+                    </>
+                  ) : (
+                    "Update Password"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {toast && <DashboardToast message={toast} />}
     </div>
