@@ -149,6 +149,11 @@ class AdminApiService {
     return this.postData(config.apiEndpoints.admin.createAdmin, adminData);
   }
 
+  getAdmins(params = {}) {
+    const qs = new URLSearchParams(params).toString();
+    return this.getData(`${config.apiEndpoints.admin.getAdmins}${qs ? `?${qs}` : ''}`);
+  }
+
   deactivateActivateAdmin(email_username_id, action) {
     if (action === 'deactivate') {
       return this.putData(config.apiEndpoints.admin.deactivateAdmin, { email_username_id });
@@ -157,6 +162,10 @@ class AdminApiService {
     } else {
       throw new Error('Invalid action. Use "deactivate" or "activate".');
     }
+  }
+
+  deleteAdmin(adminId) {
+    return this.deleteData(`${config.apiEndpoints.admin.deleteAdmin}/${adminId}` );
   }
 }
 

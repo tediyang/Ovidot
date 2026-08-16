@@ -42,7 +42,7 @@ class AdminStorage {
     return !!this.token;
   }
 
-  /** Decode the JWT payload to get { id, role, exp } without a library. */
+  /** Decode the JWT payload to get { id, role, username, exp } without a library. */
   getPayload() {
     if (!this.token) return null;
     try {
