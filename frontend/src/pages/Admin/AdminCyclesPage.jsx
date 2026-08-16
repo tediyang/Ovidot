@@ -53,6 +53,7 @@ const AdminCyclesPage = () => {
       setTotalPages(data.total_pages);
     } catch (err) {
       if (err?.message?.includes('Session expired')) navigate('/admin/sign-in');
+      else if (err?.message?.includes("You must change your password before performing such action")) navigate('/admin/settings');
       else setError(err?.message || 'Failed to load cycles.');
     } finally {
       setLoading(false);
@@ -121,7 +122,7 @@ const AdminCyclesPage = () => {
   };
 
   return (
-    <div className="bg-[#FDF4FF] mt-5">
+    <div className="bg-[#FDF4FF] mt-5 h-[100dvh] lg:h-[100dvh] overflow-y-auto">
       <AdminHeader page="Cycles" username={username} role={role} />
       <div className="flex flex-col relative lg:flex-row lg:justify-center lg:gap-5">
         <AdminAsideMenu username={username} role={role} />
