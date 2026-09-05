@@ -873,6 +873,11 @@ class AdminController {
 
       const { adminId } = req.params;
 
+      // Prevent super admin from deleting his account
+      if (adminId === req.user.id) {
+        return handleResponse(res, 403, "Admin cannot delete it own self");
+      }
+
       const admin = await Admin.findByIdAndRemove(adminId);
       if (!admin) {
         return handleResponse(res, 404, "Admin not found");
