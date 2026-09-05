@@ -62,12 +62,14 @@ const AdminSettingsPage = () => {
     role: "ADMIN",
     password: "",
     loading: false,
+    confirm: false
   });
   // Switch role state
   const [switchForm, setSwitchForm] = useState({
     email_username_id: "",
     role: "ADMIN",
     loading: false,
+    confirm: false
   });
 
   // Deactivate state
@@ -257,6 +259,11 @@ const AdminSettingsPage = () => {
       return;
     }
 
+    if (!createForm.confirm) {
+      setCreateForm((p) => ({ ...p, confirm: true }));
+      return;
+    }
+
     setCreateForm((p) => ({ ...p, loading: true }));
     try {
       // exclude loading from the payload sent to the API
@@ -276,6 +283,7 @@ const AdminSettingsPage = () => {
       });
       setPasswordMessage("");
       setPasswordValid(false);
+      fetchAdmins(page);
     } catch (err) {
       flashToast(err?.message || "Failed to create admin.");
       setCreateForm((p) => ({ ...p, loading: false }));
@@ -288,6 +296,12 @@ const AdminSettingsPage = () => {
       flashToast("Please enter an email, username, or ID.");
       return;
     }
+
+    if (!switchForm.confirm) {
+      setSwitchForm((p) => ({ ...p, confirm: true }));
+      return;
+    }
+
     setSwitchForm((p) => ({ ...p, loading: true }));
     try {
       await adminApiService.switchRole(
@@ -295,10 +309,11 @@ const AdminSettingsPage = () => {
         switchForm.role,
       );
       flashToast(`Role updated to ${switchForm.role} successfully.`);
-      setSwitchForm((p) => ({ ...p, email_username_id: "", loading: false }));
+      setSwitchForm((p) => ({ ...p, email_username_id: "", loading: false, confirm: false }));
+      fetchAdmins(page);
     } catch (err) {
       flashToast(err?.message || "Failed to switch role.");
-      setSwitchForm((p) => ({ ...p, loading: false }));
+      setSwitchForm((p) => ({ ...p, loading: false, confirm: false }));
     }
   };
 
@@ -324,6 +339,7 @@ const AdminSettingsPage = () => {
         loading: false,
         confirm: false,
       });
+      fetchAdmins(page);
     } catch (err) {
       flashToast(err?.message || "Failed to deactivate admin.");
       setDeactivateForm((p) => ({ ...p, loading: false, confirm: false }));
@@ -352,6 +368,7 @@ const AdminSettingsPage = () => {
         loading: false,
         confirm: false,
       });
+      fetchAdmins(page);
     } catch (err) {
       flashToast(err?.message || "Failed to activate admin.");
       setActivateForm((p) => ({ ...p, loading: false, confirm: false }));
@@ -539,7 +556,7 @@ const AdminSettingsPage = () => {
           <section className="flex flex-col md:flex-row gap-5">
             {/* Create Admin */}
             <div
-              className={`md:basis-[50%] bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] p-6 md:max-w-lg ${!isSuperAdmin ? "opacity-50 pointer-events-none select-none" : ""}`}
+              className={`md:basis-[50%] lg:basis-[32rem] bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] p-6 md:max-w-lg ${!isSuperAdmin ? "opacity-50 pointer-events-none select-none" : ""}`}
             >
               <SectionHeader label="Create Admin" />
               <p className="text-xs text-gray-400 mb-5">
@@ -654,26 +671,50 @@ const AdminSettingsPage = () => {
                   </div>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={createForm.loading}
-                  className={`${createForm.loading ? "opacity-60 cursor-not-allowed" : "hover:opacity-90"} flex items-center gap-2 w-fit px-6 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl border-0 cursor-pointer transition-opacity shadow-[0_4px_14px_rgba(77,11,94,0.2)]`}
-                >
-                  {createForm.loading ? (
-                    <>
-                      <FaSpinner className="animate-spin" size={13} /> Creating…
-                    </>
-                  ) : (
-                    <>
-                      <FaUser size={13} /> Create Admin
-                    </>
+                {createForm.confirm && (
+                  <div className="bg-primary bg-opacity-20 border border-primary rounded-xl px-4 py-3 text-sm text-primary">
+                    <p className="font-semibold">Are you sure?</p>
+                    <p className="text-xs mt-0.5">
+                      This will create a new admin. Click the button
+                      again to confirm.
+                    </p>
+                  </div>
+                )}
+
+                <section className="flex flex-col md:flex-row gap-2">
+                  <button
+                    type="submit"
+                    disabled={createForm.loading}
+                    className={`${createForm.loading ? "opacity-60 cursor-not-allowed" : "hover:opacity-90"} flex items-center justify-center gap-2 md:w-fit px-6 py-2.5 ${
+                    createForm.confirm ? "bg-[#3c034a]" : "bg-primary"
+                    } text-white text-sm font-semibold rounded-xl border-0 cursor-pointer transition-opacity shadow-[0_4px_14px_rgba(77,11,94,0.2)]`}
+                  >
+                    {createForm.loading ? (
+                      <>
+                        <FaSpinner className="animate-spin" size={13} /> Creating…
+                      </>
+                    ) : (
+                      <>
+                        <FaUser size={13} /> {""}
+                        {createForm.confirm
+                          ? "Confirm Create"
+                          : "Create Admin"}
+                      </>
+                    )}
+                  </button>
+                  {createForm.confirm && (
+                    <button
+                      type="button"
+                      className="flex items-center justify-center md:w-fit px-6 py-2.5 text-black hover:bg-slate-200 text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all"
+                      onClick={() => setCreateForm((p) => ({ ...p, confirm: false }))}>Cancel
+                    </button>
                   )}
-                </button>
+                </section>
               </form>
             </div>
             {/* Switch Role */}
             <div
-              className={`md:basis-[50%] bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] p-6 ${!isSuperAdmin ? "opacity-50 pointer-events-none select-none" : ""}`}
+              className={`md:basis-[50%] lg:basis-[32rem] bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] p-6 ${!isSuperAdmin ? "opacity-50 pointer-events-none select-none" : ""}`}
             >
               <SectionHeader label="Switch Admin Role" />
               <p className="text-xs text-gray-400 mb-5">
@@ -718,21 +759,46 @@ const AdminSettingsPage = () => {
                     </select>
                   </div>
                 </div>
-                <button
-                  type="submit"
-                  disabled={switchForm.loading}
-                  className={`${switchForm.loading ? "opacity-60 cursor-not-allowed" : "hover:opacity-90"} flex items-center gap-2 w-fit px-6 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl border-0 cursor-pointer transition-opacity shadow-[0_4px_14px_rgba(77,11,94,0.2)]`}
-                >
-                  {switchForm.loading ? (
-                    <>
-                      <FaSpinner className="animate-spin" size={13} /> Updating…
-                    </>
-                  ) : (
-                    <>
-                      <FaShieldAlt size={13} /> Update Role
-                    </>
+
+                {switchForm.confirm && (
+                  <div className="bg-primary bg-opacity-20 border border-primary rounded-xl px-4 py-3 text-sm text-primary">
+                    <p className="font-semibold">Are you sure?</p>
+                    <p className="text-xs mt-0.5">
+                      This will change the admin role. Click the button
+                      again to confirm.
+                    </p>
+                  </div>
+                )}
+
+                <section className="flex flex-col md:flex-row gap-2">
+                  <button
+                    type="submit"
+                    disabled={switchForm.loading}
+                    className={`${switchForm.loading ? "opacity-60 cursor-not-allowed" : "hover:opacity-90"} flex items-center justify-center gap-2 md:w-fit px-6 py-2.5 ${
+                     switchForm.confirm ? "bg-[#3c034a]" : "bg-primary"
+                    } text-white text-sm font-semibold rounded-xl border-0 cursor-pointer transition-opacity shadow-[0_4px_14px_rgba(77,11,94,0.2)]`}
+                  >
+                    {switchForm.loading ? (
+                      <>
+                        <FaSpinner className="animate-spin" size={13} /> Updating…
+                      </>
+                    ) : (
+                      <>
+                        <FaShieldAlt size={13} />{""}
+                        {switchForm.confirm
+                          ? "Confirm Update"
+                          : "Update Role"}
+                      </>
+                    )}
+                  </button>
+                  {switchForm.confirm && (
+                    <button
+                      type="button"
+                      className="flex items-center justify-center md:w-fit px-6 py-2.5 text-black hover:bg-slate-200 text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all"
+                      onClick={() => setSwitchForm((p) => ({ ...p, confirm: false }))}>Cancel
+                    </button>
                   )}
-                </button>
+                </section>
               </form>
             </div>
           </section>
@@ -740,7 +806,7 @@ const AdminSettingsPage = () => {
           <section className="flex flex-col md:flex-row gap-5">
             {/* Deactivate Admin */}
             <div
-              className={`md:basis-[50%] bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] p-6 border-l-4 border-red-300 ${!isSuperAdmin ? "opacity-50 pointer-events-none select-none" : ""}`}
+              className={`md:basis-[50%] lg:basis-[32rem] bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] p-6 border-l-4 border-red-300 ${!isSuperAdmin ? "opacity-50 pointer-events-none select-none" : ""}`}
             >
               <SectionHeader label="Deactivate Admin Account" />
               <p className="text-xs text-gray-400 mb-5">
@@ -777,32 +843,41 @@ const AdminSettingsPage = () => {
                   </div>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={deactivateForm.loading}
-                  className={`${deactivateForm.loading ? "opacity-60 cursor-not-allowed" : "hover:opacity-90"} flex items-center gap-2 w-fit px-6 py-2.5 ${
-                    deactivateForm.confirm ? "bg-yellow-600" : "bg-yellow-500"
-                  } text-white text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all`}
-                >
-                  {deactivateForm.loading ? (
-                    <>
-                      <FaSpinner className="animate-spin" size={13} />{" "}
-                      Processing…
-                    </>
-                  ) : (
-                    <>
-                      <FaUserSlash size={13} />{" "}
-                      {deactivateForm.confirm
-                        ? "Confirm Deactivation"
-                        : "Deactivate Admin"}
-                    </>
+                <section className="flex flex-col md:flex-row gap-2">
+                  <button
+                    type="submit"
+                    disabled={deactivateForm.loading}
+                    className={`${deactivateForm.loading ? "opacity-60 cursor-not-allowed" : "hover:opacity-90"} flex items-center justify-center gap-2 md:w-fit px-6 py-2.5 ${
+                      deactivateForm.confirm ? "bg-yellow-600" : "bg-yellow-500"
+                    } text-white text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all`}
+                  >
+                    {deactivateForm.loading ? (
+                      <>
+                        <FaSpinner className="animate-spin" size={13} />{" "}
+                        Processing…
+                      </>
+                    ) : (
+                      <>
+                        <FaUserSlash size={13} />{" "}
+                        {deactivateForm.confirm
+                          ? "Confirm Deactivation"
+                          : "Deactivate Admin"}
+                      </>
+                    )}
+                  </button>
+                  {deactivateForm.confirm && (
+                    <button
+                      type="button"
+                      className="flex items-center justify-center md:w-fit px-6 py-2.5 text-black hover:bg-slate-200 text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all"
+                      onClick={() => setDeactivateForm((p) => ({ ...p, confirm: false }))}>Cancel
+                    </button>
                   )}
-                </button>
+                </section>
               </form>
             </div>
             {/* Activate Admin */}
             <div
-              className={`md:basis-[50%] bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] p-6 border-l-4 border-red-300 ${!isSuperAdmin ? "opacity-50 pointer-events-none select-none" : ""}`}
+              className={`md:basis-[50%] lg:basis-[32rem] bg-white rounded-2xl shadow-[0_2px_12px_rgba(77,11,94,0.07)] p-6 border-l-4 border-red-300 ${!isSuperAdmin ? "opacity-50 pointer-events-none select-none" : ""}`}
             >
               <SectionHeader label="Activate Admin Account" />
               <p className="text-xs text-gray-400 mb-5">
@@ -838,27 +913,36 @@ const AdminSettingsPage = () => {
                   </div>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={activateForm.loading}
-                  className={`${activateForm.loading ? "opacity-60 cursor-not-allowed" : "hover:opacity-90"} flex items-center gap-2 w-fit px-6 py-2.5 ${
-                    activateForm.confirm ? "bg-green-600" : "bg-green-500"
-                  } text-white text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all`}
-                >
-                  {activateForm.loading ? (
-                    <>
-                      <FaSpinner className="animate-spin" size={13} />{" "}
-                      Processing…
-                    </>
-                  ) : (
-                    <>
-                      <FaUserPlus size={13} />{" "}
-                      {activateForm.confirm
-                        ? "Confirm Activation"
-                        : "Activate Admin"}
-                    </>
+                <section className="flex flex-col md:flex-row gap-2">
+                  <button
+                    type="submit"
+                    disabled={activateForm.loading}
+                    className={`${activateForm.loading ? "opacity-60 cursor-not-allowed" : "hover:opacity-90"} flex items-center justify-center gap-2 md:w-fit px-6 py-2.5 ${
+                      activateForm.confirm ? "bg-green-600" : "bg-green-500"
+                    } text-white text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all`}
+                  >
+                    {activateForm.loading ? (
+                      <>
+                        <FaSpinner className="animate-spin" size={13} />{" "}
+                        Processing…
+                      </>
+                    ) : (
+                      <>
+                        <FaUserPlus size={13} />{" "}
+                        {activateForm.confirm
+                          ? "Confirm Activation"
+                          : "Activate Admin"}
+                      </>
+                    )}
+                  </button>
+                  {activateForm.confirm && (
+                    <button
+                      type="button"
+                      className="flex items-center justify-center md:w-fit px-6 py-2.5 text-black hover:bg-slate-200 text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all"
+                      onClick={() => setActivateForm((p) => ({ ...p, confirm: false }))}>Cancel
+                    </button>
                   )}
-                </button>
+                </section>
               </form>
             </div>
           </section>
